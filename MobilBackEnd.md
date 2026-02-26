@@ -1,54 +1,51 @@
 # Mobil Backend (REST API Bağlantısı) Görev Dağılımı
 
-**REST API Adresi:** [api.yazmuh.com](https://api.yazmuh.com)
+**REST API Adresi:** `api.simulasyon.com` *(Canlıya alındığında güncellenecek)*
 
-Bu dokümanda, mobil uygulamanın REST API ile iletişimini sağlayan backend entegrasyon görevleri listelenmektedir. Her grup üyesi, kendisine atanan API endpoint'lerinin mobil uygulamadan çağrılması ve yönetilmesinden sorumludur.
-
----
+Bu dokümanda, AI Destekli Borsa ve Kripto Simülasyonu mobil uygulamasının, Go mimarisiyle yazılmış REST API ve mikroservisler ile iletişimini sağlayan backend entegrasyon görevleri listelenmektedir. Her grup üyesi (UraniumZ ekibi), kendisine atanan API endpoint'lerinin mobil uygulamadan çağrılması, veri akışının sağlanması ve durum yönetiminden (state management) sorumludur.
 
 ## Grup Üyelerinin Mobil Backend Görevleri
 
-1. [Ali Tutar'ın Mobil Backend Görevleri](Ali-Tutar/Ali-Tutar-Mobil-Backend-Gorevleri.md)
-2. [Grup Üyesi 2'nin Mobil Backend Görevleri](Grup-Uyesi-2/Grup-Uyesi-2-Mobil-Backend-Gorevleri.md)
-3. [Grup Üyesi 3'ün Mobil Backend Görevleri](Grup-Uyesi-3/Grup-Uyesi-3-Mobil-Backend-Gorevleri.md)
-4. [Grup Üyesi 4'ün Mobil Backend Görevleri](Grup-Uyesi-4/Grup-Uyesi-4-Mobil-Backend-Gorevleri.md)
-5. [Grup Üyesi 5'in Mobil Backend Görevleri](Grup-Uyesi-5/Grup-Uyesi-5-Mobil-Backend-Gorevleri.md)
-6. [Grup Üyesi 6'nın Mobil Backend Görevleri](Grup-Uyesi-6/Grup-Uyesi-6-Mobil-Backend-Gorevleri.md)
+1. [Furkan Alp Günay'ın Mobil Backend Görevleri](./Furkan-Alp-Gunay/Furkan-Alp-Gunay-Mobil-Backend-Gorevleri.md)
+2. [Enes Çoban'ın Mobil Backend Görevleri](./Enes-Coban/Enes-Coban-Mobil-Backend-Gorevleri.md)
+3. [Cem Karaca'ın Mobil Backend Görevleri](./Cem-Karaca/Cem-Karaca-Mobil-Backend-Gorevleri.md)
+4. [Salih Arda Katırcıoğlu'nun Mobil Backend Görevleri](./Salih-Arda-Katircioglu/Salih-Arda-Katircioglu-Mobil-Backend-Gorevleri.md)
+5. [Yakup Efe Çelebi'nin Mobil Backend Görevleri](./Yakup-Efe-Celebi/Yakup-Efe-Celebi-Mobil-Backend-Gorevleri.md)
 
 ---
 
 ## Genel Mobil Backend Prensipleri
 
-### 1. HTTP Client Yapılandırması
-- **Base URL:** `https://api.yazmuh.com/v1`
-- **Timeout:** Request timeout 30 saniye, connect timeout 10 saniye
-- **Headers:** 
-  - `Content-Type: application/json`
-  - `Authorization: Bearer {token}` (gerekli endpoint'lerde)
+**1. HTTP Client ve WebSocket Yapılandırması**
+* **Base URL:** `https://api.simulasyon.com/v1`
+* **Gerçek Zamanlı Veri (WebSocket/SSE):** Borsa ve kripto anlık fiyat akışları için Kafka ve Redis destekli WebSocket bağlantılarının yönetimi.
+* **Timeout:** Request timeout 30 saniye, connect timeout 10 saniye (Kritik alım-satım işlemleri için optimize edilmelidir).
+* **Headers:**
+    * `Content-Type: application/json`
+    * `Authorization: Bearer {token}` (Kimlik doğrulama gerektiren endpoint'lerde)
 
-### 2. Authentication Yönetimi
-- JWT token'ları secure storage'da saklama
-- Token refresh mekanizması implementasyonu
-- Otomatik token yenileme (401 durumunda)
-- Logout durumunda token temizleme
+**2. Authentication (Kimlik Doğrulama) Yönetimi**
+* JWT (JSON Web Token) verilerini cihazın güvenli depolama alanında (Secure Storage / Keychain) saklama.
+* Token refresh mekanizması implementasyonu (Oturumun aniden kapanmasını önlemek için).
+* 401 Unauthorized durumunda otomatik token yenileme.
+* Kullanıcı çıkış (Logout) yaptığında veya hesap silindiğinde cihazdaki token'ları temizleme.
 
-### 3. Error Handling
-- Network hataları (timeout, connection error)
-- HTTP status kodlarına göre uygun mesajlar gösterme
-- Retry mekanizması (network hatalarında)
-- Offline durum yönetimi
+**3. Error Handling (Hata Yönetimi)**
+* Network hataları (timeout, connection error) durumunda kullanıcıya anlaşılır uyarılar çıkarma.
+* HTTP status kodlarına (400, 404, 500 vb.) göre uygun hata mesajları gösterme (Örn: "Yetersiz bakiye", "Piyasa kapalı").
+* Kritik olmayan GET istekleri için Retry (yeniden deneme) mekanizması.
+* Kullanıcının interneti kesildiğinde (Offline durum) uygulamanın çökmesini engelleyen durum yönetimi.
 
-### 4. Caching Stratejisi
-- GET istekleri için response caching
-- Cache invalidation (PUT/DELETE sonrası)
-- Offline-first yaklaşımı (mümkün olduğunda)
+**4. Caching (Önbellekleme) Stratejisi**
+* Yapay zeka portföy raporları ve geçmiş işlem dökümleri (GET istekleri) için response caching kullanımı.
+* Kullanıcı yeni bir işlem yaptığında (PUT/POST/DELETE sonrası) ilgili önbelleğin (cache invalidation) temizlenmesi.
+* Mümkün olan ekranlarda offline-first yaklaşımı ile Redis'ten gelen son verilerin gösterimi.
 
-### 5. Loading States
-- Request başlangıcında loading indicator
-- Başarılı/başarısız durum bildirimleri
-- Optimistic updates (kullanıcı deneyimi için)
+**5. Loading States (Yükleme Durumları)**
+* Alım-satım emri gönderildiğinde veya AI analizi beklenirken request başlangıcında loading indicator (yükleniyor animasyonu) gösterme.
+* Başarılı (Örn: "Emir gerçekleşti") veya başarısız durum bildirimlerini (Toast/Snackbar) anında yansıtma.
+* Kullanıcı deneyimini (UX) hızlandırmak için Optimistic Updates (sunucu cevabını beklemeden arayüzü güncelleme) kullanımı.
 
-### 6. Logging ve Debugging
-- API request/response logging (development modunda)
-- Error logging ve crash reporting
-- Network interceptor kullanımı
+**6. Logging ve Debugging (Kayıt ve Hata Ayıklama)**
+* Development (geliştirme) modunda API request ve response loglarının (Interceptor aracılığıyla) konsola yazdırılması.
+* Uygulama çökmeleri ve tespit edilemeyen API hataları için Error Logging ve Crash Reporting entegrasyonu.
