@@ -1,45 +1,6 @@
-# Gereksinim Analizi
-
-Tüm gereksinimlerimizi çıkardıktan sonra beraber tartıştık ve son gereksinimlerin isimlerini hangi API metoduna karşılık geleceğini ve kısa açıklamalarını aşağıda numaralı bir şekilde listeledik. Daha sonra aşağıda her grup üyesi için ayrılmış bölümlerde bu gereksinimlerin detaylı açıklamalarına yer verdik. Toplam 5 kişilik ekibimiz için sistemin temel işlevlerini kapsayan 30 adet gereksinim belirlenmiş ve eşit olarak dağıtılmıştır.
-
-## Tüm Gereksinimler
-
-1. Üye Olma (Furkan Alp Günay)
-2. Giriş Yapma (Furkan Alp Günay)
-3. Profil Görüntüleme (Furkan Alp Günay)
-4. Profil Güncelleme (Furkan Alp Günay)
-5. Hesap Silme (Furkan Alp Günay)
-6. Giriş Geçmişini İnceleme (Furkan Alp Günay)
-7. İzleme Listesi Oluşturma (Enes Çoban)
-8. İzleme Listesine Varlık Ekleme (Enes Çoban)
-9. İzleme Listelerini Görüntüleme (Enes Çoban)
-10. İzleme Listesi Adını Güncelleme (Enes Çoban)
-11. İzleme Listesinden Varlık Çıkarma (Enes Çoban)
-12. İzleme Listesini Silme (Enes Çoban)
-13. Piyasa Emri Oluşturma (Cem Karaca)
-14. Limit Emri Oluşturma (Cem Karaca)
-15. Açık Emirleri Listeleme (Cem Karaca)
-16. Limit Emrini Güncelleme (Cem Karaca)
-17. Bekleyen Emri İptal Etme (Cem Karaca)
-18. İşlem Geçmişini Görüntüleme (Cem Karaca)
-19. Portföy Riskini Analiz Etme (Salih Arda Katırcıoğlu)
-20. Varlık Durumunu Analiz Etme (Salih Arda Katırcıoğlu)
-21. Fiyat Alarmı Kurma (Salih Arda Katırcıoğlu)
-22. Fiyat Alarmını Güncelleme (Salih Arda Katırcıoğlu)
-23. Fiyat Alarmını İptal Etme (Salih Arda Katırcıoğlu)
-24. Analiz Tercihlerini Kaydetme (Salih Arda Katırcıoğlu)
-25. Akıllı Asistan ile Sohbet Etme (Yakup Efe Çelebi)
-26. Analiz Geçmişini Temizleme (Yakup Efe Çelebi)
-27. Yeni Market Varlığı Ekleme (Yakup Efe Çelebi)
-28. Piyasa Verilerini Listeleme (Yakup Efe Çelebi)
-29. Varlık Bilgilerini Güncelleme (Yakup Efe Çelebi)
-30. Sistem Durumunu Kontrol Etme (Yakup Efe Çelebi)
-
----
-
-## Gereksinim Dağılımları
-
-### Furkan Alp Günay'ın Gereksinimleri (Kullanıcı ve Hesap Yönetimi)
+<details>
+<summary><b>Furkan Alp Günay'ın Gereksinimleri (Kullanıcı ve AI Tercihleri)</b></summary>
+<br>
 
 **1. Üye Olma**
 * **API Metodu:** `POST /auth/register`
@@ -61,15 +22,18 @@ Tüm gereksinimlerimizi çıkardıktan sonra beraber tartıştık ve son gereksi
 * **API Metodu:** `DELETE /users/{userId}`
 * **Açıklama:** Kullanıcı hesabını ve bu hesaba bağlı olan tüm kişisel verileri sistemden kalıcı olarak temizler.
 
-**6. Giriş Geçmişini İnceleme**
-* **API Metodu:** `GET /users/{userId}/logs`
-* **Açıklama:** Hesaba yapılan son giriş işlemlerini (cihaz adresi, tarih, saat) güvenlik takibi amacıyla kullanıcıya listeler.
+**6. Yapay Zeka Analiz Tercihlerini Kaydetme**
+* **API Metodu:** `POST /users/{userId}/ai-preferences`
+* **Açıklama:** Kullanıcının yatırım yaparken yapay zekadan hangi risk seviyesinde (düşük, orta, yüksek) tavsiyeler almak istediğini sisteme kaydeder.
+</details>
 
-### Enes Çoban'ın Gereksinimleri (İzleme Listesi Yönetimi)
+<details>
+<summary><b>Enes Çoban'ın Gereksinimleri (İzleme Listesi ve AI Önerileri)</b></summary>
+<br>
 
 **7. İzleme Listesi Oluşturma**
 * **API Metodu:** `POST /watchlists`
-* **Açıklama:** Kullanıcının takip etmek istediği varlıklar için "Favorilerim" veya "Hisselerim" gibi isimlerle özel klasörler (listeler) oluşturmasını sağlar.
+* **Açıklama:** Kullanıcının takip etmek istediği varlıklar için özel klasörler (listeler) oluşturmasını sağlar.
 
 **8. İzleme Listesine Varlık Ekleme**
 * **API Metodu:** `POST /watchlists/{listId}/assets`
@@ -79,19 +43,22 @@ Tüm gereksinimlerimizi çıkardıktan sonra beraber tartıştık ve son gereksi
 * **API Metodu:** `GET /watchlists`
 * **Açıklama:** Kullanıcıya ait tüm izleme listelerini ve bu listelerin içindeki varlıkların anlık fiyat durumlarını getirir.
 
-**10. İzleme Listesi Adını Güncelleme**
-* **API Metodu:** `PUT /watchlists/{listId}`
-* **Açıklama:** Daha önceden oluşturulmuş bir izleme listesinin başlığını kullanıcının isteğine göre değiştirir.
-
-**11. İzleme Listesinden Varlık Çıkarma**
+**10. İzleme Listesinden Varlık Çıkarma**
 * **API Metodu:** `DELETE /watchlists/{listId}/assets/{assetSymbol}`
 * **Açıklama:** Kullanıcının artık takip etmek istemediği bir varlığı izleme listesinden kaldırır.
 
-**12. İzleme Listesini Silme**
+**11. İzleme Listesini Silme**
 * **API Metodu:** `DELETE /watchlists/{listId}`
 * **Açıklama:** Bir izleme listesini, içindeki kayıtlı varlıklarla birlikte tamamen siler.
 
-### Cem Karaca'nın Gereksinimleri (Alım-Satım ve Emir Yönetimi)
+**12. Yapay Zeka ile Varlık Önerisi Alma**
+* **API Metodu:** `GET /watchlists/ai-suggestions`
+* **Açıklama:** Kullanıcının mevcut izleme listesine veya yatırım alışkanlıklarına bakarak yapay zekanın yeni hisse veya kripto para önermesini sağlar.
+</details>
+
+<details>
+<summary><b>Cem Karaca'nın Gereksinimleri (Alım-Satım ve AI Bot İşlemleri)</b></summary>
+<br>
 
 **13. Piyasa Emri Oluşturma**
 * **API Metodu:** `POST /orders/market`
@@ -105,25 +72,28 @@ Tüm gereksinimlerimizi çıkardıktan sonra beraber tartıştık ve son gereksi
 * **API Metodu:** `GET /orders/open`
 * **Açıklama:** Kullanıcının verdiği ancak piyasa şartları henüz oluşmadığı için gerçekleşmemiş (bekleyen) emirlerin listesini gösterir.
 
-**16. Limit Emrini Güncelleme**
-* **API Metodu:** `PUT /orders/{orderId}`
-* **Açıklama:** Bekleyen bir emrin hedef fiyatını veya alınacak/satılacak varlık miktarını değiştirir.
-
-**17. Bekleyen Emri İptal Etme**
+**16. Bekleyen Emri İptal Etme**
 * **API Metodu:** `DELETE /orders/{orderId}`
 * **Açıklama:** Henüz gerçekleşmemiş bir emri sistemden kaldırarak, bu işlem için bekletilen sanal bakiyeyi kullanıcıya iade eder.
 
-**18. İşlem Geçmişini Görüntüleme**
+**17. İşlem Geçmişini Görüntüleme**
 * **API Metodu:** `GET /orders/history`
 * **Açıklama:** Kullanıcının geçmişte yaptığı tüm başarılı alım ve satım işlemlerinin detaylı dökümünü sunar.
 
-### Salih Arda Katırcıoğlu'nun Gereksinimleri (Yapay Zeka ve Bildirimler)
+**18. Yapay Zeka Otomatik Alım-Satım Emri Kurma**
+* **API Metodu:** `POST /orders/ai-bot`
+* **Açıklama:** Yapay zekanın piyasa durumuna göre belirli kurallar çerçevesinde otomatik olarak alım veya satım yapması için bir bot talimatı oluşturur.
+</details>
 
-**19. Portföy Riskini Analiz Etme**
+<details>
+<summary><b>Salih Arda Katırcıoğlu'nun Gereksinimleri (AI Analiz ve Bildirimler)</b></summary>
+<br>
+
+**19. Portföy Riskini Yapay Zeka ile Analiz Etme**
 * **API Metodu:** `GET /ai/report/portfolio/{userId}`
 * **Açıklama:** Akıllı sistemin, kullanıcının sahip olduğu tüm varlıkları inceleyerek genel bir risk puanı çıkarmasını ve yatırımları iyileştirmek için öneriler sunmasını sağlar.
 
-**20. Varlık Durumunu Analiz Etme**
+**20. Varlık Durumunu Yapay Zeka ile Analiz Etme**
 * **API Metodu:** `GET /ai/report/status/{assetSymbol}`
 * **Açıklama:** Belirli bir hisse veya kripto para için piyasadaki güncel haberleri ve gidişatı yorumlayarak özet bir yön tahmini (Al/Sat/Tut) sunar.
 
@@ -139,32 +109,36 @@ Tüm gereksinimlerimizi çıkardıktan sonra beraber tartıştık ve son gereksi
 * **API Metodu:** `DELETE /alerts/{alertId}`
 * **Açıklama:** Kullanıcının artık ihtiyaç duymadığı bir fiyat bildirim kuralını sistemden kaldırır.
 
-**24. Analiz Tercihlerini Kaydetme**
-* **API Metodu:** `POST /ai/preferences`
-* **Açıklama:** Kullanıcının yatırım yaparken hangi risk seviyesinde (düşük, orta, yüksek) tavsiyeler almak istediğini sisteme kaydeder.
+**24. Akıllı Asistan ile Sohbet Etme**
+* **API Metodu:** `POST /ai/chat`
+* **Açıklama:** Kullanıcının piyasa veya belirli varlıklar hakkında yapay zeka asistanına yazılı sorular sormasını ve anında cevap almasını sağlar.
+</details>
 
-### Yakup Efe Çelebi'nin Gereksinimleri (Akıllı Asistan ve Sistem Yönetimi)
+<details>
+<summary><b>Yakup Efe Çelebi'nin Gereksinimleri (Sistem Verileri ve AI Duyarlılığı)</b></summary>
+<br>
 
-**25. Akıllı Asistan ile Sohbet Etme**
-* **API Metodu:** `POST/GET /ai/chat/{assetSymbol}`
-* **Açıklama:** Kullanıcının piyasa veya belirli bir varlık hakkında yapay zeka asistanına yazılı sorular sormasını ve anında cevap almasını sağlar.
-
-**26. Analiz Geçmişini Temizleme**
-* **API Metodu:** `DELETE /ai/history`
-* **Açıklama:** Kullanıcının akıllı asistan ile yaptığı geçmiş konuşmaları ve analiz sorgularını kalıcı olarak siler.
-
-**27. Yeni Market Varlığı Ekleme**
+**25. Yeni Market Varlığı Ekleme**
 * **API Metodu:** `POST /market/assets`
 * **Açıklama:** Yetkili kullanıcıların (yöneticilerin) sisteme alınıp satılabilecek yeni bir hisse senedi veya kripto para tanımlamasını sağlar.
 
-**28. Piyasa Verilerini Listeleme**
+**26. Piyasa Verilerini Listeleme**
 * **API Metodu:** `GET /market/prices`
 * **Açıklama:** Sistemde kayıtlı olan tüm varlıkların o anki güncel fiyat bilgilerini listeler.
 
-**29. Varlık Bilgilerini Güncelleme**
+**27. Varlık Bilgilerini Güncelleme**
 * **API Metodu:** `PUT /market/assets/{assetId}`
 * **Açıklama:** Yetkili kullanıcıların sistemdeki bir varlığın adını, açıklamasını veya işlem görüp görmeme durumunu değiştirmesini sağlar.
 
-**30. Sistem Durumunu Kontrol Etme**
+**28. Sistem Durumunu Kontrol Etme**
 * **API Metodu:** `GET /admin/health`
 * **Açıklama:** Sistemin arka planında çalışan altyapı servislerinin ve veri bağlantılarının sorunsuz çalışıp çalışmadığını kontrol eden bir rapor sunar.
+
+**29. Yapay Zeka Analiz Geçmişini Temizleme**
+* **API Metodu:** `DELETE /ai/history`
+* **Açıklama:** Kullanıcının akıllı asistan ile yaptığı geçmiş konuşmaları ve analiz sorgularını kalıcı olarak siler.
+
+**30. Yapay Zeka Piyasa Duyarlılığını Görüntüleme**
+* **API Metodu:** `GET /ai/market-sentiment`
+* **Açıklama:** Yapay zekanın genel piyasa haberlerini ve trendlerini okuyarak borsanın veya kripto piyasasının o günkü genel psikolojisini (olumlu/olumsuz) raporlamasını sağlar.
+</details>
