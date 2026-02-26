@@ -1,42 +1,36 @@
+# Gereksinim Analizi
 
+Tüm gereksinimlerinizi çıkardıktan sonra beraber tartışıyoruz ve son gereksinimlerin isimlerini hangi API metoduna karşılık geleceğini ve kısa açıklamalarını buraya numaralı bir şekilde yazıyorsunuz. Daha sonra aşağıya herkes kendi gereksinimiyle ilgili sayfayı oluşturmalı ve kendi sayfasında kendine ait gereksinimleri numaralı bir şekilde listeleyerek her bir gereksinimin açıklamalarını yazmalı. Toplamda grup üyesi sayısı kadar sayfa oluşturulmalı. Her grup üyesine eşit sayıda gereksinim atanmalı.
 
-## Tüm Gereksinimler
+## Gereksinim Sayıları (En Az)
 
-1. Üye Olma (Furkan Alp Günay)
-2. Giriş Yapma (Furkan Alp Günay)
-3. Profil Görüntüleme (Furkan Alp Günay)
-4. Profil Güncelleme (Furkan Alp Günay)
-5. Hesap Silme (Furkan Alp Günay)
-6. Yapay Zeka Analiz Tercihlerini Kaydetme (Furkan Alp Günay)
-7. İzleme Listesi Oluşturma (Enes Çoban)
-8. İzleme Listesine Varlık Ekleme (Enes Çoban)
-9. İzleme Listelerini Görüntüleme (Enes Çoban)
-10. İzleme Listesinden Varlık Çıkarma (Enes Çoban)
-11. İzleme Listesini Silme (Enes Çoban)
-12. Yapay Zeka ile Varlık Önerisi Alma (Enes Çoban)
-13. Piyasa Emri Oluşturma (Cem Karaca)
-14. Limit Emri Oluşturma (Cem Karaca)
-15. Açık Emirleri Listeleme (Cem Karaca)
-16. Bekleyen Emri İptal Etme (Cem Karaca)
-17. İşlem Geçmişini Görüntüleme (Cem Karaca)
-18. Yapay Zeka Otomatik Alım-Satım Emri Kurma (Cem Karaca)
-19. Portföy Riskini Yapay Zeka ile Analiz Etme (Salih Arda Katırcıoğlu)
-20. Varlık Durumunu Yapay Zeka ile Analiz Etme (Salih Arda Katırcıoğlu)
-21. Fiyat Alarmı Kurma (Salih Arda Katırcıoğlu)
-22. Fiyat Alarmını Güncelleme (Salih Arda Katırcıoğlu)
-23. Fiyat Alarmını İptal Etme (Salih Arda Katırcıoğlu)
-24. Akıllı Asistan ile Sohbet Etme (Salih Arda Katırcıoğlu)
-25. Yeni Market Varlığı Ekleme (Yakup Efe Çelebi)
-26. Piyasa Verilerini Listeleme (Yakup Efe Çelebi)
-27. Varlık Bilgilerini Güncelleme (Yakup Efe Çelebi)
-28. Sistem Durumunu Kontrol Etme (Yakup Efe Çelebi)
-29. Yapay Zeka Analiz Geçmişini Temizleme (Yakup Efe Çelebi)
-30. Yapay Zeka Piyasa Duyarlılığını Görüntüleme (Yakup Efe Çelebi)
+- **1 Kişi:** 10 gereksinim
+- **2 Kişi:** 16 gereksinim
+- **3 Kişi:** 21 gereksinim
+- **4 Kişi:** 24 gereksinim
+- **5 Kişi:** 30 gereksinim
 
-## Gereksinim Dağılımları
+## Gereksinimlerde Uyulması Gereken Kurallar
 
-1. [Furkan Alp Günay'ın Gereksinimleri](./Furkan-Alp-Gunay/Furkan-Alp-Gunay-Gereksinimler.md)
-2. [Enes Çoban'ın Gereksinimleri](./Enes-Coban/Enes-Coban-Gereksinimler.md)
-3. [Cem Karaca'nın Gereksinimleri](./Cem-Karaca/Cem-Karaca-Gereksinimler.md)
-4. [Salih Arda Katırcıoğlu'nun Gereksinimleri](./Salih-Arda-Katircioglu/Salih-Arda-Katircioglu-Gereksinimler.md)
-5. [Yakup Efe Çelebi'nin Gereksinimleri](./Yakup-Efe-Celebi/Yakup-Efe-Celebi-Gereksinimler.md)
+1. **İsimler anlamlı olmalı:** Gereksinim isimleri net ve anlaşılır olmalıdır.
+2. **Açıklamalar net olmalı:** Her gereksinimin açıklaması açık ve anlaşılır şekilde yazılmalıdır.
+3. **Açıklamalar teknik jargon ve kısaltmalar içermemeli:** Gereksinim açıklamaları herkesin anlayabileceği basit bir dille yazılmalıdır.
+4. **Gereksinim isimleri çok uzun olmamalı ve bir eylem bildirmeli:** 
+   - İsimler kısa ve öz olmalıdır
+   - Bir eylem fiili içermelidir
+   - Örnekler: "Kayıt Olma", "Giriş Yapma", "Profil Güncelleme", "Hesap Silme"
+
+# Tüm Gereksinimler 
+
+1. **Giriş Yapma** (Ali Tutar)
+2. **Üye Olma** (Ali Tutar)
+3. ..
+4. ..
+# Gereksinim Dağılımları
+
+1. [Ali Tutar'ın Gereksinimleri](Ali-Tutar/Ali-Tutar-Gereksinimler.md)
+2. [Grup Üyesi 2'nin Gereksinimleri](Grup-Uyesi-2/Grup-Uyesi-2-Gereksinimler.md)
+3. [Grup Üyesi 3'ün Gereksinimleri](Grup-Uyesi-3/Grup-Uyesi-3-Gereksinimler.md)
+4. [Grup Üyesi 4'ün Gereksinimleri](Grup-Uyesi-4/Grup-Uyesi-4-Gereksinimler.md)
+5. [Grup Üyesi 5'in Gereksinimleri](Grup-Uyesi-5/Grup-Uyesi-5-Gereksinimler.md)
+6. [Grup Üyesi 6'nın Gereksinimleri](Grup-Uyesi-6/Grup-Uyesi-6-Gereksinimler.md)
