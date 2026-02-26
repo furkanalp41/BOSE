@@ -1,7 +1,7 @@
 # BOSE
 
 # AI Destekli Borsa ve Kripto Simülasyonu
-
+![Proje Tanıtım Afişi](https://github.com/furkanalp41/BOSE/raw/main/proje.png)
 **Not:** Bu proje, Borsa İstanbul ve kripto piyasalarının dinamiklerini yapay zeka analizleriyle birleştiren, gerçek zamanlı bir pazar simülasyonudur.
 
 ## Proje Hakkında
