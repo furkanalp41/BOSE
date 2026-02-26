@@ -1,5 +1,7 @@
 # AI Destekli Borsa ve Kripto Simülasyonu
+
 ![Proje Tanıtım Afişi](https://github.com/furkanalp41/BOSE/raw/main/proje.png)
+
 **Not:** Bu proje, Borsa İstanbul ve kripto piyasalarının dinamiklerini yapay zeka analizleriyle birleştiren, gerçek zamanlı bir pazar simülasyonudur.
 
 ## Proje Hakkında
@@ -34,9 +36,9 @@ UraniumZ
 
 Proje dokümantasyonuna aşağıdaki linklerden erişebilirsiniz:
 * [Gereksinim Analizi](./Gereksinim-Analizi.md)
-* [REST API Tasarımı](./REST-API-Tasarimi.md)
-* [REST API](./REST-API.md)
-* [Web Front-End](./Web-Front-End.md)
-* [Mobil Front-End](./Mobil-Front-End.md)
-* [Mobil Backend](./Mobil-Backend.md)
-* [Video Sunum](./Video-Sunum.md)
+* [REST API Tasarımı](./API-Tasarimi.md)
+* [REST API](./Rest-API.md)
+* [Web Front-End](./WebFrontEnd.md)
+* [Mobil Front-End](./MobilFrontEnd.md)
+* [Mobil Backend](./MobilBackEnd.md)
+* [Video Sunum](./Sunum.md)
