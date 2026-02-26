@@ -1,143 +1,125 @@
 # Video Sunum
 
-## Sunum Videosu
-
-> **Video Linki:** [Sunum videosu linki buraya eklenecek](https://example.com)
-
----
+**Video Linki:** `Sunum videosu YouTube/Drive linki buraya eklenecek`
 
 ## Sunum Yapısı
 
 ### 1. Grup Lideri - Açılış Konuşması (1-2 dakika)
 
 **Konuşma İçeriği:**
-- Grup adının tanıtılması
-- Projenin genel tanıtımı
-- Projenin amacı ve kapsamı
-- Sunumun yapısının kısaca açıklanması
+* Grup adının (UraniumZ) tanıtılması
+* Projenin genel tanıtımı (AI Destekli Borsa ve Kripto Simülasyonu)
+* Projenin amacı, kullanılan teknolojiler (Go, Kafka, Redis, Docker) ve kapsamı
+* Sunumun yapısının kısaca açıklanması
 
 **Örnek Konuşma:**
-> "Merhaba, ben [Grup Lideri İsmi]. [Grup Adı] ekibi olarak [Proje Adı] projesini geliştirdik. Bu proje [kısa proje açıklaması]. Bugün sizlere projemizi ve ekibimizin çalışmalarını sunacağız. Her ekip üyesi kendini tanıtacak ve sorumlu olduğu gereksinimleri gösterecek."
+*"Merhaba, ben Furkan Alp Günay. UraniumZ ekibi olarak geliştirdiğimiz 'Yapay Zeka Destekli Borsa ve Kripto Simülasyonu' projemizin sunumuna hoş geldiniz. Bu projede, gerçek zamanlı piyasa verilerini Go, Kafka ve Redis altyapısıyla simüle ederek, kullanıcılara risk almadan yapay zeka destekli yatırım yapma ve algoritmik ticaret stratejilerini test etme imkanı sunuyoruz. Bugün sizlere mikroservis mimarisiyle geliştirdiğimiz bu güçlü altyapıyı ve arayüzü tanıtacağız. Şimdi sırasıyla her ekip arkadaşım kendini tanıtacak ve geliştirdiği modüllerin canlı demosunu yapacak."*
 
 ---
 
 ### 2. Ekip Üyeleri - Kişisel Tanıtım ve Gereksinim Sunumu
 
-Her ekip üyesi için aşağıdaki yapı takip edilecektir:
+Her ekip üyesi sunumunu aşağıdaki formata göre (4-6 dakika) yapacaktır:
 
-#### Format (Her üye için 4-6 dakika)
-
-**A) Kişisel Tanıtım (30-45 saniye)**
-- Yüz görünecek şekilde kamera karşısında
-- İsim ve soyisim
-- Ekipteki rolü
-- Sorumlu olduğu alan (Backend/Frontend/Mobil vb.)
-
-**B) Gereksinim Sunumu (3.5-5 dakika)**
-- Sorumlu olduğu gereksinimlerin listesi
-- Her gereksinimin kısa açıklaması
-- Canlı demo (ekran kaydı ile)
-- Her gereksinimin çalışır durumda olduğunun detaylı gösterilmesi
-- Her gereksinim için yeterli süre ayrılmalı (yaklaşık 1-1.5 dakika/gereksinim)
+* **A) Kişisel Tanıtım (30-45 saniye):** Yüz görünecek şekilde kamera karşısında isim, ekipteki rol ve sorumlu olunan alan belirtilecek.
+* **B) Gereksinim Sunumu (3.5-5 dakika):** Sorumlu olunan 6 gereksinimin kısa açıklaması ve ekran kaydı ile Postman/Arayüz üzerinden canlı demosu yapılacaktır. Her bir maddeye yaklaşık 1 dakika ayrılmalıdır.
 
 ---
 
-### 3. Ekip Üyeleri Sunum Sırası
+### 3. Ekip Üyeleri Sunum Sırası ve Dağılımı
 
-#### Ali Tutar
-**Kişisel Tanıtım:**
-- İsim: Ali Tutar
+#### 1. Furkan Alp Günay
+* **Rol:** Grup Lideri / Kullanıcı ve Hesap Yönetimi (Backend/Frontend)
+* **Gereksinimler ve Demo Akışı:**
+  1. **Üye Olma:** `POST /auth/register` (Kayıt ve başlangıç bakiyesi ataması gösterilecek)
+  2. **Giriş Yapma:** `POST /auth/login` (JWT token alımı gösterilecek)
+  3. **Profil Görüntüleme:** `GET /users/{userId}` (Bakiye ve bilgilerin çekilmesi)
+  4. **Profil Güncelleme:** `PUT /users/{userId}` (Kullanıcı bilgilerinin değiştirilmesi)
+  5. **Hesap Silme:** `DELETE /users/{userId}` (Hesabın sistemden temizlenmesi)
+  6. **AI Analiz Tercihlerini Kaydetme:** `POST /users/{userId}/ai-preferences` (Risk profili seçimi)
 
-**Gereksinimler:**
-1. **Üye Olma**
-   - API Metodu: `POST /auth/register`
-   - Demo: Kullanıcı kayıt işleminin gösterilmesi
+#### 2. Enes Çoban
+* **Rol:** İzleme Listesi Yönetimi (Backend/Frontend)
+* **Gereksinimler ve Demo Akışı:**
+  1. **İzleme Listesi Oluşturma:** `POST /watchlists`
+  2. **Listeye Varlık Ekleme:** `POST /watchlists/{listId}/assets`
+  3. **Listeleri Görüntüleme:** `GET /watchlists`
+  4. **Listeden Varlık Çıkarma:** `DELETE /watchlists/{listId}/assets/{assetSymbol}`
+  5. **Listeyi Silme:** `DELETE /watchlists/{listId}`
+  6. **AI ile Varlık Önerisi Alma:** `GET /watchlists/ai-suggestions`
 
-2. **Profil Görüntüleme**
-   - API Metodu: `GET /users/{userId}`
-   - Demo: Kullanıcı profil bilgilerinin görüntülenmesi
+#### 3. Cem Karaca
+* **Rol:** Alım-Satım ve Emir Yönetimi (Backend/Frontend)
+* **Gereksinimler ve Demo Akışı:**
+  1. **Piyasa Emri Oluşturma:** `POST /orders/market` (Anlık alım-satım)
+  2. **Limit Emri Oluşturma:** `POST /orders/limit` (Hedef fiyatlı emir)
+  3. **Açık Emirleri Listeleme:** `GET /orders/open`
+  4. **Bekleyen Emri İptal Etme:** `DELETE /orders/{orderId}` (Bakiye iadesi)
+  5. **İşlem Geçmişini Görüntüleme:** `GET /orders/history`
+  6. **AI Otomatik Alım-Satım Emri Kurma:** `POST /orders/ai-bot`
 
-3. **Profil Güncelleme**
-   - API Metodu: `PUT /users/{userId}`
-   - Demo: Profil bilgilerinin güncellenmesi
+#### 4. Salih Arda Katırcıoğlu
+* **Rol:** Yapay Zeka Analiz ve Bildirim Servisleri (Backend/Frontend)
+* **Gereksinimler ve Demo Akışı:**
+  1. **Portföy Riskini Analiz Etme:** `GET /ai/report/portfolio/{userId}`
+  2. **Varlık Durumunu Analiz Etme:** `GET /ai/report/status/{assetSymbol}`
+  3. **Fiyat Alarmı Kurma:** `POST /alerts`
+  4. **Fiyat Alarmını Güncelleme:** `PUT /alerts/{alertId}`
+  5. **Fiyat Alarmını İptal Etme:** `DELETE /alerts/{alertId}`
+  6. **Akıllı Asistan ile Sohbet:** `POST /ai/chat`
 
-4. **Hesap Silme**
-   - API Metodu: `DELETE /users/{userId}`
-   - Demo: Hesap silme işleminin gösterilmesi
-
----
-
-#### Veli Yılmaz
-**Kişisel Tanıtım:**
-- İsim: Veli Yılmaz
-- Rol: [Rol belirtilecek]
-
-**Gereksinimler:**
-- [Gereksinim 1]
-- [Gereksinim 2]
-- [Gereksinim 3]
-- [Gereksinim 4]
+#### 5. Yakup Efe Çelebi
+* **Rol:** Market Verileri ve Sistem Yönetimi (Backend/Frontend)
+* **Gereksinimler ve Demo Akışı:**
+  1. **Yeni Market Varlığı Ekleme:** `POST /market/assets`
+  2. **Piyasa Verilerini Listeleme:** `GET /market/prices` (Redis üzerinden anlık akış)
+  3. **Varlık Bilgilerini Güncelleme:** `PUT /market/assets/{assetId}`
+  4. **Sistem Durumunu Kontrol Etme:** `GET /admin/health` (Kafka/Docker durumu)
+  5. **AI Analiz Geçmişini Temizleme:** `DELETE /ai/history`
+  6. **AI Piyasa Duyarlılığını Görüntüleme:** `GET /ai/market-sentiment`
 
 ---
 
 ### 4. Grup Lideri - Kapanış Konuşması (1 dakika)
 
 **Konuşma İçeriği:**
-- Tüm gereksinimlerin tamamlandığının özeti
-- Projenin başarıyla tamamlandığının vurgulanması
+* Tüm gereksinimlerin test edildiğinin ve başarıyla çalıştığının özeti.
+* Projenin hedefine ulaştığının vurgulanması.
 
 **Örnek Konuşma:**
-> "Bugün sizlere [Proje Adı] projemizi sunduk. Tüm ekip üyelerimiz sorumlu oldukları gereksinimleri başarıyla tamamladılar ve çalışır durumda gösterdiler. Projemiz [kısa özet]. Teşekkürler!"
+*"Bugün sizlere UraniumZ ekibi olarak geliştirdiğimiz projemizin tüm fonksiyonlarını sunduk. Gördüğünüz gibi anlık veri akışı, yapay zeka entegrasyonları, emir yönetimleri ve kullanıcı servislerimiz mikroservis mimarisiyle sorunsuz bir şekilde çalışıyor. Ekip olarak finansal teknolojiler alanında gerçek piyasa dinamiklerine çok yakın bir laboratuvar ortamı inşa etmeyi başardık. Bizi dinlediğiniz için teşekkür ederiz."*
 
 ---
 
 ## Sunum Hazırlık Kontrol Listesi
 
 ### Genel Hazırlık
-- [ ] Grup lideri açılış konuşmasını hazırladı
-- [ ] Her ekip üyesi kendi sunumunu hazırladı
-- [ ] Tüm gereksinimler çalışır durumda
-- [ ] Demo senaryoları hazırlandı
-- [ ] Test verileri ve hesaplar hazırlandı
+- [ ] Grup lideri açılış ve kapanış konuşmalarını hazırladı
+- [ ] Her ekip üyesi kendi sunumunu ve ekran kayıtlarını hazırladı
+- [ ] Tüm 30 gereksinim canlı ortamda / Postman'de çalışır durumda
+- [ ] Demo senaryoları, sanal bakiyeler ve test hesapları hazırlandı
 
 ### Teknik Hazırlık
-- [ ] Video kayıt cihazı/kamera hazır
-- [ ] Mikrofon kalitesi test edildi
-- [ ] Işıklandırma uygun
-- [ ] Arka plan düzenlendi
-- [ ] Ekran kayıt yazılımı hazır (demo için)
+- [ ] Video kayıt cihazı / web kamerası hazır ve test edildi
+- [ ] Mikrofon kalitesi test edildi (cızırtı/yankı yok)
+- [ ] Işıklandırma yüzü net gösterecek şekilde ayarlandı
+- [ ] Arka plan düzenlendi (profesyonel/sade bir görünüm)
+- [ ] Ekran kayıt yazılımı (OBS vb.) kodları ve postman'i net gösterecek çözünürlükte ayarlandı
 
 ### Kişisel Hazırlık
-- [ ] Her ekip üyesi kendi bölümünü prova etti
-- [ ] Konuşma süreleri kontrol edildi
-- [ ] Gereksinimler ezberlendi veya notlar hazırlandı
-- [ ] Demo akışı prova edildi
+- [ ] Her ekip üyesi kendi bölümünü süre tutarak prova etti
+- [ ] Postman/Arayüz demo akışında yaşanabilecek gecikmelere karşı önlem alındı
+- [ ] Anlatım sırasında teknik jargona boğmadan net açıklamalar çalışıldı
 
----
+## Video Çekim Teknikleri ve Zaman Yönetimi
 
-## Video Çekim Teknikleri
-
-### Kişisel Tanıtım Bölümü
-- **Kamera Açısı:** Yüz net görünecek şekilde
-- **Işık:** Yüzün iyi aydınlatıldığından emin olun
-- **Arka Plan:** Temiz ve profesyonel görünüm
-- **Görüntü:** Omuz üstü çekim
-- **Göz Teması:** Kameraya bakarak konuşun
-
-### Demo Bölümü
-- **Ekran Kaydı:** Net ve yüksek çözünürlükte
-- **Ses:** Demo sırasında açıklama yapın
-- **Hız:** Yavaş ve anlaşılır hareket edin
-- **Vurgu:** Önemli noktaları işaret edin
-
----
-
-## Zaman Yönetimi
-
-- **Grup Lideri Açılış:** 1-2 dakika
-- **Her Ekip Üyesi:** 4-6 dakika
-  - Kişisel tanıtım: 30-45 saniye
-  - Gereksinim sunumu: 3.5-5 dakika
-    - Her gereksinim için: yaklaşık 1-1.5 dakika
-- **Grup Lideri Kapanış:** 1-2 dakika
-- **Toplam Süre:** Yaklaşık 30-40 dakika (5 kişilik ekip için)
+* **Kamera:** Omuz üstü çekim, göz teması kamerayla kurulmalı.
+* **Ekran Kaydı:** Kodlar veya arayüz gösterilirken okunaklı olması için gerekirse zoom yapılmalı (Özellikle JSON yanıtları gösterilirken).
+* **Zaman Çizelgesi (Hedef: 30-35 Dakika)**
+  * Lider Açılış: 2 dk
+  * Furkan Alp Günay Demo: 5 dk
+  * Enes Çoban Demo: 5 dk
+  * Cem Karaca Demo: 5 dk
+  * Salih Arda Katırcıoğlu Demo: 5 dk
+  * Yakup Efe Çelebi Demo: 5 dk
+  * Lider Kapanış: 1 dk
