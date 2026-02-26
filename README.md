@@ -23,14 +23,14 @@ TradingView, Binance Mock Trading, Investopedia Simulator
 ## Proje Ekibi
 
 **Grup Adı:**
-CyberBulls *(Kendi belirlediğiniz grup adını yazabilirsiniz)*
+UraniumZ *
 
 **Ekip Üyeleri:**
 1. Furkan Alp Günay
-2. [Takım Arkadaşı 2 İsim Soyisim]
-3. [Takım Arkadaşı 3 İsim Soyisim]
-4. [Takım Arkadaşı 4 İsim Soyisim]
-5. [Takım Arkadaşı 5 İsim Soyisim]
+2. Enes Çoban
+3. Cem Karaca
+4. Salih Arda Katırcıoğlu
+5. Yakup Efe Çelebi
 
 ## Dokümantasyon
 
