@@ -39,47 +39,8 @@ Tüm gereksinimlerimizi çıkardıktan sonra beraber tartıştık ve son gereksi
 
 ## Gereksinim Dağılımları
 
-<details>
-<summary><b>Furkan Alp Günay'ın Gereksinimleri (Kullanıcı ve Hesap Yönetimi)</b></summary>
-<br>
-
-**1. Üye Olma**
-* **API Metodu:** `POST /auth/register`
-* **Açıklama:** Kullanıcıların e-posta ve şifre ile sisteme kayıt olmasını sağlar. Başarılı kayıt sonrası kullanıcıya başlangıç bakiyesi tanımlanır.
-
-**2. Giriş Yapma**
-* **API Metodu:** `POST /auth/login`
-* **Açıklama:** Kayıtlı kullanıcıların sisteme erişim sağlaması için JWT token üretilmesini sağlar.
-
-**3. Profil Görüntüleme**
-* **API Metodu:** `GET /users/{userId}`
-* **Açıklama:** Kullanıcının ad, soyad, e-posta ve mevcut bakiye bilgilerini döndürür.
-
-**4. Profil Bilgilerini Güncelleme**
-* **API Metodu:** `PUT /users/{userId}`
-* **Açıklama:** Kullanıcının telefon, isim veya şifre gibi bilgilerini değiştirmesine olanak tanır.
-
-**5. Hesap Silme**
-* **API Metodu:** `DELETE /users/{userId}`
-* **Açıklama:** Kullanıcı hesabını ve ilişkili tüm kişisel verileri sistemden kalıcı olarak temizler.
-
-**6. Giriş Hareketlerini Listeleme**
-* **API Metodu:** `GET /users/{userId}/logs`
-* **Açıklama:** Hesaba yapılan son giriş işlemlerini (IP, Tarih) siber güvenlik takibi için listeler.
-</details>
-
-<details>
-<summary><b>Enes Çoban'ın Gereksinimleri (İzleme Listeleri - Watchlist)</b></summary>
-<br>
-
-**7. Yeni İzleme Listesi Oluşturma**
-* **API Metodu:** `POST /watchlists`
-* **Açıklama:** Kullanıcının "Favorilerim" veya "Hisselerim" gibi isimlerle özel listeler oluşturmasını sağlar.
-
-**8. İzleme Listesine Varlık Ekleme**
-* **API Metodu:** `POST /watchlists/{listId}/assets`
-* **Açıklama:** Belirli bir listeye BİST hissesi veya Kripto para sembolü ekler.
-
-**9. İzleme Listelerini Görüntüleme**
-* **API Metodu:** `GET /watchlists`
-* **Açıklama:** Kullanıcıya ait tüm izleme listelerini ve içindeki varlıkların anlık
+1. [Furkan Alp Günay'ın Gereksinimleri](./Furkan-Alp-Gunay/Furkan-Alp-Gunay-Gereksinimler.md)
+2. [Enes Çoban'ın Gereksinimleri](./Enes-Coban/Enes-Coban-Gereksinimler.md)
+3. [Cem Karaca'nın Gereksinimleri](./Cem-Karaca/Cem-Karaca-Gereksinimler.md)
+4. [Salih Arda Katırcıoğlu'nun Gereksinimleri](./Salih-Arda-Katircioglu/Salih-Arda-Katircioglu-Gereksinimler.md)
+5. [Yakup Efe Çelebi'nin Gereksinimleri](./Yakup-Efe-Celebi/Yakup-Efe-Celebi-Gereksinimler.md)
