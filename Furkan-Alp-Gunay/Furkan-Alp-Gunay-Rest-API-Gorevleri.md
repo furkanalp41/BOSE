@@ -21,11 +21,14 @@
 Endpoint: POST /auth/login
 
 Request Body:
+```json
 
 {
   "email": "furkan@example.com",
   "password": "GucluSifre123!"
 }
+
+```
 
 Authentication: Gerekmiyor
 
@@ -50,11 +53,13 @@ Path Parameters:
 userId (string, required) - Kullanıcı ID'si
 
 Request Body:
-
+```json
 {
   "fullName": "Furkan Alp Günay",
   "phone": "+905551234567"
 }
+
+```
 Authentication: Bearer Token gerekli
 
 Response: 200 OK - Kullanıcı başarıyla güncellendi.
@@ -79,12 +84,15 @@ userId (string, required) - Kullanıcı ID'si
 
 Request Body:
 
-
+```json
 {
   "riskLevel": "HIGH",
   "investmentTerm": "LONG_TERM"
 }
+
+```
 Authentication: Bearer Token gerekli
 
 Response: 200 OK - Yapay zeka tercihleri kaydedildi.
+
 
