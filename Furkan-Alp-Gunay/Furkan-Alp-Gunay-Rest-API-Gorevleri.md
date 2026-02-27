@@ -13,6 +13,7 @@
     "password": "GucluSifre123!",
     "fullName": "Furkan Alp Günay"
   }
+  ```
 
   Response: 201 Created - Kullanıcı başarıyla oluşturuldu ve başlangıç bakiyesi tanımlandı.
 
@@ -86,3 +87,4 @@ Request Body:
 Authentication: Bearer Token gerekli
 
 Response: 200 OK - Yapay zeka tercihleri kaydedildi.
+
