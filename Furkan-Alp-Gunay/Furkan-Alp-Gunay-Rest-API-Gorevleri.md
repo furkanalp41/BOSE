@@ -11,6 +11,7 @@ Request Body:{
 "fullName": "Furkan Alp Günay"
 }
 
+Authentication: Gerekmiyor
 Response: 201 Created - Kullanıcı başarıyla oluşturuldu ve başlangıç bakiyesi tanımlandı
 2. Giriş Yapma
 
@@ -20,6 +21,7 @@ Request Body:{
 "password": "GucluSifre123!"
 }
 
+Authentication: Gerekmiyor
 Response: 200 OK - Giriş başarılı, JWT Token döndürüldü
 3. Profil Görüntüleme
 
@@ -56,6 +58,3 @@ Request Body:{
 "riskLevel": "HIGH",
 "investmentTerm": "LONG_TERM"
 }
-
-Authentication: Bearer Token gerekli
-Response: 200 OK - Yapay zeka tercihleri kaydedildi
