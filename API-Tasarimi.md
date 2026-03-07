@@ -1,6 +1,6 @@
 # API Tasarımı - OpenAPI Specification
 
-**OpenAPI Spesifikasyon Dosyası:** `lamine.yaml`
+**OpenAPI Spesifikasyon Dosyası:** [lamine.yaml](./lamine.yaml)
 
 Bu doküman, UraniumZ ekibi tarafından geliştirilen "AI Destekli Borsa ve Kripto Simülasyonu" projesi için OpenAPI Specification (OAS) 3.0 standardına göre hazırlanmış API tasarımını içermektedir.
 
