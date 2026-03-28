@@ -14,4 +14,6 @@ func SetupAdminRoutes(app *fiber.App) {
 
 	admin.Get("/logs", controllers.GetSystemLogs)
 	admin.Delete("/users/:id", controllers.DeleteUser)
+	admin.Put("/users/:id/role", controllers.UpdateUserRole)
+	admin.Post("/announcements", controllers.CreateSystemAlert)
 }
