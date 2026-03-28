@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"bose/controllers"
+	"your_module_name/controllers"
 
 	"github.com/gofiber/fiber/v2"
 )

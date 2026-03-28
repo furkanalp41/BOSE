@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bose/config"
-	"bose/models"
-	"bose/routes"
+	"your_module_name/config"
+	"your_module_name/models"
+	"your_module_name/routes"
 	"log"
 
 	"github.com/gofiber/fiber/v2"

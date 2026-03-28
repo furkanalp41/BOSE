@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"bose/config"
-	"bose/models"
+	"your_module_name/config"
+	"your_module_name/models"
 
 	"github.com/gofiber/fiber/v2"
 )
