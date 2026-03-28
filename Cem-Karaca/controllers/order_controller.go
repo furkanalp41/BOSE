@@ -48,7 +48,29 @@ func PlaceOrder(c *fiber.Ctx) error {
 
 	totalPrice := asset.CurrentPrice * input.Quantity
 
-	// 5. Emri oluştur
+	// 5. Kullanıcının bakiyesini çek
+	var user models.User
+	if err := config.DB.First(&user, userID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Kullanıcı bulunamadı",
+		})
+	}
+
+	// 6. Alım ise bakiye kontrolü yap, satım ise bakiyeye ekle
+	if input.OrderType == models.OrderTypeBuy {
+		if user.VirtualBalance < totalPrice {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error":    "Yetersiz bakiye",
+				"balance":  user.VirtualBalance,
+				"required": totalPrice,
+			})
+		}
+		config.DB.Model(&user).Update("virtual_balance", user.VirtualBalance-totalPrice)
+	} else {
+		config.DB.Model(&user).Update("virtual_balance", user.VirtualBalance+totalPrice)
+	}
+
+	// 7. Emri oluştur
 	order := models.Order{
 		UserID:     userID,
 		Symbol:     input.Symbol,
@@ -56,7 +78,7 @@ func PlaceOrder(c *fiber.Ctx) error {
 		Quantity:   input.Quantity,
 		Price:      asset.CurrentPrice,
 		TotalPrice: totalPrice,
-		Status:     models.OrderStatusFilled, // Anlık işlem: direkt gerçekleşti
+		Status:     models.OrderStatusFilled,
 	}
 
 	if err := config.DB.Create(&order).Error; err != nil {
@@ -66,9 +88,10 @@ func PlaceOrder(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"success": true,
-		"message": "Emir başarıyla gerçekleşti",
-		"data":    order,
+		"success":     true,
+		"message":     "Emir başarıyla gerçekleşti",
+		"data":        order,
+		"new_balance": user.VirtualBalance,
 	})
 }
 
@@ -157,7 +180,6 @@ func CancelOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	// Sadece bekleyen emirler iptal edilebilir
 	if order.Status != models.OrderStatusPending {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Sadece 'pending' durumundaki emirler iptal edilebilir",

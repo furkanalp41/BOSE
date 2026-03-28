@@ -1,27 +1,32 @@
 package main
 
 import (
+	"log"
 	"your_module_name/config"
 	"your_module_name/models"
 	"your_module_name/routes"
-	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	// 1. Veritabanına bağlan (Furkan'ın config/db.go'su)
+	// 0. .env dosyasını yükle
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(".env dosyası yüklenemedi: ", err)
+	}
+
+	// 1. Veritabanına bağlan
 	config.ConnectDB()
 
-	// 2. Tabloları otomatik oluştur (geliştirme aşaması için)
+	// 2. Tabloları otomatik oluştur
 	config.DB.AutoMigrate(&models.MarketAsset{}, &models.Order{})
 
 	// 3. Fiber uygulamasını başlat
 	app := fiber.New()
 
-	// 4. Test için sahte auth middleware (Furkan'ın middleware'i gelince değiştirilecek)
+	// 4. Test için sahte auth middleware
 	fakeAuth := func(c *fiber.Ctx) error {
-		// Geçici: userID'yi 1 olarak set et
 		c.Locals("userID", uint(1))
 		return c.Next()
 	}
