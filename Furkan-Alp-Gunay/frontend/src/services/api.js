@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
 
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: '/api',
   headers: { 'Content-Type': 'application/json' },
   timeout: 10_000,
 })
@@ -41,12 +41,20 @@ export const authApi = {
   login:    (data) => api.post('/auth/login', data),
 }
 
-// ── User endpoints ──────────────────────────────────────────────────────────
+// ── User endpoints (JWT-resolved, no ID in URL) ────────────────────────────
 export const userApi = {
-  getProfile:    (id)        => api.get(`/users/${id}`),
-  updateProfile: (id, data)  => api.put(`/users/${id}`, data),
-  deleteAccount: (id)        => api.delete(`/users/${id}`),
-  updateAIPrefs: (id, data)  => api.post(`/users/${id}/ai-preferences`, data),
+  getProfile:    ()          => api.get('/users/profile'),
+  updateProfile: (_id, data) => api.put('/users/profile', data),
+  deleteAccount: ()          => api.delete('/users/profile'),
+  updateAIPrefs: (_id, data) => api.put('/users/ai-preferences', data),
+}
+
+// ── Admin endpoints (RequireAuth + RequireAdmin) ────────────────────────���───
+export const adminApi = {
+  getLogs:             ()          => api.get('/admin/logs'),
+  deleteUser:          (id)        => api.delete(`/admin/users/${id}`),
+  updateUserRole:      (id, role)  => api.put(`/admin/users/${id}/role`, { role }),
+  createAnnouncement:  (message)   => api.post('/admin/announcements', { message }),
 }
 
 export default api

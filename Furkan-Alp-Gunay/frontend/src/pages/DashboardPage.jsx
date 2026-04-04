@@ -7,6 +7,9 @@ import ProfileCard from '../components/dashboard/ProfileCard'
 import AIPreferences from '../components/dashboard/AIPreferences'
 import DangerZone from '../components/dashboard/DangerZone'
 
+// Admin
+import AdminPanel from './AdminPanel'
+
 function OverviewSection() {
   return (
     <div className="space-y-6">
@@ -26,14 +29,20 @@ function ProfileSection() {
   )
 }
 
+function AdminSection() {
+  return <AdminPanel />
+}
+
 const SECTIONS = {
   overview: OverviewSection,
   profile: ProfileSection,
+  admin: AdminSection,
 }
 
 const SECTION_TITLES = {
   overview: 'Dashboard Overview',
   profile: 'Account Settings',
+  admin: 'Admin Panel',
 }
 
 export default function DashboardPage() {

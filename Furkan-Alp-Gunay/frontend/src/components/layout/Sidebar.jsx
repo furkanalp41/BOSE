@@ -19,6 +19,13 @@ const NAV_ITEMS = [
       </svg>
     ),
   },
+  {
+    id: 'admin', label: 'Admin Panel', adminOnly: true, icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg>
+    ),
+  },
 ]
 
 export default function Sidebar({ activeSection, onSectionChange }) {
@@ -46,7 +53,7 @@ export default function Sidebar({ activeSection, onSectionChange }) {
 
       {/* Nav */}
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {NAV_ITEMS.map((item) => {
+        {NAV_ITEMS.filter(item => !item.adminOnly || user?.role === 'admin').map((item) => {
           const active = activeSection === item.id
           return (
             <motion.button key={item.id} onClick={() => onSectionChange(item.id)}
