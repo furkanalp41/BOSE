@@ -1,168 +1,98 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
+import { Settings, Shield, Clock, Save } from 'lucide-react'
 
-const RISK_LEVELS = [
-  {
-    value: 'Low',
-    label: 'Dusuk Risk',
-    description: 'Muhafazakar strateji. Dusuk volatiliteli varliklar ve uzun vadeli yatirimlar tercih edilir.',
-    color: 'emerald',
-  },
-  {
-    value: 'Medium',
-    label: 'Orta Risk',
-    description: 'Dengeli strateji. Risk ve getiri arasinda optimum denge hedeflenir.',
-    color: 'yellow',
-  },
-  {
-    value: 'High',
-    label: 'Yuksek Risk',
-    description: 'Agresif strateji. Yuksek volatiliteli varliklar ve kisa vadeli firsatlar takip edilir.',
-    color: 'red',
-  },
+const riskLevels = [
+  { value: 'low', label: 'Dusuk Risk', desc: 'Sabit getirili ve buyuk hacimli varliklar', color: 'emerald' },
+  { value: 'medium', label: 'Orta Risk', desc: 'Dengeli portfoy, karisik varliklar', color: 'yellow' },
+  { value: 'high', label: 'Yuksek Risk', desc: 'Agresif buyume, volatil varliklar', color: 'red' },
 ]
 
-const INVESTMENT_TERMS = [
-  { value: 'short', label: 'Kisa Vade', description: '1 gunden 1 haftaya' },
-  { value: 'medium', label: 'Orta Vade', description: '1 haftadan 3 aya' },
-  { value: 'long', label: 'Uzun Vade', description: '3 aydan fazla' },
+const investTerms = [
+  { value: 'short', label: 'Kisa Vade', desc: '1-3 ay' },
+  { value: 'medium', label: 'Orta Vade', desc: '3-12 ay' },
+  { value: 'long', label: 'Uzun Vade', desc: '1+ yil' },
 ]
 
 export default function AIPreferences() {
-  const { user, updateUser } = useAuth()
-  const [riskLevel, setRiskLevel] = useState('Medium')
-  const [investmentTerm, setInvestmentTerm] = useState('medium')
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
-  const [saving, setSaving] = useState(false)
+  const { user, setUser } = useAuth()
 
-  useEffect(() => {
-    if (user?.ai_preferences) {
-      try {
-        const prefs = typeof user.ai_preferences === 'string'
-          ? JSON.parse(user.ai_preferences)
-          : user.ai_preferences
-        if (prefs.risk_level) setRiskLevel(prefs.risk_level)
-        if (prefs.investment_term) setInvestmentTerm(prefs.investment_term)
-      } catch {
-        // invalid JSON, use defaults
-      }
-    }
-  }, [user])
+  const existing = (() => {
+    try { return JSON.parse(user?.ai_preferences || '{}') } catch { return {} }
+  })()
+
+  const [risk, setRisk] = useState(existing.risk_level || 'medium')
+  const [term, setTerm] = useState(existing.investment_term || 'medium')
+  const [loading, setLoading] = useState(false)
+  const [msg, setMsg] = useState('')
+  const [error, setError] = useState('')
 
   const handleSave = async () => {
-    setMessage('')
+    setLoading(true)
     setError('')
-    setSaving(true)
-
+    setMsg('')
     try {
-      const res = await api.put('/users/ai-preferences', {
-        risk_level: riskLevel,
-        investment_term: investmentTerm,
-      })
-      // Refresh user data
-      const profileRes = await api.get('/users/profile')
-      updateUser(profileRes.data.user)
-      setMessage('AI tercihleri basariyla kaydedildi.')
+      const prefs = JSON.stringify({ risk_level: risk, investment_term: term })
+      await api.put('/users/ai-preferences', { ai_preferences: prefs })
+      setUser(prev => ({ ...prev, ai_preferences: prefs }))
+      setMsg('Tercihler kaydedildi!')
+      setTimeout(() => setMsg(''), 3000)
     } catch (err) {
-      setError(err.response?.data?.error || 'Tercihler kaydedilemedi.')
-    } finally {
-      setSaving(false)
-    }
+      setError(err.response?.data?.error || 'Kayit basarisiz.')
+    } finally { setLoading(false) }
   }
 
-  const colorMap = {
-    emerald: {
-      selected: 'border-emerald-500 ring-2 ring-emerald-500/30 bg-emerald-950/30',
-      dot: 'bg-emerald-500',
-    },
-    yellow: {
-      selected: 'border-yellow-500 ring-2 ring-yellow-500/30 bg-yellow-950/30',
-      dot: 'bg-yellow-500',
-    },
-    red: {
-      selected: 'border-red-500 ring-2 ring-red-500/30 bg-red-950/30',
-      dot: 'bg-red-500',
-    },
-  }
+  const colorMap = { emerald: 'border-emerald-500 bg-emerald-500/10 text-emerald-400', yellow: 'border-yellow-500 bg-yellow-500/10 text-yellow-400', red: 'border-red-500 bg-red-500/10 text-red-400' }
+  const colorMapInactive = { emerald: 'hover:border-emerald-500/30', yellow: 'hover:border-yellow-500/30', red: 'hover:border-red-500/30' }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-100">AI Analiz Tercihleri</h1>
-        <p className="text-gray-400 mt-1">
-          Yapay zeka destekli analizler icin yatirim profilinizi belirleyin
-        </p>
+    <div className="space-y-6 max-w-2xl">
+      <div className="flex items-center gap-3">
+        <Settings size={28} className="text-purple-400" />
+        <h1 className="text-2xl font-bold text-slate-100">AI Tercihleri</h1>
       </div>
 
-      {message && (
-        <div className="p-3 bg-emerald-900/30 border border-emerald-800 rounded-lg text-emerald-400 text-sm">
-          {message}
-        </div>
-      )}
-      {error && (
-        <div className="p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-400 text-sm">
-          {error}
-        </div>
-      )}
+      {msg && <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-400 text-sm">{msg}</div>}
+      {error && <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">{error}</div>}
 
-      <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-gray-100 mb-4">Risk Toleransi</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {RISK_LEVELS.map((level) => {
-            const isSelected = riskLevel === level.value
-            const colors = colorMap[level.color]
-            return (
-              <button
-                key={level.value}
-                onClick={() => setRiskLevel(level.value)}
-                className={`p-4 rounded-xl border text-left transition-all ${
-                  isSelected
-                    ? colors.selected
-                    : 'border-gray-700 bg-gray-800 hover:border-gray-600'
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <span className={`w-3 h-3 rounded-full ${colors.dot}`}></span>
-                  <span className="font-medium text-gray-100">{level.label}</span>
-                </div>
-                <p className="text-xs text-gray-400">{level.description}</p>
-              </button>
-            )
-          })}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Shield size={20} className="text-emerald-400" />
+          <h2 className="text-lg font-semibold text-slate-100">Risk Seviyesi</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {riskLevels.map(r => (
+            <button key={r.value} onClick={() => setRisk(r.value)}
+              className={`p-4 rounded-xl border-2 text-left transition-all ${risk === r.value ? colorMap[r.color] : `border-slate-700 bg-slate-800/50 ${colorMapInactive[r.color]}`}`}>
+              <p className={`font-semibold text-sm ${risk === r.value ? '' : 'text-slate-200'}`}>{r.label}</p>
+              <p className="text-xs text-slate-400 mt-1">{r.desc}</p>
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-gray-100 mb-4">Yatirim Vadesi</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {INVESTMENT_TERMS.map((term) => {
-            const isSelected = investmentTerm === term.value
-            return (
-              <button
-                key={term.value}
-                onClick={() => setInvestmentTerm(term.value)}
-                className={`p-4 rounded-xl border text-left transition-all ${
-                  isSelected
-                    ? 'border-emerald-500 ring-2 ring-emerald-500/30 bg-emerald-950/30'
-                    : 'border-gray-700 bg-gray-800 hover:border-gray-600'
-                }`}
-              >
-                <span className="font-medium text-gray-100">{term.label}</span>
-                <p className="text-xs text-gray-400 mt-1">{term.description}</p>
-              </button>
-            )
-          })}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Clock size={20} className="text-purple-400" />
+          <h2 className="text-lg font-semibold text-slate-100">Yatirim Vadesi</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {investTerms.map(t => (
+            <button key={t.value} onClick={() => setTerm(t.value)}
+              className={`p-4 rounded-xl border-2 text-left transition-all ${term === t.value
+                ? 'border-purple-500 bg-purple-500/10 text-purple-400'
+                : 'border-slate-700 bg-slate-800/50 hover:border-purple-500/30'}`}>
+              <p className={`font-semibold text-sm mt-1 ${term === t.value ? '' : 'text-slate-200'}`}>{t.label}</p>
+              <p className="text-xs text-slate-400 mt-0.5">{t.desc}</p>
+            </button>
+          ))}
         </div>
       </div>
 
-      <button
-        onClick={handleSave}
-        disabled={saving}
-        className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-800 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
-      >
-        {saving ? 'Kaydediliyor...' : 'Tercihleri Kaydet'}
+      <button onClick={handleSave} disabled={loading}
+        className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2">
+        <Save size={16} /> {loading ? 'Kaydediliyor...' : 'Tercihleri Kaydet'}
       </button>
     </div>
   )
