@@ -2,7 +2,7 @@ package routes
 
 import (
 	"net/http"
-	
+
 	"stock-analyzer/controllers"
 	"stock-analyzer/middlewares"
 )
@@ -10,12 +10,16 @@ import (
 func SetupAIRoutes(analysisController *controllers.AnalysisController) http.Handler {
 	mux := http.NewServeMux()
 
-	// Endpoints under /ai/ domain
-	mux.HandleFunc("/ai/reports/portfolio", analysisController.AnalyzePortfolio)
-	mux.HandleFunc("/ai/reports/portfolio/test", analysisController.RunTestAnalysis)
+	// ── Yeni Pydantic uyumlu AI endpoint'leri ──
+	mux.HandleFunc("/ai/reports/portfolio", analysisController.AnalyzePortfolioV2)
+	mux.HandleFunc("/ai/reports/watchlist", analysisController.AnalyzeWatchlist)
+	mux.HandleFunc("/ai/reports/transactions", analysisController.AnalyzeTransactions)
+	mux.HandleFunc("/ai/chat", analysisController.HandleChat)
 
-	// In the future:
-	// mux.HandleFunc("/ai/chat", chatController.HandleChat)
+	// ── Eski endpoint'ler (backward compat) ──
+	mux.HandleFunc("/ai/reports/portfolio/legacy", analysisController.AnalyzePortfolio)
+	mux.HandleFunc("/ai/reports/portfolio/test", analysisController.RunTestAnalysis)
 
 	return middlewares.Logger(mux)
 }
+
