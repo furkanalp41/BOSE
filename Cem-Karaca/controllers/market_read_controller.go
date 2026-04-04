@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"your_module_name/config"
-	"your_module_name/models"
+	"cem-backend/config"
+	"cem-backend/models"
 
 	"github.com/gofiber/fiber/v2"
 )

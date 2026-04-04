@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"your_module_name/controllers"
+	"cem-backend/controllers"
 
 	"github.com/gofiber/fiber/v2"
 )
