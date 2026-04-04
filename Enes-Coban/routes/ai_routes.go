@@ -20,6 +20,6 @@ func SetupAIRoutes(analysisController *controllers.AnalysisController) http.Hand
 	mux.HandleFunc("/ai/reports/portfolio/legacy", analysisController.AnalyzePortfolio)
 	mux.HandleFunc("/ai/reports/portfolio/test", analysisController.RunTestAnalysis)
 
-	return middlewares.Logger(mux)
+	return middlewares.CORS(middlewares.Logger(mux))
 }
 
