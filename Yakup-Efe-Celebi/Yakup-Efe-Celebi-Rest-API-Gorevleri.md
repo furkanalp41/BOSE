@@ -1,4 +1,4 @@
-```json  Yeni Market Varlığı Ekleme
+  Yeni Market Varlığı Ekleme
 Endpoint: POST /market/assets Request Body:{ "symbol": "ASELS", "name": "Aselsan Elektronik", "type": "BIST" }  ```
 
 Authentication: Bearer Token gerekli (Sadece Admin yetkisi) Response: 201 Created - Yeni varlık piyasa sistemine başarıyla eklendi 2. Market Verilerini Listeleme
