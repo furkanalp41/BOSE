@@ -1,0 +1,2 @@
+# BOSE-Staging
+base stage
