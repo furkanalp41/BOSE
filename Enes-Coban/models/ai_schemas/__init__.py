@@ -10,7 +10,7 @@ Kullanım:
     from ai_schemas import *
 """
 
-from ai_schemas.base import (
+from .base import (
     AssetType,
     RiskLevel,
     AnalysisLanguage,
@@ -20,24 +20,24 @@ from ai_schemas.base import (
     UserContext,
     AIResponseBase,
 )
-from ai_schemas.portfolio import (
+from .portfolio import (
     PortfolioAnalysisQuery,
     PortfolioAnalysisResponse,
 )
-from ai_schemas.watchlist import (
+from .watchlist import (
     WatchlistAnalysisType,
     WatchlistAnalysisQuery,
     WatchlistItemAnalysis,
     WatchlistAnalysisResponse,
 )
-from ai_schemas.transaction import (
+from .transaction import (
     TransactionType,
     TransactionRecord,
     TransactionAnalysisQuery,
     BehaviorPattern,
     TransactionAnalysisResponse,
 )
-from ai_schemas.chat import (
+from .chat import (
     ChatRole,
     ChatMessage,
     SuggestedAction,

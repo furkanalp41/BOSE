@@ -9,7 +9,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from ai_schemas.base import (
+from .base import (
     AIResponseBase,
     AnalysisDepth,
     AnalysisLanguage,

@@ -13,7 +13,7 @@ from uuid import uuid4
 # ai_schemas paketinin üst dizinini path'e ekle
 sys.path.insert(0, "/home/enes/Desktop/BOSE/BOSE/Enes-Coban")
 
-from ai_schemas import (
+from models.ai_schemas import (
     # Base
     AssetType, RiskLevel, AnalysisLanguage, AnalysisDepth,
     StockItemSchema, PortfolioHolding, UserContext, AIResponseBase,
