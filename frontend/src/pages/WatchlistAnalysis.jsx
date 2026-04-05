@@ -4,9 +4,13 @@ import { aiReportsApi, watchlistApi } from '../services/api'
 
 const SIGNAL_STYLES = {
   'AL':   'text-neon bg-neon/10 border-neon/20',
+  'BUY':  'text-neon bg-neon/10 border-neon/20',
   'SAT':  'text-crimson bg-crimson/10 border-crimson/20',
+  'SELL': 'text-crimson bg-crimson/10 border-crimson/20',
   'TUT':  'text-amber-400 bg-amber-400/10 border-amber-400/20',
+  'HOLD': 'text-amber-400 bg-amber-400/10 border-amber-400/20',
   'İZLE': 'text-ice bg-ice/10 border-ice/20',
+  'WATCH':'text-ice bg-ice/10 border-ice/20',
 }
 
 export default function WatchlistAnalysis() {
@@ -34,14 +38,14 @@ export default function WatchlistAnalysis() {
     if (!selectedId) return
     setLoading(true); setError(''); setResult(null)
     try {
-      const { data } = await aiReportsApi.analyzeWatchlist({
-        watchlist_id: Number(selectedId),
-      })
+      const { data } = await aiReportsApi.analyzeWatchlist({ watchlist_id: Number(selectedId) })
       setResult(data)
     } catch (err) {
       setError(err.response?.data?.error || 'Analysis failed')
     } finally { setLoading(false) }
   }
+
+  const isAI = result?.model_used && !result.model_used.includes('rules-engine')
 
   return (
     <div className="space-y-6">
@@ -50,13 +54,12 @@ export default function WatchlistAnalysis() {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-ice/20 to-neon/10 border border-ice/20 flex items-center justify-center">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00cfff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
             </svg>
           </div>
           <div>
             <h3 className="text-lg font-bold text-cloud">Watchlist Analysis</h3>
-            <p className="text-silver text-xs">Select a saved watchlist for AI signal analysis</p>
+            <p className="text-silver text-xs">AI-powered signal analysis for your watchlist</p>
           </div>
         </div>
 
@@ -69,7 +72,7 @@ export default function WatchlistAnalysis() {
                   animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }} />
               </div>
             ) : watchlists.length === 0 ? (
-              <p className="text-silver/50 text-sm py-4">No watchlists found. Add assets to a watchlist from the Live Market page first.</p>
+              <p className="text-silver/50 text-sm py-4">No watchlists found. Add assets to a watchlist first.</p>
             ) : (
               <select value={selectedId} onChange={(e) => setSelectedId(e.target.value)}
                 className="input-base py-2.5 text-sm bg-void appearance-none cursor-pointer w-full">
@@ -99,9 +102,9 @@ export default function WatchlistAnalysis() {
               <span className="flex items-center justify-center gap-2">
                 <motion.span className="block w-4 h-4 border-2 border-void/40 border-t-void rounded-full"
                   animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }} />
-                Analyzing...
+                AI analyzing watchlist...
               </span>
-            ) : 'Analyze Watchlist'}
+            ) : result ? 'Re-analyze Watchlist' : 'Analyze Watchlist'}
           </button>
         </div>
 
@@ -112,13 +115,17 @@ export default function WatchlistAnalysis() {
         {result && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             className="glass p-6 md:p-8 space-y-6">
+
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold text-cloud">{result.watchlist_name || 'Results'}</h3>
-              {result.top_pick && (
-                <span className="text-[10px] font-bold px-3 py-1 rounded-lg border text-neon bg-neon/10 border-neon/20">
-                  Top Pick: {result.top_pick}
-                </span>
-              )}
+              <div className="flex items-center gap-2">
+                {result.top_pick && (
+                  <span className="text-[10px] font-bold px-3 py-1 rounded-lg border text-neon bg-neon/10 border-neon/20">
+                    Top Pick: {result.top_pick}
+                  </span>
+                )}
+                <ModelBadge model={result.model_used} />
+              </div>
             </div>
 
             {result.risk_warning && (
@@ -128,18 +135,30 @@ export default function WatchlistAnalysis() {
               </div>
             )}
 
+            {/* AI Analysis Content */}
             {result.overall_summary && (
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-border">
-                <p className="text-cloud text-sm whitespace-pre-wrap">{result.overall_summary}</p>
+              <div className={`p-5 rounded-xl border ${isAI ? 'bg-ice/[0.02] border-ice/20' : 'bg-white/[0.02] border-border'}`}>
+                <div className="flex items-center gap-2 mb-3">
+                  {isAI && (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00cfff" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                  )}
+                  <p className={`text-xs uppercase tracking-widest font-medium ${isAI ? 'text-ice' : 'text-silver'}`}>
+                    {isAI ? 'AI Summary' : 'Rules-Based Summary'}
+                  </p>
+                </div>
+                <div className="text-cloud text-sm leading-relaxed whitespace-pre-wrap">
+                  {result.overall_summary}
+                </div>
               </div>
             )}
 
             {result.item_analyses?.length > 0 && (
               <div className="space-y-3">
+                <p className="text-silver text-xs uppercase tracking-widest">Asset Signals</p>
                 {result.item_analyses.map((item, i) => (
                   <div key={i} className="flex items-center justify-between gap-4 p-4 rounded-xl bg-white/[0.02] border border-border hover:border-white/10 transition-colors">
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className={`text-[10px] font-bold px-2 py-1 rounded-lg border ${SIGNAL_STYLES[item.signal] || 'text-silver bg-white/5 border-border'}`}>
+                      <span className={`text-[10px] font-bold px-2 py-1 rounded-lg border shrink-0 ${SIGNAL_STYLES[item.signal] || 'text-silver bg-white/5 border-border'}`}>
                         {item.signal}
                       </span>
                       <div className="min-w-0">
@@ -150,7 +169,9 @@ export default function WatchlistAnalysis() {
                     <div className="text-right shrink-0">
                       <div className="flex items-center gap-2">
                         <div className="w-16 h-1.5 rounded-full bg-white/5 overflow-hidden">
-                          <div className="h-full rounded-full bg-ice" style={{ width: `${item.confidence}%` }} />
+                          <motion.div initial={{ width: 0 }} animate={{ width: `${item.confidence}%` }}
+                            transition={{ duration: 0.8, ease: 'easeOut' }}
+                            className="h-full rounded-full bg-ice" />
                         </div>
                         <span className="text-ice font-mono text-xs font-bold">{item.confidence}%</span>
                       </div>
@@ -166,5 +187,16 @@ export default function WatchlistAnalysis() {
         )}
       </AnimatePresence>
     </div>
+  )
+}
+
+function ModelBadge({ model }) {
+  if (!model) return null
+  const isAI = !model.includes('rules-engine')
+  return (
+    <span className={`text-[10px] font-bold px-3 py-1 rounded-lg border font-mono
+      ${isAI ? 'text-ice bg-ice/10 border-ice/20' : 'text-silver bg-white/5 border-border'}`}>
+      {isAI ? `AI: ${model}` : 'Rules Engine'}
+    </span>
   )
 }
