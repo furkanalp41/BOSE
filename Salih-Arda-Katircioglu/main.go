@@ -1,51 +1,37 @@
 package main
 
 import (
-	"log"
-	"os"
-
-	"bose/config"
 	"bose/models"
 	"bose/routes"
 	"bose/services"
+	"log"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres" // SQLite yerine PostgreSQL sürücüsünü ekledik
+	"gorm.io/gorm"
 )
 
 func main() {
-	// .env dosyasini yukle
-	if err := godotenv.Load(); err != nil {
-		log.Println("Uyari: .env dosyasi bulunamadi.")
+	// Render PostgreSQL bağlantı cümlen (DSN)
+	dsn := "postgresql://boseadmin:GUM2GNy4CXJFULfgbGWjJ9dLJ5a4XeCH@dpg-d73rh2haae7s73b5pi3g-a.frankfurt-postgres.render.com/bosedb"
+
+	// Veritabanına bağlan
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal("PostgreSQL veritabanına bağlanılamadı: ", err)
 	}
 
-	// Veritabanina baglan (DSN artik .env'den okunuyor)
-	config.ConnectDB()
+	log.Println("PostgreSQL veritabanına başarıyla bağlanıldı!")
 
-	// Modelleri veritabani tablolarina donustur (Auto Migrate)
-	config.DB.AutoMigrate(&models.MarketItem{}, &models.Watchlist{}, &models.Alert{})
+	// Modelleri veritabanı tablolarına dönüştür (Auto Migrate)
+	db.AutoMigrate(&models.MarketItem{}, &models.Watchlist{}, &models.Alert{})
 
-	// Arka Plan Market Servisini Baslat
-	services.StartMarketSimulation(config.DB)
+	// Arka Plan Market Servisini Başlat
+	services.StartMarketSimulation(db)
 
-	// Gin Sunucusunu Baslat
+	// Gin Sunucusunu Başlat
 	r := gin.Default()
+	routes.SetupRoutes(r, db)
 
-	// CORS Middleware
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
-		AllowCredentials: true,
-	}))
-
-	routes.SetupRoutes(r, config.DB)
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	log.Printf("Arda'nin servisi :%s'de calisiyor", port)
-	r.Run(":" + port)
+	r.Run(":8080") // Sunucu 8080 portunda çalışır
 }
