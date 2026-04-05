@@ -1,6 +1,7 @@
 # Furkan Alp Günay'ın REST API Metotları
 
 **API Test Videosu:** [https://www.youtube.com/watch?v=31ebGIfgDsM&t=7s]
+**Backend API Swagger UI Paneli:** [https://bose-platform.onrender.com/docs] (#)
 
 ### 1. Üye Olma
 
