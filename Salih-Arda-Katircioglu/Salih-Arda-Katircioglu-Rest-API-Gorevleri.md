@@ -1,4 +1,7 @@
-**API Test Videosu:** [Link buraya eklenecek](#)
+Rest API Dokümantasyonu: [https://bose-platform.onrender.com/]
+
+
+**API Test Videosu:** [https://youtu.be/tmX6SkjJaSQ]
 
 ### 17. Yeni İzleme Listesi Oluşturma
 * **Endpoint:** `POST /watchlist`
