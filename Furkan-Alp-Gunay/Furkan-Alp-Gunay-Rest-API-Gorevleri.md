@@ -1,6 +1,6 @@
 # Furkan Alp Günay'ın REST API Metotları
 
-**API Test Videosu:** [Link buraya eklenecek](#)
+**API Test Videosu:** [https://www.youtube.com/watch?v=31ebGIfgDsM&t=7s]
 
 ### 1. Üye Olma
 
