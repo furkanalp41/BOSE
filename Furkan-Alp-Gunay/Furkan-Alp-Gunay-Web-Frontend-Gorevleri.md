@@ -1,6 +1,7 @@
 Furkan Alp Günay'ın Web Frontend Görevleri
 
 **Front-end Test Videosu:** [https://www.youtube.com/watch?v=bMAp1wuyE1c]
+**Front-end Bağlantısı:** [https://frontend-bose.vercel.app/login] (#)
 
 Üye Olma (Kayıt) Sayfası
 API Endpoint: POST /auth/register
