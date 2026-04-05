@@ -1,7 +1,7 @@
 # Front-end Dokümantasyonu
 
-**Front-end Test Videosu:** [Link buraya eklenecek](#)
-
+**Front-end Test Videosu:** [https://youtu.be/E67RtxMqKa0](#)
+**Front-end Bağlantısı:** [https://frontend-bose.vercel.app/login] (#)
 ---
 
 ## 26. AI Yatırım Tavsiyesi Ekranı

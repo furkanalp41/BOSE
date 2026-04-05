@@ -1,6 +1,7 @@
 # API Dokümantasyonu
 
-**API Test Videosu:** [Link buraya eklenecek](#)
+**API Test Videosu:** [https://youtu.be/0jEJTugLoNg](#)
+**Backend API Swagger UI Paneli:** [https://bose-platform.onrender.com/docs] (#)
 
 ---
 
