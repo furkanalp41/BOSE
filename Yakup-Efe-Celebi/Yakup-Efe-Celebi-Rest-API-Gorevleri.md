@@ -1,17 +1,48 @@
-  Yeni Market Varlığı Ekleme
-Endpoint: POST /market/assets Request Body:{ "symbol": "ASELS", "name": "Aselsan Elektronik", "type": "BIST" }  ```
+**API Test Videosu:** [Link buraya eklenecek](#)
 
-Authentication: Bearer Token gerekli (Sadece Admin yetkisi) Response: 201 Created - Yeni varlık piyasa sistemine başarıyla eklendi 2. Market Verilerini Listeleme
+### 31. Market Varlıklarını Listeleme
+* **Endpoint:** `GET /market/assets`
+Authentication: Gerekmiyor
+Response: 200 OK - Piyasa verileri ve anlık fiyatları başarıyla döndürüldü.
 
-Endpoint: GET /market/prices Query Parameters: type (string, optional) - Varlık türü (BIST, CRYPTO) Response: 200 OK - Varlıkların anlık verileri Redis'ten getirildi 3. Varlık Bilgilerini Güncelleme
+### 32. Admin Market Varlıklarını Listeleme
+* **Endpoint:** `GET /admin/market/assets`
+Authentication: Bearer Token gerekli (Admin)
+Response: 200 OK - Admin görünümlü detaylı varlık listesi döndürüldü.
 
-Endpoint: PUT /market/assets/{assetId} Path Parameters: assetId (string, required) - Varlık ID'si Request Body:```json{ "isActive": false, "description": "Tahta geçici olarak kapatılmıştır." }  ```
+### 33. Yeni Market Varlığı Ekleme
+* **Endpoint:** `POST /admin/market/assets`
+Request Body:
+```json
+{
+  "symbol": "BTC",
+  "name": "Bitcoin",
+  "price": 60000.0
+}
+```
+Authentication: Bearer Token gerekli (Admin)
+Response: 201 Created - Yeni varlık eklendi.
 
-Authentication: Bearer Token gerekli (Sadece Admin yetkisi) Response: 200 OK - Varlık bilgileri güncellendi 4. Sistem Sağlık Durumu Görüntüleme
+### 34. Varlık Bilgilerini Güncelleme
+* **Endpoint:** `PUT /admin/market/assets/{symbol}`
+Path Parameters:
+symbol (string, required)
+Authentication: Bearer Token gerekli (Admin)
+Response: 200 OK - Varlık güncellendi.
 
-Endpoint: GET /admin/health Authentication: Bearer Token gerekli (Sadece Admin yetkisi) Response: 200 OK - Docker, Kafka ve Redis servislerinin güncel durum raporu döndürüldü 5. Giriş Hareketlerini Listeleme
+### 35. Market Varlığı Silme
+* **Endpoint:** `DELETE /admin/market/assets/{symbol}`
+Path Parameters:
+symbol (string, required)
+Authentication: Bearer Token gerekli (Admin)
+Response: 204 No Content - Varlık başarıyla silindi.
 
-Endpoint: GET /users/{userId}/logs Path Parameters: userId (string, required) - Kullanıcı ID'si Authentication: Bearer Token gerekli Response: 200 OK - Son giriş yapılan IP ve cihaz bilgileri listelendi 6. AI Tahmin Geçmişini Temizleme
+### 36. Liderlik Tablosu Görüntüleme
+* **Endpoint:** `GET /leaderboard/rankings` ve `GET /leaderboard/user/{userId}`
+Authentication: Bearer Token gerekli
+Response: 200 OK - Sıralama tablosu ve kullanıcı sırası başarıyla getirildi.
 
-Endpoint: DELETE /ai/history Authentication: Bearer Token gerekli Response: 204 No Content - Kullanıcının AI sohbet geçmişi kalıcı olarak silindi 
-
+### 37. Başarımları Görüntüleme
+* **Endpoint:** `GET /leaderboard/achievements`
+Authentication: Bearer Token gerekli
+Response: 200 OK - Başarımlar getirildi.

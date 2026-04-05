@@ -1,23 +1,27 @@
-Yeni Market Varlığı Ekleme
-API Metodu: POST /market/assets
-Açıklama: Sistem yöneticilerinin (admin), platformda alınıp satılabilmesi için yeni bir BİST hissesini veya Kripto para çiftini sisteme tanımlamasını sağlar. Sadece "Yönetici" yetkisine sahip, giriş yapmış kullanıcılar tarafından kullanılabilir.
+Market Varlıklarını Listeleme
+API Metodu: GET /market/assets
+Açıklama: Sistemde mevcut tüm varlıkları ve anlık fiyat bilgilerini listeler. Herkese açıktır.
 
-Market Verilerini Listeleme
-API Metodu: GET /market/prices
-Açıklama: Sistemde kayıtlı olan tüm varlıkların Redis üzerinden çekilen anlık fiyat bilgilerini ve değişim oranlarını listeler. Platformun ana veri akışını besler. Bu özellik genel piyasa takibi için halka açık olarak çalışabilir.
+Admin Market Varlıklarını Listeleme
+API Metodu: GET /admin/market/assets
+Açıklama: Adminlerin tüm market varlıklarını düzenlemek üzere görebileceği daha detaylı liste görünümü. Güvenlik için admin yetkisi gerektirir.
+
+Yeni Market Varlığı Ekleme
+API Metodu: POST /admin/market/assets
+Açıklama: Sistem yöneticilerinin platformda alınıp satılabilmesi için yeni bir varlığı (Hisse/Kripto vb.) sisteme tanımlamasını sağlar.
 
 Varlık Bilgilerini Güncelleme
-API Metodu: PUT /market/assets/{assetId}
-Açıklama: Sistemdeki bir varlığın açıklamasını, şirket/coin logosunu veya platformda işlem görüp görmeme durumunu (tahta kapatma) günceller. Güvenlik için "Yönetici" yetkisine sahip giriş yapmış kullanıcılar kullanabilir.
+API Metodu: PUT /admin/market/assets/{symbol}
+Açıklama: Sistemdeki bir varlığın adını veya genel bilgilerini günceller. Güvenlik için admin yetkisi gerektirir.
 
-Sistem Sağlık Durumu Görüntüleme
-API Metodu: GET /admin/health
-Açıklama: Sistemin arka planında çalışan Docker konteynerlarının, Kafka kuyruklarının ve Redis bağlantılarının durumunu teknik rapor olarak sunar. Altyapı takibi için sadece "Yönetici" yetkisine sahip kullanıcılar erişebilir.
+Market Varlığı Silme
+API Metodu: DELETE /admin/market/assets/{symbol}
+Açıklama: Belirli bir varlığın sistemden kalıcı olarak çıkarılmasını sağlar. Güvenlik için admin yetkisi gerektirir.
 
-Giriş Hareketlerini Listeleme
-API Metodu: GET /users/{userId}/logs
-Açıklama: Hesaba yapılan son giriş işlemlerini (cihaz IP bilgisi, Tarayıcı, Tarih) siber güvenlik takibi için listeler. Kullanıcılar hesaplarının güvende olup olmadığını kontrol etmek için bu loglara erişebilir. Güvenlik için giriş yapmış olmak gerekir.
+Liderlik Tablosu Görüntüleme
+API Metodu: GET /leaderboard/rankings
+Açıklama: Tüm kullanıcıları toplam portföy değerine göre sıralayarak listeler. Böylece turnuva formatında yarışma desteklenir. Güvenlik için giriş yapmış olmak gerekir.
 
-AI Tahmin Geçmişini Temizleme
-API Metodu: DELETE /ai/history
-Açıklama: Kullanıcının akıllı asistan ile daha önce yaptığı sohbet geçmişini ve sistemden istediği analiz sorgularının kaydını veri tabanından kalıcı olarak silmesini sağlar. Gizlilik hakkını korumak için tasarlanmıştır, giriş yapmış olmak gerekir.
+Başarımları Görüntüleme
+API Metodu: GET /leaderboard/achievements
+Açıklama: Kullanıcının kazandığı başarım rozetlerini listeler (Örn: "İlk İşlem", "Balina" vb.). Güvenlik için giriş yapmış olmak gerekir.

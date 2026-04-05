@@ -1,67 +1,50 @@
-```markdown
 # Cem Karaca'nın REST API Metotları
 
 **API Test Videosu:** [Link buraya eklenecek](#)
 
-### 1. Piyasa Emri Oluşturma
+### 11. Emir Oluşturma
 
-* **Endpoint:** `POST /orders/market`
+* **Endpoint:** `POST /api/v1/trading/order`
 * **Request Body:**
 
   ```json
   {
-    "symbol": "BTCUSDT",
+    "symbol": "BTC",
     "side": "BUY",
     "quantity": 0.5
   }
-
- ```
-
-Authentication: Bearer Token gerekli
-Response: 201 Created - Anlık piyasa emri gerçekleşti, bakiye güncellendi.
-2. Limit Emir Oluşturma
-Endpoint: POST /orders/limit
-Request Body:
-```json
-{
-  "symbol": "AAPL",
-  "side": "SELL",
-  "quantity": 10,
-  "targetPrice": 185.50
-}
- ```
-
+  ```
 
 Authentication: Bearer Token gerekli
-Response: 201 Created - Limit emir kaydedildi, bakiye bloke edildi.
-3. Açık Emirleri Listeleme
-Endpoint: GET /orders/open
+Response: 201 Created - Anlık piyasa emri gerçekleşti.
+12. Açık Pozisyonları Listeleme
+Endpoint: GET /api/v1/trading/positions
 Authentication: Bearer Token gerekli
-Response: 200 OK - Bekleyen durumdaki emirler listelendi.
-4. Limit Emir Güncelleme
-Endpoint: PUT /orders/{orderId}
+Response: 200 OK - Tüm açık pozisyonlar ve detayları listelendi.
+13. Pozisyon Kapatma
+Endpoint: POST /api/v1/trading/positions/{positionId}/close
 Path Parameters:
-orderId (string, required) - Emir ID'si
+positionId (integer, required) - Pozisyon ID'si
+Authentication: Bearer Token gerekli
+Response: 200 OK - Pozisyon kapatıldı.
+14. İşlem Geçmişini Görüntüleme
+Endpoint: GET /api/v1/trading/history
+Authentication: Bearer Token gerekli
+Response: 200 OK - İşlem geçmişi listelendi.
+15. Portföy Özeti Görüntüleme
+Endpoint: GET /api/v1/trading/portfolio
+Authentication: Bearer Token gerekli
+Response: 200 OK - Portföy bakiye ve pozisyon özeti döndürüldü.
+16. Duyuru Oluşturma
+Endpoint: POST /api/v1/admin/announcements
 Request Body:
+
 ```json
 {
-  "targetPrice": 190.00,
-  "quantity": 10
+  "title": "Sistem Bakımı",
+  "content": "Sistemimiz bu gece bakıma alınacaktır."
 }
 ```
 
-
-Authentication: Bearer Token gerekli
-Response: 200 OK - Bekleyen emir başarıyla güncellendi.
-5. Bekleyen Emri İptal Etme
-Endpoint: DELETE /orders/{orderId}
-Path Parameters:
-orderId (string, required) - Emir ID'si
-Authentication: Bearer Token gerekli
-Response: 204 No Content - Emir iptal edildi, bloke bakiye iade edildi.
-6. AI Portföy Raporu Almak
-Endpoint: GET /ai/report/portfolio/{userId}
-Path Parameters:
-userId (string, required) - Kullanıcı ID'si
-Authentication: Bearer Token gerekli
-Response: 200 OK - AI portföy dağılımı ve risk analizi raporu döndürüldü.
+Authentication: Bearer Token gerekli (Admin)
+Response: 201 Created - Duyuru başarıyla oluşturuldu.

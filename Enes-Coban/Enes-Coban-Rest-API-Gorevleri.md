@@ -4,117 +4,76 @@
 
 ---
 
-## 1. Yeni İzleme Listesi Oluşturma
+## 26. AI Yatırım Tavsiyesi Alma
 
-Yeni bir izleme listesi (watchlist) oluşturur.
+Belirtilen varlık için yapay zeka tabanlı AL/SAT/TUT tavsiyesi ve analizi oluşturur.
 
-*   **Endpoint:** `POST /watchlists`
+*   **Endpoint:** `POST /ai/advice`
 *   **Authentication:** Bearer Token gerekli
 
 **Request Body:**
 ```json
 {
-  "name": "Uzun Vadeli Kriptolarım"
+  "symbol": "BTC"
 }
 ```
 
 **Response:**
-*   `201 Created` - İzleme listesi başarıyla oluşturuldu.
+*   `200 OK` - AI tavsiyesi ve analiz metni başarıyla döndürüldü.
+*   `401 Unauthorized` - Token geçersiz veya yok.
 
 ---
 
-## 2. İzleme Listesine Varlık Ekleme
+## 27. AI Portföy Raporu Alma
 
-Mevcut bir listeye yeni bir varlık (sembol) ekler.
+Mevcut portföy üzerinden risk analizi ve strateji raporlaması yapar.
 
-*   **Endpoint:** `POST /watchlists/{listId}/assets`
+*   **Endpoint:** `POST /ai/reports/portfolio`
 *   **Authentication:** Bearer Token gerekli
 
-**Path Parameters:**
+**Response:**
+*   `200 OK` - AI raporu başarıyla getirildi.
+*   `401 Unauthorized` - Token geçersiz veya yok.
 
-| Parametre | Tip | Zorunlu | Açıklama |
-| :--- | :--- | :---: | :--- |
-| `listId` | string | Evet | İzleme listesi ID'si |
+---
+
+## 28. AI Watchlist Raporu Alma
+
+Kullanıcının izleme listesindeki varlıkların AI analiz raporunu getirir.
+
+*   **Endpoint:** `POST /ai/reports/watchlist`
+*   **Authentication:** Bearer Token gerekli
+
+**Response:**
+*   `200 OK` - AI raporu başarıyla getirildi.
+
+---
+
+## 29. AI İşlem Geçmişi Raporu Alma
+
+Aktiviteler üzerinden işlem başarı performansı ölçümü yapan AI raporu.
+
+*   **Endpoint:** `POST /ai/reports/transactions`
+*   **Authentication:** Bearer Token gerekli
+
+**Response:**
+*   `200 OK` - Performans raporu başarıyla döndürüldü.
+
+---
+
+## 30. AI Chatbot ile Sohbet
+
+Yapay zeka asistanına serbest finansal / teknik analiz soruları sormak için kullanılır.
+
+*   **Endpoint:** `POST /ai/chat`
+*   **Authentication:** Bearer Token gerekli
 
 **Request Body:**
 ```json
 {
-  "symbol": "BTCUSDT"
+  "message": "BTC hakkında ne düşünüyorsun?"
 }
 ```
 
 **Response:**
-*   `201 Created` - Varlık listeye eklendi.
-
----
-
-## 3. İzleme Listelerini Görüntüleme
-
-Kullanıcıya ait tüm listeleri ve içindeki varlıkların anlık fiyatlarını getirir.
-
-*   **Endpoint:** `GET /watchlists`
-*   **Authentication:** Bearer Token gerekli
-
-**Response:**
-*   `200 OK` - Tüm listeler ve anlık fiyatlar başarıyla getirildi.
-
----
-
-## 4. Liste Adı Güncelleme
-
-Mevcut bir izleme listesinin adını değiştirir.
-
-*   **Endpoint:** `PUT /watchlists/{listId}`
-*   **Authentication:** Bearer Token gerekli
-
-**Path Parameters:**
-
-| Parametre | Tip | Zorunlu | Açıklama |
-| :--- | :--- | :---: | :--- |
-| `listId` | string | Evet | İzleme listesi ID'si |
-
-**Request Body:**
-```json
-{
-  "name": "Favori Hisselerim"
-}
-```
-
-**Response:**
-*   `200 OK` - Liste adı başarıyla güncellendi.
-
----
-
-## 5. İzleme Listesini Silme
-
-Belirtilen izleme listesini siler (Sadece kendi listesini silme yetkisi vardır).
-
-*   **Endpoint:** `DELETE /watchlists/{listId}`
-*   **Authentication:** Bearer Token gerekli
-
-**Path Parameters:**
-
-| Parametre | Tip | Zorunlu | Açıklama |
-| :--- | :--- | :---: | :--- |
-| `listId` | string | Evet | İzleme listesi ID'si |
-
-**Response:**
-*   `204 No Content` - İzleme listesi başarıyla silindi.
-
----
-
-## 6. AI Durum Raporu Almak
-
-Kişinin yatırım alışkanlıkları için rapor oluşturur.
-
-*   **Endpoint:** `GET /ai/report/status/{assetSymbol}`
-*   **Authentication:** Bearer Token gerekli
-
-**Path Parameters:**
-
-| Parametre | Tip | Zorunlu | Açıklama |
-| :--- | :--- | :---: | :--- |
-| `assetSymbol` | string | Evet | - |
-
-**Response:**
-*   `200 OK` - AI teknik analiz ve durum özeti döndürüldü.
+*   `200 OK` - Chat yanıtı alındı.

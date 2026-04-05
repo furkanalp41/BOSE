@@ -1,24 +1,39 @@
 Üye Olma
 API Metodu: POST /auth/register
-Açıklama: Kullanıcıların yeni hesaplar oluşturarak sisteme kayıt olmasını sağlar. Kişisel bilgilerin toplanmasını ve hesap oluşturma işlemlerini içerir. Kullanıcılar email adresi ve şifre belirleyerek hesap oluşturur. Başarılı kayıt sonrası kullanıcıya sanal başlangıç bakiyesi tanımlanır.
+Açıklama: Sisteme yeni bir kullanıcı kaydeder ve 100.000 TL başlangıç sanal bakiyesini tanımlar.
 
 Giriş Yapma
 API Metodu: POST /auth/login
-Açıklama: Kayıtlı kullanıcıların e-posta ve şifre bilgilerini doğrulayarak sisteme güvenli erişim sağlamasını kontrol eder. Başarılı giriş durumunda kullanıcının işlemlerine devam edebilmesi için JWT token üretilmesini sağlar.
+Açıklama: Kullanıcının e-posta ve şifre bilgilerini doğrulayarak sisteme giriş yapmasını sağlar. Başarılı giriş durumunda JWT token döner.
 
-Profil Görüntüleme
+Kendi Profilini Görüntüleme
+API Metodu: GET /users/me
+Açıklama: JWT token'dan alınan kullanıcı ID'si ile kişinin kendi profil bilgilerini (sanal bakiye, rol vs.) getirir. Güvenlik için giriş yapmış olmak gerekir.
+
+Kullanıcı Detayı Görüntüleme
 API Metodu: GET /users/{userId}
-Açıklama: Kullanıcının profil bilgilerini görüntülemesini sağlar. Kullanıcı adı, email, telefon gibi kişisel bilgiler ve sanal hesap bakiyesi durumu gösterilir. Kullanıcılar kendi profil bilgilerini görüntüleyebilir veya yöneticiler diğer kullanıcıların bilgilerini inceleyebilir. Güvenlik için giriş yapmış olmak gerekir.
+Açıklama: Belirtilen kullanıcının profil bilgilerini getirir. Güvenlik için giriş yapmış olmak gerekir.
 
 Profil Bilgilerini Güncelleme
 API Metodu: PUT /users/{userId}
-Açıklama: Kullanıcının profil bilgilerini güncellemesini sağlar. Kullanıcılar ad, soyad, email, telefon gibi kişisel bilgilerini değiştirebilir. Güvenlik için giriş yapmış olmak gerekir ve kullanıcılar yalnızca kendi bilgilerini güncelleyebilir.
+Açıklama: Kullanıcı profil bilgilerini (Ad Soyad, telefon vb.) günceller. Güvenlik için giriş yapmış olmak gerekir.
 
 Hesap Silme
 API Metodu: DELETE /users/{userId}
-Açıklama: Kullanıcının hesabını sistemden kalıcı olarak silmesini sağlar. Kullanıcı hesabını kapatmak istediğinde veya yönetici tarafından hesap kapatılması gerektiğinde kullanılır. Bu işlem geri alınamaz ve kullanıcının tüm verileri silinir. Güvenlik için giriş yapmış olmak gerekir.
+Açıklama: Kullanıcının hesabını sistemden kalıcı olarak silmesini sağlar. Yönetici tarafından veya kişinin kendi isteğiyle hesap kapatıldığında kullanılır. Güvenlik için giriş yapmış olmak gerekir.
 
 AI Tercihlerini Kaydetme
 API Metodu: POST /users/{userId}/ai-preferences
-Açıklama: Kullanıcının yatırım yaparken yapay zeka asistanından ne tür tavsiyeler alacağını belirlemesini sağlar. Risk seviyesi (düşük, orta, yüksek) gibi yatırım tercihleri sisteme kaydedilir. Güvenlik için giriş yapmış olmak gerekir.
+Açıklama: Yapay zeka yatırım risk seviyesi ve vade tercihlerini kaydeder. Güvenlik için giriş yapmış olmak gerekir.
 
+Admin Loglarını Görüntüleme
+API Metodu: GET /admin/logs
+Açıklama: Sistem yönetim loglarını getirir. Sadece Admin yetkisi gerektirir.
+
+Admin Kullanıcı Silme
+API Metodu: DELETE /admin/users/{id}
+Açıklama: Admin yetkisiyle herhangi bir kullanıcıyı siler. Sadece Admin yetkisi gerektirir.
+
+Admin Kullanıcı Rolü Güncelleme
+API Metodu: PUT /admin/users/{id}/role
+Açıklama: Kullanıcının rolünü (user/admin) günceller. Sadece Admin yetkisi gerektirir.

@@ -1,159 +1,151 @@
 # Cem Karaca - REST API Gereksinimleri
 
-> **REST API Domain:** `https://YOUR-DOMAIN.railway.app/v1`  
+> **REST API Domain:** `https://bose-platform.onrender.com/api/v1`  
 > **Postman Collection:** [Cem-Karaca-Postman-Collection.json](./Cem-Karaca-Postman-Collection.json)  
 > **YouTube Test Videosu:** *(deploy sonrası eklenecek)*
 
 ---
 
-## Gereksinim 13 - Piyasa Emri Oluşturma
+## Gereksinim 11 - Emir Oluşturma
 
-**Yöntem:** `POST /v1/orders/market`  
-**Açıklama:** Kullanıcı, anlık piyasa fiyatından hisse veya kripto alım/satım emri verir. Emir anında gerçekleşir ve `COMPLETED` statüsüne geçer. Alım emirlerinde kullanıcının bakiyesi yeterli olmalıdır.
+**Yöntem:** `POST /api/v1/trading/order`  
+**Açıklama:** Anlık piyasa fiyatından alım veya satım emri oluşturur. Alımda bakiyeden düşer, satışta pozisyon kapatılır.
 
 **Request Body:**
 ```json
 {
-  "symbol": "BTCUSDT",
+  "symbol": "BTC",
   "side": "BUY",
-  "quantity": 0.01
+  "quantity": 0.5
 }
 ```
 
 **Başarılı Response (201):**
 ```json
 {
-  "id": "uuid",
-  "user_id": "uuid",
-  "symbol": "BTCUSDT",
+  "id": 1,
+  "userId": 1,
+  "symbol": "BTC",
   "side": "BUY",
-  "type": "MARKET",
-  "quantity": 0.01,
-  "filled_price": 65032.50,
-  "status": "COMPLETED",
-  "created_at": "2026-03-28T10:00:00Z"
+  "quantity": 0.5,
+  "price": 65000.00,
+  "total": 32500.00,
+  "createdAt": "2026-03-28T10:00:00Z"
 }
 ```
 
 ---
 
-## Gereksinim 14 - Limit Emir Oluşturma
+## Gereksinim 12 - Açık Pozisyonları Listeleme
 
-**Yöntem:** `POST /v1/orders/limit`  
-**Açıklama:** Kullanıcı, belirli bir hedef fiyattan gerçekleşmek üzere bekleyen emir oluşturur. Emir `PENDING` statüsünde kalır. Alım emirlerinde hedef fiyat × miktar kadar bakiye bloke edilir.
-
-**Request Body:**
-```json
-{
-  "symbol": "THYAO",
-  "side": "BUY",
-  "quantity": 10,
-  "target_price": 270.00
-}
-```
-
-**Başarılı Response (201):**
-```json
-{
-  "id": "uuid",
-  "symbol": "THYAO",
-  "side": "BUY",
-  "type": "LIMIT",
-  "quantity": 10,
-  "target_price": 270.00,
-  "status": "PENDING",
-  "created_at": "2026-03-28T10:05:00Z"
-}
-```
-
----
-
-## Gereksinim 15 - Açık Emirleri Listeleme
-
-**Yöntem:** `GET /v1/orders/open`  
-**Açıklama:** Kullanıcının henüz gerçekleşmemiş (`PENDING`) tüm limit emirlerini listeler.
+**Yöntem:** `GET /api/v1/trading/positions`  
+**Açıklama:** Kullanıcının tüm açık pozisyonlarını güncel piyasa fiyatları ve PnL ile getirir.
 
 **Başarılı Response (200):**
 ```json
 [
   {
-    "id": "uuid",
-    "symbol": "THYAO",
-    "side": "BUY",
-    "type": "LIMIT",
-    "quantity": 10,
-    "target_price": 270.00,
-    "status": "PENDING",
-    "created_at": "2026-03-28T10:05:00Z"
+    "id": 1,
+    "userId": 1,
+    "symbol": "BTC",
+    "quantity": 0.5,
+    "avgEntryPrice": 64000.00,
+    "createdAt": "2026-03-27T14:00:00Z",
+    "currentPrice": 65000.00,
+    "marketValue": 32500.00,
+    "pnl": 500.00,
+    "pnlPercent": 1.56
   }
 ]
 ```
 
 ---
 
-## Gereksinim 16 - Limit Emir Güncelleme
+## Gereksinim 13 - Pozisyon Kapatma
 
-**Yöntem:** `PUT /v1/orders/:orderId`  
-**Açıklama:** `PENDING` durumundaki bir limit emrinin miktar ve/veya hedef fiyatını günceller. Sadece kendi emrini güncelleyebilir.
+**Yöntem:** `POST /api/v1/trading/positions/:positionId/close`  
+**Açıklama:** Belirtilen pozisyonu güncel piyasa fiyatından kapatır ve bakiyeyi günceller.
 
-**Request Body:**
+**Başarılı Response:** `200 OK`
+
+**Hata Durumları:**
+- `400` → Kötü istek
+- `401` → Kimlik doğrulama başarısız
+
+---
+
+## Gereksinim 14 - İşlem Geçmişini Görüntüleme
+
+**Yöntem:** `GET /api/v1/trading/history`  
+**Açıklama:** Kullanıcının gerçekleşmiş tüm alım-satım işlemlerini kronolojik listeler.
+
+**Başarılı Response (200):**
 ```json
-{
-  "quantity": 15,
-  "target_price": 265.00
-}
+[
+  {
+    "id": 1,
+    "userId": 1,
+    "symbol": "BTC",
+    "side": "BUY",
+    "quantity": 0.5,
+    "price": 65000.00,
+    "total": 32500.00,
+    "createdAt": "2026-03-28T10:00:00Z"
+  }
+]
 ```
 
-**Başarılı Response (200):** Güncellenmiş Order objesi döner.
-
-**Hata Durumları:**
-- `404` → Emir bulunamadı veya zaten tamamlanmış/iptal edilmiş
-- `403` → Başka kullanıcının emrini güncellemeye çalışma
-
 ---
 
-## Gereksinim 17 - Bekleyen Emri İptal Etme
+## Gereksinim 15 - Portföy Özeti Görüntüleme
 
-**Yöntem:** `DELETE /v1/orders/:orderId`  
-**Açıklama:** `PENDING` durumundaki bir emri iptal eder, statüsü `CANCELLED` olur. Bloke edilen bakiye iade edilir.
-
-**Başarılı Response:** `204 No Content`
-
-**Hata Durumları:**
-- `404` → Emir bulunamadı, zaten tamamlanmış veya yetkisiz
-
----
-
-## Gereksinim 18 - AI Portföy Raporu Almak
-
-**Yöntem:** `GET /v1/ai/report/portfolio/:userId`  
-**Açıklama:** Kullanıcının mevcut portföyünü analiz ederek yapay zeka destekli bir rapor döner. Raporda risk skoru, çeşitlendirme tavsiyesi, beklenen getiri ve varlık ağırlıkları yer alır.
+**Yöntem:** `GET /api/v1/trading/portfolio`  
+**Açıklama:** Kullanıcının toplam bakiye, pozisyon değeri, PnL ve detaylı pozisyon bilgilerini döner.
 
 **Başarılı Response (200):**
 ```json
 {
-  "user_id": "uuid",
-  "risk_score": 62,
-  "risk_level": "MEDIUM",
-  "diversification_advice": "Portföyünüz kripto ağırlıklı (%65.3). BİST hisseleri ekleyerek riski dengeleyebilirsiniz.",
-  "expected_return": 18.5,
-  "holdings": [
+  "balance": 15000.00,
+  "inPositions": 32500.00,
+  "totalValue": 47500.00,
+  "pnl": 500.00,
+  "pnlPercent": 1.56,
+  "positions": [
     {
-      "symbol": "BTCUSDT",
-      "quantity": 0.05,
-      "avg_cost": 64500.00,
-      "weight_percent": 65.3
-    },
-    {
-      "symbol": "THYAO",
-      "quantity": 100,
-      "avg_cost": 275.00,
-      "weight_percent": 34.7
+      "id": 1,
+      "userId": 1,
+      "symbol": "BTC",
+      "quantity": 0.5,
+      "avgEntryPrice": 64000.00,
+      "createdAt": "2026-03-27T14:00:00Z",
+      "currentPrice": 65000.00,
+      "marketValue": 32500.00,
+      "pnl": 500.00,
+      "pnlPercent": 1.56
     }
-  ],
-  "generated_at": "2026-03-28T11:00:00Z"
+  ]
 }
 ```
+
+---
+
+## Gereksinim 16 - Duyuru Oluşturma
+
+**Yöntem:** `POST /api/v1/admin/announcements`  
+**Açıklama:** Sistem genelinde duyuru yayınlar. Sadece Admin yetkisine sahip kullanıcılar erişebilir.
+
+**Request Body:**
+```json
+{
+  "title": "Sistem Bakımı",
+  "content": "Sistemimiz bu gece kısa bir süreliğine bakıma alınacaktır."
+}
+```
+
+**Başarılı Response:** `201 Created`
+
+**Hata Durumları:**
+- `403` → Admin yetkisi yok
 
 ---
 
@@ -161,12 +153,12 @@
 
 | # | Gereksinim | Method | Path |
 |---|-----------|--------|------|
-| 13 | Piyasa Emri Oluşturma | `POST` | `/v1/orders/market` |
-| 14 | Limit Emir Oluşturma | `POST` | `/v1/orders/limit` |
-| 15 | Açık Emirleri Listeleme | `GET` | `/v1/orders/open` |
-| 16 | Limit Emir Güncelleme | `PUT` | `/v1/orders/:orderId` |
-| 17 | Bekleyen Emri İptal Etme | `DELETE` | `/v1/orders/:orderId` |
-| 18 | AI Portföy Raporu | `GET` | `/v1/ai/report/portfolio/:userId` |
+| 11 | Emir Oluşturma | `POST` | `/api/v1/trading/order` |
+| 12 | Açık Pozisyonları Listeleme | `GET` | `/api/v1/trading/positions` |
+| 13 | Pozisyon Kapatma | `POST` | `/api/v1/trading/positions/:positionId/close` |
+| 14 | İşlem Geçmişini Görüntüleme | `GET` | `/api/v1/trading/history` |
+| 15 | Portföy Özeti Görüntüleme | `GET` | `/api/v1/trading/portfolio` |
+| 16 | Duyuru Oluşturma | `POST` | `/api/v1/admin/announcements` |
 
 Tüm endpoint'ler JWT Bearer Token ile kimlik doğrulama gerektirir.
 

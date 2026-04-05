@@ -17,82 +17,88 @@
 
   Response: 201 Created - Kullanıcı başarıyla oluşturuldu ve başlangıç bakiyesi tanımlandı.
 
-  2. Giriş Yapma
-Endpoint: POST /auth/login
+### 2. Giriş Yapma
+* **Endpoint:** `POST /auth/login`
+* **Request Body:**
 
-Request Body:
 ```json
-
 {
   "email": "furkan@example.com",
   "password": "GucluSifre123!"
 }
-
 ```
 
 Authentication: Gerekmiyor
-
 Response: 200 OK - Giriş başarılı, JWT Token döndürüldü.
 
-3. Profil Görüntüleme
-Endpoint: GET /users/{userId}
-
-Path Parameters:
-
-userId (string, required) - Kullanıcı ID'si
-
+### 3. Kendi Profilini Görüntüleme
+* **Endpoint:** `GET /users/me`
 Authentication: Bearer Token gerekli
+Response: 200 OK - Kendi profil ve bakiye bilgileri döndürülür.
 
-Response: 200 OK - Kullanıcı bilgileri ve sanal bakiye başarıyla getirildi.
-
-4. Profil Bilgilerini Güncelleme
-Endpoint: PUT /users/{userId}
-
+### 4. Kullanıcı Detayı Görüntüleme
+* **Endpoint:** `GET /users/{userId}`
 Path Parameters:
+userId (integer, required) - Kullanıcı ID'si
+Authentication: Bearer Token gerekli
+Response: 200 OK - Belirtilen kullanıcının bilgileri getirilir.
 
-userId (string, required) - Kullanıcı ID'si
-
+### 5. Profil Bilgilerini Güncelleme
+* **Endpoint:** `PUT /users/{userId}`
+Path Parameters:
+userId (integer, required) - Kullanıcı ID'si
 Request Body:
 ```json
 {
   "fullName": "Furkan Alp Günay",
   "phone": "+905551234567"
 }
-
 ```
 Authentication: Bearer Token gerekli
-
 Response: 200 OK - Kullanıcı başarıyla güncellendi.
 
-5. Hesap Silme
-Endpoint: DELETE /users/{userId}
-
+### 6. Hesap Silme
+* **Endpoint:** `DELETE /users/{userId}`
 Path Parameters:
-
-userId (string, required) - Kullanıcı ID'si
-
-Authentication: Bearer Token gerekli (Kendi hesabını silme yetkisi)
-
+userId (integer, required) - Kullanıcı ID'si
+Authentication: Bearer Token gerekli
 Response: 204 No Content - Kullanıcı başarıyla silindi.
 
-6. AI Tercihlerini Kaydetme
-Endpoint: POST /users/{userId}/ai-preferences
-
+### 7. AI Tercihlerini Kaydetme
+* **Endpoint:** `POST /users/{userId}/ai-preferences`
 Path Parameters:
-
-userId (string, required) - Kullanıcı ID'si
-
+userId (integer, required) - Kullanıcı ID'si
 Request Body:
-
 ```json
 {
   "riskLevel": "HIGH",
   "investmentTerm": "LONG_TERM"
 }
-
 ```
 Authentication: Bearer Token gerekli
-
 Response: 200 OK - Yapay zeka tercihleri kaydedildi.
 
+### 8. Admin Loglarını Görüntüleme
+* **Endpoint:** `GET /admin/logs`
+Authentication: Bearer Token gerekli (Admin)
+Response: 200 OK - Sistem yönetim logları getirildi.
 
+### 9. Admin Kullanıcı Silme
+* **Endpoint:** `DELETE /admin/users/{id}`
+Path Parameters:
+id (integer, required) - Kullanıcı ID'si
+Authentication: Bearer Token gerekli (Admin)
+Response: 204 No Content - İlgili kullanıcı başarıyla silindi.
+
+### 10. Admin Kullanıcı Rolü Güncelleme
+* **Endpoint:** `PUT /admin/users/{id}/role`
+Path Parameters:
+id (integer, required) - Kullanıcı ID'si
+Request Body:
+```json
+{
+  "role": "admin"
+}
+```
+Authentication: Bearer Token gerekli (Admin)
+Response: 200 OK - Kullanıcı rolü güncellendi.
