@@ -1,6 +1,6 @@
 Yakup Efe Çelebi'nin Web Frontend Görevleri
 
-Front-end Test Videosu: Link buraya eklenecek
+Front-end Test Videosu: [https://www.youtube.com/watch?v=4NeQ81Tqji4](#)
 
 Market Varlıklarını Listeleme Sayfası (Piyasalar)
 API Endpoint: GET /market/assets
