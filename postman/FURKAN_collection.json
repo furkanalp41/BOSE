@@ -1,0 +1,130 @@
+{
+	"info": {
+		"name": "BOSE - Furkan Alp Gunay",
+		"description": "Auth, User CRUD, Admin endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{ "key": "baseUrl", "value": "https://bose-platform.onrender.com/api/v1" },
+		{ "key": "token", "value": "" }
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/auth/register",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"fullName\":\"Furkan Test\",\"email\":\"furkan_test@bose.dev\",\"password\":\"Test1234!\"}" }
+					}
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/auth/login",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": { "mode": "raw", "raw": "{\"email\":\"furkan_test@bose.dev\",\"password\":\"Test1234!\"}" }
+					},
+					"event": [{
+						"listen": "test",
+						"script": { "exec": ["var json = pm.response.json(); pm.collectionVariables.set('token', json.token);"] }
+					}]
+				}
+			]
+		},
+		{
+			"name": "User Profile",
+			"item": [
+				{
+					"name": "GET /users/me",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/users/me",
+						"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+					}
+				},
+				{
+					"name": "PUT /users/:id",
+					"request": {
+						"method": "PUT",
+						"url": "{{baseUrl}}/users/1",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": { "mode": "raw", "raw": "{\"full_name\":\"Furkan Gunay\",\"risk_level\":\"HIGH\"}" }
+					}
+				},
+				{
+					"name": "POST AI Preferences",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/users/1/ai-preferences",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": { "mode": "raw", "raw": "{\"riskLevel\":\"HIGH\",\"investmentTerm\":\"SHORT_TERM\"}" }
+					}
+				},
+				{
+					"name": "DELETE /users/:id",
+					"request": {
+						"method": "DELETE",
+						"url": "{{baseUrl}}/users/99",
+						"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "GET /admin/logs",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/admin/logs",
+						"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+					}
+				},
+				{
+					"name": "PUT /admin/users/:id/role",
+					"request": {
+						"method": "PUT",
+						"url": "{{baseUrl}}/admin/users/2/role",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": { "mode": "raw", "raw": "{\"role\":\"admin\"}" }
+					}
+				},
+				{
+					"name": "DELETE /admin/users/:id",
+					"request": {
+						"method": "DELETE",
+						"url": "{{baseUrl}}/admin/users/99",
+						"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+					}
+				},
+				{
+					"name": "POST /admin/announcements",
+					"request": {
+						"method": "POST",
+						"url": "{{baseUrl}}/admin/announcements",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": { "mode": "raw", "raw": "{\"message\":\"Sistem bakimda!\"}" }
+					}
+				}
+			]
+		}
+	]
+}

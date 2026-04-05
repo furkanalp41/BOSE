@@ -1,5 +1,11 @@
 # REST API Documentation — Enes
 
+## Domain
+**API Base URL:** https://bose-platform.onrender.com/api/v1
+
+## Test Videosu
+> [YouTube video linki buraya eklenecek]
+
 ## Responsibilities
 AI-powered analysis: portfolio analysis, transaction analysis, AI chat advisor, and recommendation engine.
 

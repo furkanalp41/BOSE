@@ -1,5 +1,11 @@
 # Frontend Documentation — Arda
 
+## Domain
+**Frontend URL:** https://bose-platform.onrender.com
+
+## Test Videosu
+> [YouTube video linki buraya eklenecek]
+
 ## Responsibilities
 Watchlist UI, alert management, and watchlist analysis page.
 

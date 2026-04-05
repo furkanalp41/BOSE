@@ -1,0 +1,82 @@
+{
+	"info": {
+		"name": "BOSE - Cem",
+		"description": "Trading endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{ "key": "baseUrl", "value": "https://bose-platform.onrender.com/api/v1" },
+		{ "key": "token", "value": "" }
+	],
+	"item": [
+		{
+			"name": "Login (token al)",
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/auth/login",
+				"header": [{ "key": "Content-Type", "value": "application/json" }],
+				"body": { "mode": "raw", "raw": "{\"email\":\"cem_test@bose.dev\",\"password\":\"Test1234!\"}" }
+			},
+			"event": [{
+				"listen": "test",
+				"script": { "exec": ["var json = pm.response.json(); pm.collectionVariables.set('token', json.token);"] }
+			}]
+		},
+		{
+			"name": "POST /trading/order (BUY BTC)",
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/trading/order",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}" },
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": { "mode": "raw", "raw": "{\"symbol\":\"BTC\",\"side\":\"BUY\",\"quantity\":0.01}" }
+			}
+		},
+		{
+			"name": "POST /trading/order (BUY ETH)",
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/trading/order",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}" },
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": { "mode": "raw", "raw": "{\"symbol\":\"ETH\",\"side\":\"BUY\",\"quantity\":0.5}" }
+			}
+		},
+		{
+			"name": "GET /trading/positions",
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/trading/positions",
+				"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+			}
+		},
+		{
+			"name": "POST /trading/positions/:id/close",
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/trading/positions/1/close",
+				"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+			}
+		},
+		{
+			"name": "GET /trading/history",
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/trading/history",
+				"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+			}
+		},
+		{
+			"name": "GET /trading/portfolio",
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/trading/portfolio",
+				"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+			}
+		}
+	]
+}

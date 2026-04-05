@@ -80,7 +80,7 @@ func main() {
 		Format: "[${time}] ${status} ${method} ${path} - ${latency}\n",
 	}))
 	// CORS: dev + production origins
-	corsOrigins := "http://localhost:5173,http://localhost:3000,https://bose.uraniumz.com"
+	corsOrigins := "http://localhost:5173,http://localhost:3000,https://frontend-bose.vercel.app"
 	if extra := os.Getenv("CORS_ORIGINS"); extra != "" {
 		corsOrigins += "," + extra
 	}

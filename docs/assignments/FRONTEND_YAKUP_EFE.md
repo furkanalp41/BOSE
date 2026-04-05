@@ -1,5 +1,11 @@
 # Frontend Documentation — Yakup Efe
 
+## Domain
+**Frontend URL:** https://bose-platform.onrender.com
+
+## Test Videosu
+> [YouTube video linki buraya eklenecek]
+
 ## Responsibilities
 Market data display, real-time price streaming UI, leaderboard, and portfolio chart.
 

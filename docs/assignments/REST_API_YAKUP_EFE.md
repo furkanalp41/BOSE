@@ -1,5 +1,11 @@
 # REST API Documentation — Yakup Efe
 
+## Domain
+**API Base URL:** https://bose-platform.onrender.com/api/v1
+
+## Test Videosu
+> [YouTube video linki buraya eklenecek]
+
 ## Responsibilities
 Market data system, admin asset management, leaderboard & achievements, and user profile updates.
 

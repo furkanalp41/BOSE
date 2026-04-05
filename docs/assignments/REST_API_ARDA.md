@@ -1,5 +1,11 @@
 # REST API Documentation — Arda
 
+## Domain
+**API Base URL:** https://bose-platform.onrender.com/api/v1
+
+## Test Videosu
+> [YouTube video linki buraya eklenecek]
+
 ## Responsibilities
 Watchlist management, price alerts, and alert monitoring system.
 

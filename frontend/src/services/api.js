@@ -1,16 +1,19 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
 
+// ── Detect backend base URL ─────────────────────────────────────────────────
+const BACKEND = import.meta.env.VITE_API_URL || '/api'
+
 // ── Primary API client (all /api/* routes) ─────────────────────────────────
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: BACKEND,
   headers: { 'Content-Type': 'application/json' },
   timeout: 10_000,
 })
 
 // ── AI client (same backend, longer timeout for AI analysis) ────────────────
 const aiClient = axios.create({
-  baseURL: '/api/ai',
+  baseURL: `${BACKEND}/ai`,
   headers: { 'Content-Type': 'application/json' },
   timeout: 60_000,
 })

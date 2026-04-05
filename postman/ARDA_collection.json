@@ -1,0 +1,110 @@
+{
+	"info": {
+		"name": "BOSE - Arda",
+		"description": "Watchlist & Alerts endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{ "key": "baseUrl", "value": "https://bose-platform.onrender.com/api/v1" },
+		{ "key": "token", "value": "" }
+	],
+	"item": [
+		{
+			"name": "Login (token al)",
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/auth/login",
+				"header": [{ "key": "Content-Type", "value": "application/json" }],
+				"body": { "mode": "raw", "raw": "{\"email\":\"arda_test@bose.dev\",\"password\":\"Test1234!\"}" }
+			},
+			"event": [{
+				"listen": "test",
+				"script": { "exec": ["var json = pm.response.json(); pm.collectionVariables.set('token', json.token);"] }
+			}]
+		},
+		{
+			"name": "POST /watchlist (olustur)",
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/watchlist/",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}" },
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": { "mode": "raw", "raw": "{\"name\":\"Kripto Favori\"}" }
+			}
+		},
+		{
+			"name": "GET /watchlist (listele)",
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/watchlist/",
+				"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+			}
+		},
+		{
+			"name": "POST /watchlist/:id/items (sembol ekle)",
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/watchlist/1/items",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}" },
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": { "mode": "raw", "raw": "{\"symbol\":\"BTC\"}" }
+			}
+		},
+		{
+			"name": "DELETE /watchlist/:id/items/:itemId",
+			"request": {
+				"method": "DELETE",
+				"url": "{{baseUrl}}/watchlist/1/items/1",
+				"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+			}
+		},
+		{
+			"name": "DELETE /watchlist/:id",
+			"request": {
+				"method": "DELETE",
+				"url": "{{baseUrl}}/watchlist/1",
+				"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+			}
+		},
+		{
+			"name": "POST /watchlist/alerts (alarm olustur)",
+			"request": {
+				"method": "POST",
+				"url": "{{baseUrl}}/watchlist/alerts",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}" },
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": { "mode": "raw", "raw": "{\"symbol\":\"BTC\",\"target_price\":70000,\"condition\":\"ABOVE\"}" }
+			}
+		},
+		{
+			"name": "GET /watchlist/alerts",
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/watchlist/alerts",
+				"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+			}
+		},
+		{
+			"name": "DELETE /watchlist/alerts/:alertId",
+			"request": {
+				"method": "DELETE",
+				"url": "{{baseUrl}}/watchlist/alerts/1",
+				"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+			}
+		},
+		{
+			"name": "GET /watchlist/alerts/triggered",
+			"request": {
+				"method": "GET",
+				"url": "{{baseUrl}}/watchlist/alerts/triggered",
+				"header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+			}
+		}
+	]
+}

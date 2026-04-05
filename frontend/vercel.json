@@ -3,7 +3,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://bose-backend.onrender.com/api/v1/:path*" },
+    { "source": "/api/:path*", "destination": "https://bose-platform.onrender.com/api/v1/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

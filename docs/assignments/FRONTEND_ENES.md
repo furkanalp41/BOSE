@@ -1,5 +1,11 @@
 # Frontend Documentation — Enes
 
+## Domain
+**Frontend URL:** https://bose-platform.onrender.com
+
+## Test Videosu
+> [YouTube video linki buraya eklenecek]
+
 ## Responsibilities
 AI analysis pages: Portfolio Analysis, Transaction Analysis, AI Chat interface.
 

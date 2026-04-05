@@ -1,5 +1,11 @@
 # Frontend Documentation — Cem
 
+## Domain
+**Frontend URL:** https://bose-platform.onrender.com
+
+## Test Videosu
+> [YouTube video linki buraya eklenecek]
+
 ## Responsibilities
 Trading interface: order form, position list, order summary, and trade history.
 

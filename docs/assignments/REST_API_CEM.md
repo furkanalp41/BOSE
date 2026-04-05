@@ -1,5 +1,11 @@
 # REST API Documentation — Cem
 
+## Domain
+**API Base URL:** https://bose-platform.onrender.com/api/v1
+
+## Test Videosu
+> [YouTube video linki buraya eklenecek]
+
 ## Responsibilities
 Trading engine: order placement, position management, trade history, and portfolio calculation.
 

@@ -1,5 +1,11 @@
 # Frontend Documentation — Furkan Alp Gunay
 
+## Domain
+**Frontend URL:** https://bose-platform.onrender.com
+
+## Test Videosu
+> [YouTube video linki buraya eklenecek]
+
 ## Responsibilities
 Authentication UI, User Dashboard, Admin Panel, and application layout/routing.
 
