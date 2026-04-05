@@ -90,6 +90,11 @@ func main() {
 		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
 	}))
 
+	// API Docs (Swagger-style)
+	app.Get("/docs", func(c *fiber.Ctx) error {
+		return c.SendFile("./static/swagger.html")
+	})
+
 	// Routes
 	routes.SetupRoutes(app, engine, hub, providers, alertChecker)
 

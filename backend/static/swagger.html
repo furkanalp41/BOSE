@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOSE API Documentation</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#e0e0e0;line-height:1.6}
+.container{max-width:960px;margin:0 auto;padding:20px}
+header{background:linear-gradient(135deg,#0d1117,#161b22);border:1px solid #30363d;border-radius:12px;padding:24px;margin-bottom:24px}
+header h1{font-size:24px;color:#00ff88;margin-bottom:4px}
+header p{color:#8b949e;font-size:14px}
+.base-url{display:inline-block;margin-top:12px;padding:6px 14px;background:#0d1117;border:1px solid #30363d;border-radius:6px;font-family:monospace;font-size:13px;color:#00cfff}
+.group{margin-bottom:20px;border:1px solid #30363d;border-radius:10px;overflow:hidden}
+.group-header{padding:12px 16px;background:#161b22;cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none}
+.group-header:hover{background:#1c2129}
+.group-header h2{font-size:15px;font-weight:600;color:#e6edf3}
+.group-header .badge{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700;color:#0a0a0f}
+.group-body{display:none}
+.group.open .group-body{display:block}
+.group-header .arrow{color:#8b949e;transition:transform .2s}
+.group.open .arrow{transform:rotate(90deg)}
+.endpoint{border-top:1px solid #21262d;padding:12px 16px;cursor:pointer}
+.endpoint:hover{background:#161b22}
+.endpoint-header{display:flex;align-items:center;gap:10px}
+.method{font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;font-family:monospace;min-width:52px;text-align:center;color:#fff}
+.GET{background:#1f6feb}.POST{background:#238636}.PUT{background:#9e6a03}.DELETE{background:#da3633}
+.path{font-family:monospace;font-size:13px;color:#c9d1d9}
+.lock{color:#fbbf24;font-size:11px;margin-left:auto}
+.endpoint-detail{display:none;padding:12px 16px 16px 70px;border-top:1px solid #21262d;background:#0d1117}
+.endpoint.open .endpoint-detail{display:block}
+.detail-section{margin-bottom:12px}
+.detail-section h4{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#8b949e;margin-bottom:6px}
+pre{background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px;font-size:12px;overflow-x:auto;color:#c9d1d9}
+.try-it{margin-top:12px}
+.try-it input,.try-it textarea{width:100%;padding:8px 12px;background:#161b22;border:1px solid #30363d;border-radius:6px;color:#e6edf3;font-family:monospace;font-size:12px;margin-bottom:8px;outline:none}
+.try-it input:focus,.try-it textarea:focus{border-color:#00cfff}
+.try-btn{padding:8px 20px;background:#238636;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.try-btn:hover{background:#2ea043}
+.try-btn:disabled{opacity:.5;cursor:not-allowed}
+.response-box{margin-top:10px;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;white-space:pre-wrap;max-height:400px;overflow-y:auto;display:none}
+.response-box.visible{display:block}
+.status-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-bottom:8px}
+.s2xx{background:#238636;color:#fff}.s4xx{background:#9e6a03;color:#fff}.s5xx{background:#da3633;color:#fff}
+.tag{font-size:10px;padding:2px 6px;border-radius:3px;background:#1f6feb20;color:#1f6feb;border:1px solid #1f6feb40}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>BOSE Platform API</h1>
+  <p>Virtual Trading Platform — REST API Documentation</p>
+  <div class="base-url" id="baseUrl">https://bose-platform.onrender.com/api/v1</div>
+  <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+    <label style="color:#8b949e;font-size:12px">Token:</label>
+    <input id="globalToken" type="text" placeholder="Paste your JWT token here..." style="flex:1;padding:6px 10px;background:#0d1117;border:1px solid #30363d;border-radius:6px;font-family:monospace;font-size:12px;color:#00cfff;outline:none">
+  </div>
+</header>
+
+<div id="groups"></div>
+</div>
+
+<script>
+const BASE = window.location.origin.includes('localhost')
+  ? 'http://localhost:8080/api/v1'
+  : 'https://bose-platform.onrender.com/api/v1';
+
+document.getElementById('baseUrl').textContent = BASE;
+
+const API = [
+  { group: 'Auth', color: '#238636', endpoints: [
+    { m:'POST', p:'/auth/register', desc:'Register a new user', auth:false,
+      body:'{"fullName":"Test User","email":"test@bose.dev","password":"Test1234!"}' },
+    { m:'POST', p:'/auth/login', desc:'Login and receive JWT token', auth:false,
+      body:'{"email":"test@bose.dev","password":"Test1234!"}',
+      note:'Copy the token from the response and paste it in the Token field above.' },
+  ]},
+  { group: 'Market', color: '#1f6feb', endpoints: [
+    { m:'GET', p:'/market/assets', desc:'Get all market assets with live prices', auth:false },
+  ]},
+  { group: 'User Profile', color: '#9e6a03', endpoints: [
+    { m:'GET', p:'/users/me', desc:'Get current user profile', auth:true },
+    { m:'GET', p:'/users/:userId', desc:'Get user by ID', auth:true, params:['userId'] },
+    { m:'PUT', p:'/users/:userId', desc:'Update user profile', auth:true, params:['userId'],
+      body:'{"full_name":"Updated Name","risk_level":"HIGH"}' },
+    { m:'DELETE', p:'/users/:userId', desc:'Delete user account', auth:true, params:['userId'] },
+    { m:'POST', p:'/users/:userId/ai-preferences', desc:'Update AI preferences', auth:true, params:['userId'],
+      body:'{"riskLevel":"HIGH","investmentTerm":"SHORT_TERM"}' },
+  ]},
+  { group: 'Trading', color: '#da3633', endpoints: [
+    { m:'POST', p:'/trading/order', desc:'Place a buy/sell order', auth:true,
+      body:'{"symbol":"BTC","side":"BUY","quantity":0.01}' },
+    { m:'GET', p:'/trading/positions', desc:'Get open positions', auth:true },
+    { m:'POST', p:'/trading/positions/:positionId/close', desc:'Close a position', auth:true, params:['positionId'] },
+    { m:'GET', p:'/trading/history', desc:'Get trade history', auth:true },
+    { m:'GET', p:'/trading/portfolio', desc:'Get portfolio summary', auth:true },
+  ]},
+  { group: 'Watchlist', color: '#00cfff', endpoints: [
+    { m:'POST', p:'/watchlist/', desc:'Create a watchlist', auth:true, body:'{"name":"My Watchlist"}' },
+    { m:'GET', p:'/watchlist/', desc:'Get all watchlists', auth:true },
+    { m:'DELETE', p:'/watchlist/:id', desc:'Delete a watchlist', auth:true, params:['id'] },
+    { m:'POST', p:'/watchlist/:id/items', desc:'Add symbol to watchlist', auth:true, params:['id'],
+      body:'{"symbol":"BTC"}' },
+    { m:'DELETE', p:'/watchlist/:id/items/:itemId', desc:'Remove item from watchlist', auth:true, params:['id','itemId'] },
+  ]},
+  { group: 'Alerts', color: '#fbbf24', endpoints: [
+    { m:'POST', p:'/watchlist/alerts', desc:'Create price alert', auth:true,
+      body:'{"symbol":"BTC","target_price":70000,"condition":"ABOVE"}' },
+    { m:'GET', p:'/watchlist/alerts', desc:'Get all alerts', auth:true },
+    { m:'DELETE', p:'/watchlist/alerts/:alertId', desc:'Delete an alert', auth:true, params:['alertId'] },
+    { m:'GET', p:'/watchlist/alerts/triggered', desc:'Get triggered alerts', auth:true },
+  ]},
+  { group: 'AI Reports & Chat', color: '#a855f7', endpoints: [
+    { m:'POST', p:'/ai/advice', desc:'Get AI trading advice', auth:true },
+    { m:'POST', p:'/ai/reports/portfolio', desc:'AI portfolio analysis', auth:true },
+    { m:'POST', p:'/ai/reports/watchlist', desc:'AI watchlist analysis', auth:true,
+      body:'{"watchlist_id":1}' },
+    { m:'POST', p:'/ai/reports/transactions', desc:'AI transaction analysis', auth:true },
+    { m:'POST', p:'/ai/chat', desc:'Chat with AI advisor', auth:true,
+      body:'{"message":"What do you think about BTC?"}' },
+  ]},
+  { group: 'Leaderboard', color: '#1f6feb', endpoints: [
+    { m:'GET', p:'/leaderboard/rankings', desc:'Get global rankings', auth:true },
+    { m:'GET', p:'/leaderboard/user/:userId', desc:'Get user rank', auth:true, params:['userId'] },
+    { m:'GET', p:'/leaderboard/achievements', desc:'Get achievements', auth:true },
+  ]},
+  { group: 'Admin', color: '#da3633', endpoints: [
+    { m:'GET', p:'/admin/logs', desc:'Get admin audit logs', auth:true, tag:'admin' },
+    { m:'DELETE', p:'/admin/users/:id', desc:'Delete a user (admin)', auth:true, params:['id'], tag:'admin' },
+    { m:'PUT', p:'/admin/users/:id/role', desc:'Update user role', auth:true, params:['id'], tag:'admin',
+      body:'{"role":"admin"}' },
+    { m:'POST', p:'/admin/announcements', desc:'Create announcement', auth:true, tag:'admin',
+      body:'{"message":"System maintenance!"}' },
+    { m:'GET', p:'/admin/market/assets', desc:'List all assets (admin)', auth:true, tag:'admin' },
+    { m:'POST', p:'/admin/market/assets', desc:'Create new asset', auth:true, tag:'admin',
+      body:'{"symbol":"TSLA","price":245.50,"drift":0.0001,"volatility":0.0015}' },
+    { m:'PUT', p:'/admin/market/assets/:symbol', desc:'Update asset', auth:true, params:['symbol'], tag:'admin',
+      body:'{"price":250.00,"drift":0.0002}' },
+    { m:'DELETE', p:'/admin/market/assets/:symbol', desc:'Delete asset', auth:true, params:['symbol'], tag:'admin' },
+  ]},
+];
+
+function render() {
+  const container = document.getElementById('groups');
+  API.forEach((g, gi) => {
+    const div = document.createElement('div');
+    div.className = 'group open';
+    div.innerHTML = `
+      <div class="group-header" onclick="this.parentElement.classList.toggle('open')">
+        <span class="arrow">▶</span>
+        <span class="badge" style="background:${g.color}">${g.endpoints.length}</span>
+        <h2>${g.group}</h2>
+      </div>
+      <div class="group-body">
+        ${g.endpoints.map((e, ei) => renderEndpoint(e, gi, ei)).join('')}
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function renderEndpoint(e, gi, ei) {
+  const id = `ep-${gi}-${ei}`;
+  const paramInputs = (e.params||[]).map(p =>
+    `<input id="${id}-${p}" type="text" placeholder=":${p}" style="width:120px;display:inline-block;margin-right:6px">`
+  ).join('');
+
+  return `
+    <div class="endpoint" id="${id}-wrap">
+      <div class="endpoint-header" onclick="document.getElementById('${id}-wrap').classList.toggle('open')">
+        <span class="method ${e.m}">${e.m}</span>
+        <span class="path">${e.p}</span>
+        ${e.tag ? `<span class="tag">${e.tag}</span>` : ''}
+        ${e.auth ? '<span class="lock">🔒</span>' : ''}
+      </div>
+      <div class="endpoint-detail">
+        <p style="color:#8b949e;font-size:13px;margin-bottom:12px">${e.desc}</p>
+        <div class="try-it">
+          ${paramInputs ? `<div class="detail-section"><h4>Path Parameters</h4>${paramInputs}</div>` : ''}
+          ${e.body ? `<div class="detail-section"><h4>Request Body</h4><textarea id="${id}-body" rows="4">${e.body}</textarea></div>` : ''}
+          <button class="try-btn" onclick="tryIt('${gi}','${ei}','${id}')">Send Request</button>
+          <div class="response-box" id="${id}-res"></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function tryIt(gi, ei, id) {
+  const e = API[gi].endpoints[ei];
+  let path = e.p;
+  (e.params||[]).forEach(p => {
+    const val = document.getElementById(`${id}-${p}`)?.value || '1';
+    path = path.replace(':'+p, val);
+  });
+
+  const url = BASE + path;
+  const token = document.getElementById('globalToken').value.trim();
+  const headers = { 'Content-Type': 'application/json' };
+  if (token && e.auth) headers['Authorization'] = 'Bearer ' + token;
+
+  const opts = { method: e.m, headers };
+  if (e.body && (e.m === 'POST' || e.m === 'PUT')) {
+    const bodyEl = document.getElementById(`${id}-body`);
+    opts.body = bodyEl ? bodyEl.value : e.body;
+  }
+
+  const resBox = document.getElementById(`${id}-res`);
+  resBox.className = 'response-box visible';
+  resBox.textContent = 'Loading...';
+
+  try {
+    const res = await fetch(url, opts);
+    const status = res.status;
+    const data = await res.text();
+    let pretty;
+    try { pretty = JSON.stringify(JSON.parse(data), null, 2); } catch { pretty = data; }
+
+    const cls = status < 300 ? 's2xx' : status < 500 ? 's4xx' : 's5xx';
+    resBox.innerHTML = `<span class="status-badge ${cls}">${status} ${res.statusText}</span>\n${escHtml(pretty)}`;
+
+    // Auto-save token from login response
+    if (e.p === '/auth/login' && status === 200) {
+      try {
+        const json = JSON.parse(data);
+        if (json.token) {
+          document.getElementById('globalToken').value = json.token;
+          resBox.innerHTML += '\n\n<span style="color:#00ff88">✓ Token auto-saved!</span>';
+        }
+      } catch {}
+    }
+  } catch (err) {
+    resBox.innerHTML = `<span class="status-badge s5xx">Error</span>\n${err.message}`;
+  }
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+render();
+</script>
+</body>
+</html>
