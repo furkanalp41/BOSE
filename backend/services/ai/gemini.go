@@ -65,6 +65,13 @@ func (g *GeminiProvider) Chat(ctx context.Context, messages []ChatMessage) (stri
 			// Gemini doesn't have a system role; prepend as user context.
 			role = "user"
 		}
+		// Gemini requires alternating roles. If the previous message has the
+		// same role, merge the text into it instead of creating a consecutive
+		// duplicate that the API would reject with a 400.
+		if n := len(contents); n > 0 && contents[n-1].Role == role {
+			contents[n-1].Parts = append(contents[n-1].Parts, geminiPart{Text: m.Content})
+			continue
+		}
 		contents = append(contents, geminiContent{
 			Parts: []geminiPart{{Text: m.Content}},
 			Role:  role,

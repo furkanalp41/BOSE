@@ -86,9 +86,9 @@ func AnalyzePortfolio(engine *market.PriceEngine, providers *ai.ProviderChain) f
 		modelUsed := "bose-rules-engine-v1"
 		analysisContent := advice.Summary
 
-		if providers != nil {
+		if providers != nil && providers.GetActiveProvider() != nil {
 			prompt := buildPortfolioPrompt(user, positions, holdingsSummary, prices, totalValue)
-			ctx, cancel := context.WithTimeout(c.Context(), 30*time.Second)
+			ctx, cancel := context.WithTimeout(c.Context(), 15*time.Second)
 			defer cancel()
 			llmResult, llmModel, _ := providers.Analyze(ctx, "portfolio", prompt)
 			if llmResult != "" {
@@ -271,9 +271,9 @@ func AnalyzeWatchlist(engine *market.PriceEngine, providers *ai.ProviderChain) f
 			len(items), watchlistName, strings.ToLower(user.RiskLevel), topPick,
 		)
 
-		if providers != nil {
+		if providers != nil && providers.GetActiveProvider() != nil {
 			prompt := buildWatchlistPrompt(user, itemAnalyses, watchlistName)
-			ctx, cancel := context.WithTimeout(c.Context(), 30*time.Second)
+			ctx, cancel := context.WithTimeout(c.Context(), 15*time.Second)
 			defer cancel()
 			llmResult, llmModel, _ := providers.Analyze(ctx, "watchlist", prompt)
 			if llmResult != "" {
@@ -424,9 +424,9 @@ func AnalyzeTransactions(engine *market.PriceEngine, providers *ai.ProviderChain
 		}
 
 		// Try LLM-enhanced analysis
-		if providers != nil {
+		if providers != nil && providers.GetActiveProvider() != nil {
 			prompt := buildTransactionPrompt(trades, buyCount, sellCount, totalBuyVol, totalSellVol, mostTraded, symbolCounts)
-			ctx, cancel := context.WithTimeout(c.Context(), 30*time.Second)
+			ctx, cancel := context.WithTimeout(c.Context(), 15*time.Second)
 			defer cancel()
 			llmResult, llmModel, _ := providers.Analyze(ctx, "transactions", prompt)
 			if llmResult != "" {
@@ -512,18 +512,18 @@ func AIChat(engine *market.PriceEngine, providers *ai.ProviderChain) fiber.Handl
 
 		advice, _ := ai.GenerateAdvice(config.DB, engine, claims.UserID)
 
-		// Try LLM chat first
+		// Try LLM chat first (only if a provider is actually available)
 		var reply string
 		modelUsed := "bose-rules-engine-v1"
 
-		if providers != nil {
+		if providers != nil && providers.GetActiveProvider() != nil {
 			chatMessages := []ai.ChatMessage{
 				{Role: "system", Content: buildChatSystemPrompt(assets, prices, advice)},
 			}
 			for _, m := range body.Messages {
 				chatMessages = append(chatMessages, ai.ChatMessage{Role: m.Role, Content: m.Content})
 			}
-			ctx, cancel := context.WithTimeout(c.Context(), 30*time.Second)
+			ctx, cancel := context.WithTimeout(c.Context(), 15*time.Second)
 			defer cancel()
 			llmReply, llmModel, _ := providers.ChatCompletion(ctx, chatMessages)
 			if llmReply != "" {
