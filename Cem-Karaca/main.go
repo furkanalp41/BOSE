@@ -2,39 +2,56 @@ package main
 
 import (
 	"log"
-	"your_module_name/config"
-	"your_module_name/models"
-	"your_module_name/routes"
+	"os"
+
+	"cem-karaca-bose/config"
+	"cem-karaca-bose/models"
+	"cem-karaca-bose/routes"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	// 0. .env dosyasını yükle
+	// .env dosyasını yükle
 	if err := godotenv.Load(); err != nil {
-		log.Fatal(".env dosyası yüklenemedi: ", err)
+		log.Println("⚠️  .env dosyası bulunamadı, sistem env değişkenleri kullanılacak.")
 	}
 
-	// 1. Veritabanına bağlan
+	// Veritabanına bağlan
 	config.ConnectDB()
 
-	// 2. Tabloları otomatik oluştur
-	config.DB.AutoMigrate(&models.MarketAsset{}, &models.Order{})
+	// Tabloları otomatik oluştur
+	config.DB.AutoMigrate(
+		&models.User{},
+		&models.MarketAsset{},
+		&models.Order{},
+		&models.Position{},
+		&models.Announcement{},
+	)
 
-	// 3. Fiber uygulamasını başlat
+	// Fiber başlat
 	app := fiber.New()
+	app.Use(logger.New())
+	app.Use(cors.New())
 
-	// 4. Test için sahte auth middleware
-	fakeAuth := func(c *fiber.Ctx) error {
-		c.Locals("userID", uint(1))
-		return c.Next()
+	// Route'ları bağla
+	routes.SetupRoutes(app)
+
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"message": "BOSE API - Cem Karaca Servisi Çalışıyor 🚀",
+			"version": "v1",
+		})
+	})
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
 	}
 
-	// 5. Route'ları kaydet
-	routes.SetupOrderRoutes(app, fakeAuth)
-
-	// 6. Sunucuyu başlat
-	log.Println("🚀 Cem'in servisi :3000'de çalışıyor")
-	log.Fatal(app.Listen(":3000"))
+	log.Printf("🚀 Cem Karaca servisi :%s portunda çalışıyor", port)
+	log.Fatal(app.Listen(":" + port))
 }

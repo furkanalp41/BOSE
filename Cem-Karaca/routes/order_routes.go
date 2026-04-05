@@ -1,25 +1,30 @@
 package routes
 
 import (
-	"your_module_name/controllers"
+	"cem-karaca-bose/controllers"
+	"cem-karaca-bose/middlewares"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-// SetupOrderRoutes: Emir ve market route'larını tanımla
-// main.go'da çağrılacak: routes.SetupOrderRoutes(app)
-func SetupOrderRoutes(app *fiber.App, authMiddleware fiber.Handler) {
-	// ── MARKET (public, giriş gerekmez) ──────────────────────────
-	market := app.Group("/api/market")
-	market.Get("/", controllers.GetAllAssets)               // Tüm varlıklar
-	market.Get("/type/:type", controllers.GetAssetsByType)  // Kripto veya hisse filtrele
-	market.Get("/:symbol", controllers.GetAssetBySymbol)    // Tekil varlık detayı
+func SetupRoutes(app *fiber.App) {
+	api := app.Group("/api/v1")
 
-	// ── ORDERS (private, JWT gerekir) ────────────────────────────
-	orders := app.Group("/api/orders", authMiddleware)
-	orders.Post("/", controllers.PlaceOrder)         // Emir ver (al/sat)
-	orders.Get("/", controllers.GetMyOrders)         // Tüm emirlerim
-	orders.Get("/buy", controllers.GetMyBuyOrders)   // Alım emirlerim
-	orders.Get("/sell", controllers.GetMySellOrders) // Satım emirlerim
-	orders.Delete("/:id", controllers.CancelOrder)   // Emri iptal et
+	// ── MARKET (public) ──────────────────────────────────────────
+	market := api.Group("/market")
+	market.Get("/", controllers.GetAllAssets)
+	market.Get("/type/:type", controllers.GetAssetsByType)
+	market.Get("/:symbol", controllers.GetAssetBySymbol)
+
+	// ── TRADING (JWT gerekli) ─────────────────────────────────────
+	trading := api.Group("/trading", middlewares.RequireAuth)
+	trading.Post("/order", controllers.PlaceOrder)            // Gereksinim 11
+	trading.Get("/positions", controllers.GetOpenPositions)   // Gereksinim 12
+	trading.Post("/positions/:positionId/close", controllers.ClosePosition) // Gereksinim 13
+	trading.Get("/history", controllers.GetTradingHistory)    // Gereksinim 14
+	trading.Get("/portfolio", controllers.GetPortfolio)       // Gereksinim 15
+
+	// ── ADMIN (JWT + Admin yetkisi) ───────────────────────────────
+	admin := api.Group("/admin", middlewares.RequireAuth, middlewares.RequireAdmin)
+	admin.Post("/announcements", controllers.CreateAnnouncement) // Gereksinim 16
 }

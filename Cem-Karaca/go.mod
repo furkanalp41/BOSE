@@ -1,9 +1,10 @@
-module your_module_name
+module cem-karaca-bose
 
-go 1.26.0
+go 1.21
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.12
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1
