@@ -176,12 +176,19 @@ func AnalyzeWatchlist(engine *market.PriceEngine, providers *ai.ProviderChain) f
 
 		if body.WatchlistID > 0 {
 			var wl models.Watchlist
-			if err := config.DB.Preload("Items").Where("id = ? AND user_id = ?", body.WatchlistID, claims.UserID).First(&wl).Error; err == nil {
-				watchlistName = wl.Name
-				for _, item := range wl.Items {
-					p := prices[item.Symbol]
-					items = append(items, analyzeItem{symbol: item.Symbol, price: p})
+			if err := config.DB.Preload("Items").Where("id = ? AND user_id = ?", body.WatchlistID, claims.UserID).First(&wl).Error; err != nil {
+				return fiber.NewError(fiber.StatusNotFound, "watchlist not found")
+			}
+			watchlistName = wl.Name
+			for _, item := range wl.Items {
+				if item.Symbol == "" || item.Symbol == "UNKNOWN" {
+					continue
 				}
+				p := prices[item.Symbol]
+				items = append(items, analyzeItem{symbol: item.Symbol, price: p})
+			}
+			if len(wl.Items) > 0 && len(items) == 0 {
+				return fiber.NewError(fiber.StatusBadRequest, "watchlist contains no valid symbols — add some assets first")
 			}
 		}
 

@@ -7,6 +7,7 @@ import (
 	"github.com/uraniumz/bose/config"
 	"github.com/uraniumz/bose/middleware"
 	"github.com/uraniumz/bose/models"
+	"github.com/uraniumz/bose/services/market"
 )
 
 // CreateWatchlist handles POST /api/v1/watchlist/
@@ -45,43 +46,50 @@ func GetWatchlists(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"data": watchlists})
 }
 
-// AddWatchlistItem handles POST /api/v1/watchlist/:id/items
-func AddWatchlistItem(c *fiber.Ctx) error {
-	claims := c.Locals("claims").(*middleware.Claims)
+// AddWatchlistItem returns a handler for POST /api/v1/watchlist/:id/items.
+// It validates the symbol against the live market engine before inserting.
+func AddWatchlistItem(engine *market.PriceEngine) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		claims := c.Locals("claims").(*middleware.Claims)
 
-	wlID, err := c.ParamsInt("id")
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "invalid watchlist id")
-	}
+		wlID, err := c.ParamsInt("id")
+		if err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, "invalid watchlist id")
+		}
 
-	var wl models.Watchlist
-	if err := config.DB.Where("id = ? AND user_id = ?", wlID, claims.UserID).First(&wl).Error; err != nil {
-		return fiber.NewError(fiber.StatusNotFound, "watchlist not found")
-	}
+		var wl models.Watchlist
+		if err := config.DB.Where("id = ? AND user_id = ?", wlID, claims.UserID).First(&wl).Error; err != nil {
+			return fiber.NewError(fiber.StatusNotFound, "watchlist not found")
+		}
 
-	var body struct {
-		Symbol string `json:"symbol"`
-	}
-	if err := c.BodyParser(&body); err != nil || strings.TrimSpace(body.Symbol) == "" {
-		return fiber.NewError(fiber.StatusBadRequest, "symbol is required")
-	}
-	symbol := strings.ToUpper(strings.TrimSpace(body.Symbol))
+		var body struct {
+			Symbol string `json:"symbol"`
+		}
+		if err := c.BodyParser(&body); err != nil || strings.TrimSpace(body.Symbol) == "" {
+			return fiber.NewError(fiber.StatusBadRequest, "symbol is required")
+		}
+		symbol := strings.ToUpper(strings.TrimSpace(body.Symbol))
 
-	// Check for duplicate
-	var existing models.WatchlistItem
-	if err := config.DB.Where("watchlist_id = ? AND symbol = ?", wlID, symbol).First(&existing).Error; err == nil {
-		return fiber.NewError(fiber.StatusConflict, "item already exists in watchlist")
-	}
+		if !market.ValidSymbol(engine, symbol) {
+			return fiber.NewError(fiber.StatusNotFound, "symbol not found in market — check available assets via GET /market/assets")
+		}
 
-	item := models.WatchlistItem{
-		WatchlistID: uint(wlID),
-		Symbol:      symbol,
-	}
-	if err := config.DB.Create(&item).Error; err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "failed to add item")
-	}
+		// Check for duplicate
+		var existing models.WatchlistItem
+		if err := config.DB.Where("watchlist_id = ? AND symbol = ?", wlID, symbol).First(&existing).Error; err == nil {
+			return fiber.NewError(fiber.StatusConflict, "item already exists in watchlist")
+		}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": item})
+		item := models.WatchlistItem{
+			WatchlistID: uint(wlID),
+			Symbol:      symbol,
+		}
+		if err := config.DB.Create(&item).Error; err != nil {
+			return fiber.NewError(fiber.StatusInternalServerError, "failed to add item")
+		}
+
+		return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": item})
+	}
 }
 
 // DeleteWatchlist handles DELETE /api/v1/watchlist/:id

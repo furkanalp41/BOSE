@@ -54,7 +54,7 @@ func SetupRoutes(app *fiber.App, engine *market.PriceEngine, hub *market.Hub, pr
 	wl.Post("/", controllers.CreateWatchlist)
 	wl.Get("/", controllers.GetWatchlists)
 	wl.Delete("/:id", controllers.DeleteWatchlist)
-	wl.Post("/:id/items", controllers.AddWatchlistItem)
+	wl.Post("/:id/items", controllers.AddWatchlistItem(engine))
 	wl.Delete("/:id/items/:itemId", controllers.DeleteWatchlistItem)
 	wl.Post("/alerts", controllers.CreateAlert)
 	wl.Get("/alerts", controllers.GetAlerts)

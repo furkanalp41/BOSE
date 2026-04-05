@@ -15,8 +15,8 @@ type Watchlist struct {
 // WatchlistItem links a market asset (by symbol) to a watchlist.
 type WatchlistItem struct {
 	ID          uint      `gorm:"primaryKey" json:"id"`
-	WatchlistID uint      `gorm:"index;not null" json:"watchlistId"`
-	Symbol      string    `gorm:"type:varchar(20);not null;default:'UNKNOWN'" json:"symbol"`
+	WatchlistID uint      `gorm:"index:idx_wl_items_wl_symbol,priority:1;not null" json:"watchlistId"`
+	Symbol      string    `gorm:"type:varchar(20);index:idx_wl_items_wl_symbol,priority:2;not null;default:'UNKNOWN'" json:"symbol"`
 	CreatedAt   time.Time `json:"createdAt"`
 }
 

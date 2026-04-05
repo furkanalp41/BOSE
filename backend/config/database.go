@@ -31,7 +31,9 @@ func ConnectDB() {
 	// Drop stale columns left over from previous schema.
 	// GORM AutoMigrate never removes columns, so we do it explicitly.
 	db.Exec("ALTER TABLE watchlist_items DROP COLUMN IF EXISTS market_item_id")
+	db.Exec("ALTER TABLE watchlist_items DROP COLUMN IF EXISTS market_asset_id")
 	db.Exec("ALTER TABLE alerts DROP COLUMN IF EXISTS market_item_id")
+	db.Exec("ALTER TABLE alerts DROP COLUMN IF EXISTS market_asset_id")
 
 	// Backfill NULL symbols so the NOT NULL constraint can be applied by AutoMigrate.
 	db.Exec("UPDATE watchlist_items SET symbol = 'UNKNOWN' WHERE symbol IS NULL OR symbol = ''")
