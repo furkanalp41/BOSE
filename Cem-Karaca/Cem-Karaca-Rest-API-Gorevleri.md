@@ -35,16 +35,7 @@ Response: 200 OK - İşlem geçmişi listelendi.
 Endpoint: GET /api/v1/trading/portfolio
 Authentication: Bearer Token gerekli
 Response: 200 OK - Portföy bakiye ve pozisyon özeti döndürüldü.
-16. Duyuru Oluşturma
-Endpoint: POST /api/v1/admin/announcements
-Request Body:
 
-```json
-{
-  "title": "Sistem Bakımı",
-  "content": "Sistemimiz bu gece bakıma alınacaktır."
-}
-```
 
 Authentication: Bearer Token gerekli (Admin)
 Response: 201 Created - Duyuru başarıyla oluşturuldu.
