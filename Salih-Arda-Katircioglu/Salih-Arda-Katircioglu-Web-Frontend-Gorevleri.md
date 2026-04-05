@@ -1,6 +1,9 @@
 Salih Arda Katırcıoğlu'nun Web Frontend Görevleri
 
-Front-end Test Videosu: Link buraya eklenecek
+
+Front-end Site Linki: [https://frontend-bose.vercel.app/]
+
+Front-end Test Videosu: [https://youtu.be/28jhHzgf9sc] 
 
 Yeni İzleme Listesi Oluşturma Sayfası
 API Endpoint: POST /watchlist
