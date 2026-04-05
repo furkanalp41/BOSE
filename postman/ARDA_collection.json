@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "arda-bose-collection",
+		"name": "BOSE - Salih Arda Katırcıoğlu (Watchlist & Alerts)",
+		"description": "Salih Arda Katırcıoğlu'nun sorumlu olduğu 9 endpoint.\nAPI Base URL: https://bose-platform.onrender.com/api/v1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://bose-platform.onrender.com/api/v1"
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	],
+	"item": [
+		{
+			"name": "Watchlist",
+			"item": [
+				{
+					"name": "1. POST /watchlist/ - Liste Oluştur",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Kripto Favori\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/watchlist/",
+							"host": ["{{baseUrl}}"],
+							"path": ["watchlist", ""]
+						}
+					}
+				},
+				{
+					"name": "2. GET /watchlist/ - Listeleri Getir",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/watchlist/",
+							"host": ["{{baseUrl}}"],
+							"path": ["watchlist", ""]
+						}
+					}
+				},
+				{
+					"name": "3. POST /watchlist/:id/items - Sembol Ekle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"symbol\": \"BTC\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/watchlist/1/items",
+							"host": ["{{baseUrl}}"],
+							"path": ["watchlist", "1", "items"]
+						}
+					}
+				},
+				{
+					"name": "4. DELETE /watchlist/:id/items/:itemId - Sembol Çıkar",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/watchlist/1/items/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["watchlist", "1", "items", "1"]
+						}
+					}
+				},
+				{
+					"name": "5. DELETE /watchlist/:id - Liste Sil",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/watchlist/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["watchlist", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Alerts",
+			"item": [
+				{
+					"name": "6. POST /watchlist/alerts - Alarm Oluştur",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"symbol\": \"BTC\",\n  \"target_price\": 70000,\n  \"condition\": \"ABOVE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/watchlist/alerts",
+							"host": ["{{baseUrl}}"],
+							"path": ["watchlist", "alerts"]
+						}
+					}
+				},
+				{
+					"name": "7. GET /watchlist/alerts - Alarmları Listele",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/watchlist/alerts",
+							"host": ["{{baseUrl}}"],
+							"path": ["watchlist", "alerts"]
+						}
+					}
+				},
+				{
+					"name": "8. DELETE /watchlist/alerts/:alertId - Alarm Sil",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/watchlist/alerts/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["watchlist", "alerts", "1"]
+						}
+					}
+				},
+				{
+					"name": "9. GET /watchlist/alerts/triggered - Tetiklenen Alarmlar",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/watchlist/alerts/triggered",
+							"host": ["{{baseUrl}}"],
+							"path": ["watchlist", "alerts", "triggered"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

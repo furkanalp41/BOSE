@@ -1,0 +1,252 @@
+{
+	"info": {
+		"_postman_id": "furkan-bose-collection",
+		"name": "BOSE - Furkan Alp Günay (Auth, User, Admin)",
+		"description": "Furkan Alp Günay'ın sorumlu olduğu 10 endpoint.\nAPI Base URL: https://bose-platform.onrender.com/api/v1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://bose-platform.onrender.com/api/v1"
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "1. Register - Üye Olma",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Furkan Test\",\n  \"email\": \"furkan@test.com\",\n  \"password\": \"Test1234!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "2. Login - Giriş Yapma",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set('token', jsonData.token);",
+									"    console.log('Token kaydedildi!');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"furkan@test.com\",\n  \"password\": \"Test1234!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "3. GET /users/me - Profil Görüntüleme",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "me"]
+						}
+					}
+				},
+				{
+					"name": "4. GET /users/:userId - Kullanıcı Detayı",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "1"]
+						}
+					}
+				},
+				{
+					"name": "5. PUT /users/:userId - Profil Güncelleme",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"full_name\": \"Furkan Alp Günay\",\n  \"risk_level\": \"HIGH\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "1"]
+						}
+					}
+				},
+				{
+					"name": "6. DELETE /users/:userId - Hesap Silme",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "1"]
+						}
+					}
+				},
+				{
+					"name": "7. POST /users/:userId/ai-preferences - AI Tercihleri",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"riskLevel\": \"HIGH\",\n  \"investmentTerm\": \"SHORT_TERM\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/1/ai-preferences",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "1", "ai-preferences"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "8. GET /admin/logs - Admin Logları",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/logs",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "logs"]
+						}
+					}
+				},
+				{
+					"name": "9. PUT /admin/users/:id/role - Rol Güncelleme",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"role\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/users/2/role",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "users", "2", "role"]
+						}
+					}
+				},
+				{
+					"name": "10. DELETE /admin/users/:id - Admin Kullanıcı Silme",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admin/users/2",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "users", "2"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

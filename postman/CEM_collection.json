@@ -1,0 +1,148 @@
+{
+	"info": {
+		"_postman_id": "cem-bose-collection",
+		"name": "BOSE - Cem Karaca (Trading, Admin Announcements)",
+		"description": "Cem Karaca'nın sorumlu olduğu 6 endpoint.\nAPI Base URL: https://bose-platform.onrender.com/api/v1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://bose-platform.onrender.com/api/v1"
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	],
+	"item": [
+		{
+			"name": "Trading",
+			"item": [
+				{
+					"name": "1. POST /trading/order - Alım Emri (BUY)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"symbol\": \"BTC\",\n  \"side\": \"BUY\",\n  \"quantity\": 0.01\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/trading/order",
+							"host": ["{{baseUrl}}"],
+							"path": ["trading", "order"]
+						}
+					}
+				},
+				{
+					"name": "2. GET /trading/positions - Açık Pozisyonlar",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/trading/positions",
+							"host": ["{{baseUrl}}"],
+							"path": ["trading", "positions"]
+						}
+					}
+				},
+				{
+					"name": "3. POST /trading/positions/:id/close - Pozisyon Kapat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/trading/positions/1/close",
+							"host": ["{{baseUrl}}"],
+							"path": ["trading", "positions", "1", "close"]
+						}
+					}
+				},
+				{
+					"name": "4. GET /trading/history - İşlem Geçmişi",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/trading/history",
+							"host": ["{{baseUrl}}"],
+							"path": ["trading", "history"]
+						}
+					}
+				},
+				{
+					"name": "5. GET /trading/portfolio - Portföy Özeti",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/trading/portfolio",
+							"host": ["{{baseUrl}}"],
+							"path": ["trading", "portfolio"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "6. POST /admin/announcements - Duyuru Oluştur",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Sistem bakımda!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admin/announcements",
+							"host": ["{{baseUrl}}"],
+							"path": ["admin", "announcements"]
+						}
+					}
+				}
+			]
+		}
+	]
+}
