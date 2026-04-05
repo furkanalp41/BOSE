@@ -1,6 +1,7 @@
 # REST API Görev Dağılımı
 
 **REST API Adresi:** `https://bose-platform.onrender.com/api/v1`
+**REST API SWAGGER UI:** `https://bose-platform.onrender.com/docs`
 
 Bu dokümanda, **AI Destekli Borsa ve Kripto Simülasyonu (BOSE)** projemizin arka planında çalışan, Go (Fiber) framework'üne dayalı REST API metotlarının geliştirilmesinden sorumlu ekip üyeleri listelenmektedir. Her grup üyesi (UraniumZ ekibi), kendisine atanan API endpoint'lerinin Go dilinde yazılmasından, veritabanı (PostgreSQL) işlemlerinden, yetkilendirme (JWT) kontrollerinden ve Postman testlerinden sorumludur.
 
