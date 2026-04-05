@@ -1,4 +1,6 @@
 Front-end Test Videosu:[https://www.youtube.com/watch?v=Te9yOZwwhY0]
+
+
 Emir Oluşturma Sayfası
 API Endpoint: POST /api/v1/trading/order Görev: Anlık piyasa fiyatından alım-satım panelinin tasarımı UI Bileşenleri: Al (Yeşil) ve Sat (Kırmızı) sekmeleri Miktar (Lot/Adet) input alanı İşlem tutarı özeti (Miktar * Anlık Fiyat) Büyük ve dikkat çekici "Alış Emri Gönder" butonu Form Validasyonu: Miktar 0'dan büyük olmalı Kullanıcının bakiyesi işlem tutarını karşılamıyorsa buton disabled olmalı Kullanıcı Deneyimi: Geçersiz miktar girildiğinde input altında kırmızı uyarı Başarılı işlemde konfeti efekti veya success toast mesajı Teknik Detaylar: Gerçek zamanlı fiyat verisiyle işlem tutarının anlık hesaplanması Number formatting (Binlik ayraçlar ve ondalık kısımlar)
 
