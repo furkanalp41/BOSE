@@ -1,4 +1,4 @@
-**API Test Videosu:** [Link buraya eklenecek](#)
+**API Test Videosu:** [https://www.youtube.com/watch?v=UwrBQ9VU9Uw](#)
 
 ### 31. Market Varlıklarını Listeleme
 * **Endpoint:** `GET /market/assets`
