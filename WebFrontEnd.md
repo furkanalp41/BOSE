@@ -1,8 +1,8 @@
 # Web Frontend Görev Dağılımı
 
-**Web Frontend Adresi:** `frontend.simulasyon.com` *(Canlıya alındığında güncellenecek)*
+**Web Frontend Adresi:** `https://frontend-bose.vercel.app`
 
-Bu dokümanda, **AI Destekli Borsa ve Kripto Simülasyonu** web uygulamasının kullanıcı arayüzü (UI) ve kullanıcı deneyimi (UX) görevleri listelenmektedir. Her grup üyesi (UraniumZ ekibi), kendisine atanan sayfaların tasarımı, gerçek zamanlı verilerin (Kafka/Redis) arayüze entegrasyonu ve kullanıcı etkileşimlerinden sorumludur.
+Bu dokümanda, **AI Destekli Borsa ve Kripto Simülasyonu (BOSE)** web uygulamasının kullanıcı arayüzü (UI) ve kullanıcı deneyimi (UX) görevleri listelenmektedir. Her grup üyesi (UraniumZ ekibi), kendisine atanan sayfaların React (Vite) ile tasarımı, gerçek zamanlı verilerin (WebSocket) arayüze entegrasyonu ve kullanıcı etkileşimlerinden sorumludur.
 
 ## Grup Üyelerinin Web Frontend Görevleri
 
@@ -25,7 +25,7 @@ Bu dokümanda, **AI Destekli Borsa ve Kripto Simülasyonu** web uygulamasının 
 * **Touch-Friendly:** Mobilde hızlı emir girebilmek için minimum 44x44px dokunmatik hedef (touch target) alanları.
 
 **2. Tasarım Sistemi ve Finansal Temalar**
-* **CSS Framework:** Tailwind CSS, Bootstrap veya Material-UI.
+* **CSS Framework:** Tailwind CSS.
 * **Renk Paleti & Tema:** Borsa standartlarına uygun yeşil/kırmızı tonlar, AI modülleri için fütüristik renkler. Göz yormaması için zorunlu **Dark Mode (Karanlık Tema)** desteği (CSS variables ile).
 * **Tipografi:** Rakamların ve fiyatların hizalı görünmesi için Monospaced (eşit aralıklı) font destekli tipografi.
 * **Component Library:** Emir defteri, fiyat grafiği, portföy özeti gibi tekrar kullanılabilir (reusable) UI bileşenleri.
@@ -51,18 +51,18 @@ Bu dokümanda, **AI Destekli Borsa ve Kripto Simülasyonu** web uygulamasının 
 * **Graceful Degradation:** Eski tarayıcılarda WebSocket veya gelişmiş grafikler desteklenmiyorsa standart REST tabanlı yedek (fallback) gösterimler.
 
 **7. State Management (Durum Yönetimi)**
-* **Global State:** Kullanıcı bakiyesi ve oturum bilgileri için Redux, Zustand veya Context API.
-* **Server & Real-time State:** REST istekleri için React Query/SWR ve anlık WebSocket fiyat akışları için özel hook'lar.
-* **Form State:** Karmaşık alım-satım ve limit emri formları için formik veya React Hook Form.
+* **Global State:** Kullanıcı bakiyesi ve oturum bilgileri için Zustand.
+* **Server & Real-time State:** REST istekleri için Axios ve anlık WebSocket fiyat akışları için özel hook'lar.
+* **Form State:** Alım-satım ve emir formları için kontrollü React bileşenleri.
 
 **8. Routing (Yönlendirme)**
 * **Protected Routes:** Sadece giriş yapmış kullanıcıların Portföy ve İşlem panellerine erişebilmesi (Authentication guards).
-* **Client-Side Routing:** Sayfa yenilenmeden hisseler arası anında geçiş (React Router, Vue Router).
+* **Client-Side Routing:** Sayfa yenilenmeden hisseler arası anında geçiş (React Router v6).
 * **404 Handling:** Olmayan bir hisse veya sayfa arandığında özel 404 sayfası.
 
 **9. API ve WebSocket Entegrasyonu**
 * **Gerçek Zamanlı Veri (WebSocket/SSE):** Saniyelik fiyat güncellemeleri, anlık emir defteri ve AI bildirimleri için kesintisiz bağlantı yönetimi.
-* **HTTP Client:** Güvenli REST istekleri için Axios veya Fetch API.
+* **HTTP Client:** Güvenli REST istekleri için Axios.
 * **Interceptors:** API isteklerine otomatik JWT Token ekleme ve yetki (401) hatasında otomatik Token yenileme (Refresh Token).
 * **Loading States:** API cevabı veya AI analizi beklenirken arayüzde iskelet yükleme (skeleton loader) gösterimi.
 
@@ -71,6 +71,6 @@ Bu dokümanda, **AI Destekli Borsa ve Kripto Simülasyonu** web uygulamasının 
 * **E2E Tests:** Kullanıcının giriş yapıp hisse alma senaryosunun baştan sona testi (Cypress veya Playwright).
 
 **11. Build ve Deployment (Derleme ve Dağıtım)**
-* **Build Tool:** Yüksek hız için Vite, Next.js veya Webpack.
+* **Build Tool:** Yüksek hız için Vite.
 * **Environment Variables:** API URL'leri ve gizli anahtarlar için `.env` yapılandırması.
-* **CI/CD & Hosting:** GitHub Actions üzerinden Vercel, Netlify veya AWS'ye otomatik dağıtım süreçleri.
+* **CI/CD & Hosting:** Vercel üzerinden otomatik dağıtım süreçleri.

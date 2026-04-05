@@ -12,47 +12,45 @@ info:
     UraniumZ ekibi tarafından geliştirilen, gerçek zamanlı Borsa İstanbul (BİST) ve Kripto para simülasyonu için RESTful API.
     
     ## Özellikler
-    - Kullanıcı profili, bakiye ve güvenlik logları yönetimi
-    - İzleme listesi (Watchlist) operasyonları
+    - Kullanıcı profili, bakiye ve yönetim işlemleri
+    - İzleme listesi (Watchlist) ve fiyat alarmı operasyonları
     - Gerçek zamanlı piyasa verileri ve varlık yönetimi
-    - Alım/Satım emir işlemleri (Piyasa ve Limit)
-    - Yapay zeka destekli durum, portföy analizi ve akıllı sohbet
-    - Fiyat alarmları ve bildirimler
+    - Alım/Satım emir işlemleri ve pozisyon yönetimi
+    - Yapay zeka destekli portföy analizi, watchlist analizi ve akıllı sohbet
+    - Liderlik tablosu ve başarım sistemi
     - JWT tabanlı kimlik doğrulama
   version: 1.0.0
   contact:
     name: UraniumZ API Destek Ekibi
-    email: api-support@simulasyon.com
-    url: [https://api.simulasyon.com/support](https://api.simulasyon.com/support)
+    email: api-support@bose-platform.onrender.com
+    url: https://bose-platform.onrender.com
   license:
     name: MIT
-    url: [https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
+    url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: [https://api.simulasyon.com/v1](https://api.simulasyon.com/v1)
-    description: Production server
-  - url: [https://staging-api.simulasyon.com/v1](https://staging-api.simulasyon.com/v1)
-    description: Staging server
-  - url: http://localhost:8080/v1
+  - url: https://bose-platform.onrender.com/api/v1
+    description: Production server (Render)
+  - url: http://localhost:8080/api/v1
     description: Development server
 
 tags:
   - name: auth
     description: Kimlik doğrulama işlemleri (Kayıt, Giriş)
   - name: users
-    description: Kullanıcı profili, bakiye ve log işlemleri
-  - name: watchlists
-    description: Kullanıcıya özel izleme listesi işlemleri
-  - name: orders
-    description: Alım, satım ve emir (Market/Limit) işlemleri
-  - name: alerts
-    description: Fiyat alarmı ve bildirim kuralı işlemleri
+    description: Kullanıcı profili, güncelleme ve AI tercih işlemleri
+  - name: trading
+    description: Emir oluşturma, pozisyon yönetimi ve portföy işlemleri
+  - name: watchlist
+    description: İzleme listesi ve fiyat alarmı işlemleri
   - name: ai
     description: Yapay zeka analiz, rapor ve sohbet işlemleri
   - name: market
-    description: Piyasa verileri ve varlık (Hisse/Kripto) işlemleri
+    description: Piyasa verileri ve varlık listeleme işlemleri
+  - name: leaderboard
+    description: Liderlik tablosu ve başarım işlemleri
   - name: admin
-    description: Sistem sağlık ve yönetim işlemleri
+    description: Yönetim paneli, kullanıcı ve varlık yönetimi işlemleri
 
 paths:
   /auth/register:
@@ -60,21 +58,21 @@ paths:
       tags:
         - auth
       summary: Yeni kullanıcı kaydı
-      description: Sisteme yeni bir kullanıcı kaydeder ve başlangıç sanal bakiyesini tanımlar.
+      description: Sisteme yeni bir kullanıcı kaydeder ve 100.000 TL başlangıç sanal bakiyesini tanımlar.
       operationId: registerUser
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRegistration'
+              $ref: '#/components/schemas/RegisterRequest'
       responses:
         '201':
           description: Kullanıcı başarıyla oluşturuldu
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/AuthResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
@@ -96,14 +94,33 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginCredentials'
+              $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
           description: Giriş başarılı
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthToken'
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /users/me:
+    get:
+      tags:
+        - users
+      summary: Kendi profilini görüntüle
+      description: JWT token'dan alınan kullanıcı ID'si ile kendi profil bilgilerini getirir.
+      operationId: getMe
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '401':
           $ref: '#/components/responses/Unauthorized'
 
@@ -134,7 +151,7 @@ paths:
       tags:
         - users
       summary: Kullanıcı güncelle
-      description: Kullanıcı bilgilerini günceller.
+      description: Kullanıcı profil bilgilerini günceller.
       operationId: updateUser
       security:
         - bearerAuth: []
@@ -145,7 +162,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserUpdate'
+              $ref: '#/components/schemas/UpdateProfileRequest'
       responses:
         '200':
           description: Başarılı
@@ -174,35 +191,12 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /users/{userId}/logs:
-    get:
-      tags:
-        - users
-      summary: Giriş hareketlerini listele
-      description: Kullanıcının son giriş loglarını siber güvenlik için getirir.
-      operationId: getUserLogs
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/UserIdParam'
-      responses:
-        '200':
-          description: Başarılı
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/LogEntry'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
   /users/{userId}/ai-preferences:
     post:
       tags:
         - users
       summary: AI tercihlerini kaydet
-      description: Yapay zeka yatırım risk tercihlerini kaydeder.
+      description: Yapay zeka yatırım risk seviyesi ve vade tercihlerini kaydeder.
       operationId: saveAIPreferences
       security:
         - bearerAuth: []
@@ -213,19 +207,126 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AIPreference'
+              $ref: '#/components/schemas/AIPreferencesRequest'
       responses:
         '200':
           description: Tercihler kaydedildi
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /watchlists:
+  /trading/order:
+    post:
+      tags:
+        - trading
+      summary: Emir oluştur
+      description: Anlık piyasa fiyatından alım veya satım emri oluşturur. Alımda bakiyeden düşer, satışta pozisyon kapatılır.
+      operationId: placeOrder
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Emir gerçekleşti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trade'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /trading/positions:
     get:
       tags:
-        - watchlists
+        - trading
+      summary: Açık pozisyonları listele
+      description: Kullanıcının tüm açık pozisyonlarını güncel piyasa fiyatları ve PnL ile getirir.
+      operationId: getPositions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PositionDetail'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /trading/positions/{positionId}/close:
+    post:
+      tags:
+        - trading
+      summary: Pozisyon kapat
+      description: Belirtilen pozisyonu güncel piyasa fiyatından kapatır ve bakiyeyi günceller.
+      operationId: closePosition
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PositionIdParam'
+      responses:
+        '200':
+          description: Pozisyon kapatıldı
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /trading/history:
+    get:
+      tags:
+        - trading
+      summary: İşlem geçmişi
+      description: Kullanıcının gerçekleşmiş tüm alım-satım işlemlerini kronolojik listeler.
+      operationId: getTradeHistory
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trade'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /trading/portfolio:
+    get:
+      tags:
+        - trading
+      summary: Portföy özeti
+      description: Kullanıcının toplam bakiye, pozisyon değeri, PnL ve detaylı pozisyon bilgilerini döner.
+      operationId: getPortfolio
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /watchlist:
+    get:
+      tags:
+        - watchlist
       summary: İzleme listelerini getir
-      description: Kullanıcının tüm izleme listelerini ve varlık anlık fiyatlarını listeler.
+      description: Kullanıcının tüm izleme listelerini ve içlerindeki varlıkları listeler.
       operationId: getWatchlists
       security:
         - bearerAuth: []
@@ -243,9 +344,9 @@ paths:
 
     post:
       tags:
-        - watchlists
+        - watchlist
       summary: Yeni liste oluştur
-      description: Yeni bir izleme listesi klasörü oluşturur.
+      description: Yeni bir izleme listesi oluşturur.
       operationId: createWatchlist
       security:
         - bearerAuth: []
@@ -265,53 +366,32 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /watchlists/{listId}:
-    put:
-      tags:
-        - watchlists
-      summary: Liste adını güncelle
-      operationId: updateWatchlist
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/ListIdParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WatchlistUpdate'
-      responses:
-        '200':
-          description: Güncellendi
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
+  /watchlist/{id}:
     delete:
       tags:
-        - watchlists
+        - watchlist
       summary: Listeyi sil
       operationId: deleteWatchlist
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/ListIdParam'
+        - $ref: '#/components/parameters/WatchlistIdParam'
       responses:
         '204':
           description: Silindi
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /watchlists/{listId}/assets:
+  /watchlist/{id}/items:
     post:
       tags:
-        - watchlists
+        - watchlist
       summary: Listeye varlık ekle
-      operationId: addAssetToWatchlist
+      operationId: addWatchlistItem
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/ListIdParam'
+        - $ref: '#/components/parameters/WatchlistIdParam'
       requestBody:
         required: true
         content:
@@ -321,169 +401,34 @@ paths:
               properties:
                 symbol:
                   type: string
-                  example: "BTCUSDT"
+                  example: "BTC"
       responses:
         '201':
           description: Eklendi
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /watchlists/{listId}/assets/{assetSymbol}:
+  /watchlist/{id}/items/{itemId}:
     delete:
       tags:
-        - watchlists
+        - watchlist
       summary: Listeden varlık çıkar
-      operationId: removeAssetFromWatchlist
+      operationId: removeWatchlistItem
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/ListIdParam'
-        - $ref: '#/components/parameters/AssetSymbolParam'
+        - $ref: '#/components/parameters/WatchlistIdParam'
+        - $ref: '#/components/parameters/ItemIdParam'
       responses:
         '204':
           description: Çıkarıldı
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /orders/market:
+  /watchlist/alerts:
     post:
       tags:
-        - orders
-      summary: Piyasa emri oluştur
-      description: Anlık fiyattan alım veya satım yapar.
-      operationId: createMarketOrder
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MarketOrderCreate'
-      responses:
-        '201':
-          description: Emir gerçekleşti
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /orders/limit:
-    post:
-      tags:
-        - orders
-      summary: Limit emir oluştur
-      description: Belirli bir fiyattan gerçekleşmek üzere bekleyen emir oluşturur.
-      operationId: createLimitOrder
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LimitOrderCreate'
-      responses:
-        '201':
-          description: Emir kaydedildi ve bakiye bloke edildi
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-
-  /orders/open:
-    get:
-      tags:
-        - orders
-      summary: Açık emirleri listele
-      description: Henüz gerçekleşmemiş limit emirleri getirir.
-      operationId: getOpenOrders
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Başarılı
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Order'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /orders/history:
-    get:
-      tags:
-        - orders
-      summary: İşlem geçmişi
-      description: Gerçekleşmiş ve iptal edilmiş tüm emirleri kronolojik listeler.
-      operationId: getOrderHistory
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/LimitParam'
-      responses:
-        '200':
-          description: Başarılı
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OrderList'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /orders/{orderId}:
-    put:
-      tags:
-        - orders
-      summary: Limit emir güncelle
-      operationId: updateLimitOrder
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/OrderIdParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OrderUpdate'
-      responses:
-        '200':
-          description: Güncellendi
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-    delete:
-      tags:
-        - orders
-      summary: Bekleyen emri iptal et
-      description: Emri iptal eder ve bloke bakiyeyi iade eder.
-      operationId: cancelOrder
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/OrderIdParam'
-      responses:
-        '204':
-          description: İptal edildi
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /alerts:
-    post:
-      tags:
-        - alerts
+        - watchlist
       summary: Fiyat alarmı kur
       operationId: createAlert
       security:
@@ -500,31 +445,29 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
 
-  /alerts/{alertId}:
-    put:
+    get:
       tags:
-        - alerts
-      summary: Alarmı güncelle
-      operationId: updateAlert
+        - watchlist
+      summary: Alarmları listele
+      operationId: getAlerts
       security:
         - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/AlertIdParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AlertUpdate'
       responses:
         '200':
-          description: Güncellendi
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
         '401':
           $ref: '#/components/responses/Unauthorized'
 
+  /watchlist/alerts/{alertId}:
     delete:
       tags:
-        - alerts
+        - watchlist
       summary: Alarmı sil
       operationId: deleteAlert
       security:
@@ -537,34 +480,179 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /ai/report/status/{assetSymbol}:
+  /watchlist/alerts/triggered:
     get:
       tags:
-        - ai
-      summary: AI Varlık Durum Raporu
-      description: Yapay zekanın hisse/kripto için AL/SAT/TUT tavsiyesi ve analizi.
-      operationId: getAIStatusReport
+        - watchlist
+      summary: Tetiklenmiş alarmları getir
+      description: Son kontrol döngüsünde tetiklenen alarmları listeler.
+      operationId: getTriggeredAlerts
       security:
         - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/AssetSymbolParam'
       responses:
         '200':
           description: Başarılı
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AIStatusReport'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /ai/report/portfolio/{userId}:
-    get:
+  /ai/advice:
+    post:
       tags:
         - ai
-      summary: AI Portföy Raporu
-      description: Portföy risk analizi ve AI strateji önerisi.
-      operationId: getAIPortfolioReport
+      summary: AI yatırım tavsiyesi
+      description: Belirtilen varlık için yapay zeka tabanlı AL/SAT/TUT tavsiyesi alır.
+      operationId: getAdvice
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIAdviceRequest'
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIAdviceResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /ai/reports/portfolio:
+    post:
+      tags:
+        - ai
+      summary: AI portföy raporu
+      description: ProviderChain (Gemini → Claude → Rules Engine) ile portföy risk analizi ve strateji önerisi.
+      operationId: analyzePortfolio
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIReportResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /ai/reports/watchlist:
+    post:
+      tags:
+        - ai
+      summary: AI watchlist raporu
+      description: İzleme listesindeki varlıklar için yapay zeka analizi.
+      operationId: analyzeWatchlist
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIReportResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /ai/reports/transactions:
+    post:
+      tags:
+        - ai
+      summary: AI işlem geçmişi raporu
+      description: İşlem geçmişi üzerinden yapay zeka performans analizi.
+      operationId: analyzeTransactions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIReportResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /ai/chat:
+    post:
+      tags:
+        - ai
+      summary: AI chatbot
+      description: Yapay zeka asistanı ile serbest metin sohbet.
+      operationId: aiChat
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIChatRequest'
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIChatResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /market/assets:
+    get:
+      tags:
+        - market
+      summary: Piyasa varlıklarını listele
+      description: PriceEngine tarafından üretilen anlık fiyatlarla tüm varlıkları döndürür.
+      operationId: getAssets
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MarketAsset'
+
+  /leaderboard/rankings:
+    get:
+      tags:
+        - leaderboard
+      summary: Liderlik tablosu
+      description: Tüm kullanıcıları toplam portföy değerine göre sıralar.
+      operationId: getRankings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LeaderboardEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /leaderboard/user/{userId}:
+    get:
+      tags:
+        - leaderboard
+      summary: Kullanıcı sıralaması
+      description: Belirtilen kullanıcının liderlik tablosundaki sırasını getirir.
+      operationId: getUserRank
       security:
         - bearerAuth: []
       parameters:
@@ -575,17 +663,105 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AIPortfolioReport'
+                $ref: '#/components/schemas/LeaderboardEntry'
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /ai/chat:
+  /leaderboard/achievements:
+    get:
+      tags:
+        - leaderboard
+      summary: Başarımları listele
+      description: Kullanıcının kazandığı başarım rozetlerini listeler.
+      operationId: getAchievements
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAchievement'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /admin/logs:
+    get:
+      tags:
+        - admin
+      summary: Admin loglarını görüntüle
+      description: Sistem yönetim loglarını getirir. Admin yetkisi gerektirir.
+      operationId: getAdminLogs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Başarılı
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/users/{id}:
+    delete:
+      tags:
+        - admin
+      summary: Kullanıcı sil (Admin)
+      description: Admin yetkisiyle herhangi bir kullanıcıyı siler.
+      operationId: adminDeleteUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Silindi
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/users/{id}/role:
+    put:
+      tags:
+        - admin
+      summary: Kullanıcı rolü güncelle (Admin)
+      description: Kullanıcının rolünü (user/admin) günceller.
+      operationId: adminUpdateRole
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum: [user, admin]
+      responses:
+        '200':
+          description: Güncellendi
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/announcements:
     post:
       tags:
-        - ai
-      summary: AI Chatbot
-      description: Yapay zeka asistanı ile etkileşim kurar.
-      operationId: sendAIChatMessage
+        - admin
+      summary: Duyuru oluştur (Admin)
+      description: Sistem genelinde duyuru yayınlar.
+      operationId: createAnnouncement
       security:
         - bearerAuth: []
       requestBody:
@@ -593,60 +769,39 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AIChatMessage'
+              $ref: '#/components/schemas/AnnouncementCreate'
       responses:
-        '200':
-          description: Başarılı
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AIChatMessage'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        '201':
+          description: Duyuru oluşturuldu
+        '403':
+          $ref: '#/components/responses/Forbidden'
 
-  /ai/history:
-    delete:
+  /admin/market/assets:
+    get:
       tags:
-        - ai
-      summary: AI geçmişini temizle
-      description: Kullanıcının tüm AI sohbet ve analiz geçmişini siler.
-      operationId: clearAIHistory
+        - admin
+      summary: Admin varlık listesi
+      description: Tüm market varlıklarını admin görünümüyle listeler.
+      operationId: adminGetAssets
       security:
         - bearerAuth: []
       responses:
-        '204':
-          description: Temizlendi
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /market/prices:
-    get:
-      tags:
-        - market
-      summary: Piyasa verilerini listele
-      description: Redis üzerinden akan anlık BİST ve Kripto fiyatlarını döndürür.
-      operationId: getMarketPrices
-      parameters:
-        - name: type
-          in: query
-          description: Varlık tipi
-          schema:
-            type: string
-            enum: [BIST, CRYPTO]
-      responses:
         '200':
           description: Başarılı
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MarketDataList'
+                type: array
+                items:
+                  $ref: '#/components/schemas/MarketAsset'
+        '403':
+          $ref: '#/components/responses/Forbidden'
 
-  /market/assets:
     post:
       tags:
-        - market
+        - admin
       summary: Yeni market varlığı ekle (Admin)
-      operationId: createMarketAsset
+      operationId: adminCreateAsset
       security:
         - bearerAuth: []
       requestBody:
@@ -661,16 +816,16 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
 
-  /market/assets/{assetId}:
+  /admin/market/assets/{symbol}:
     put:
       tags:
-        - market
+        - admin
       summary: Varlık bilgilerini güncelle (Admin)
-      operationId: updateMarketAsset
+      operationId: adminUpdateAsset
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/AssetIdParam'
+        - $ref: '#/components/parameters/SymbolParam'
       requestBody:
         required: true
         content:
@@ -683,22 +838,18 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
 
-  /admin/health:
-    get:
+    delete:
       tags:
         - admin
-      summary: Sistem durumunu kontrol et
-      description: Docker, Kafka ve Redis servis sağlık raporu.
-      operationId: getSystemHealth
+      summary: Market varlığı sil (Admin)
+      operationId: adminDeleteAsset
       security:
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SymbolParam'
       responses:
-        '200':
-          description: Başarılı
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HealthStatus'
+        '204':
+          description: Silindi
         '403':
           $ref: '#/components/responses/Forbidden'
 
@@ -708,7 +859,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: JWT token ile kimlik doğrulama
+      description: JWT token ile kimlik doğrulama (golang-jwt/v5, HS256)
 
   parameters:
     UserIdParam:
@@ -716,58 +867,38 @@ components:
       in: path
       required: true
       schema:
-        type: string
-        format: uuid
-    ListIdParam:
-      name: listId
+        type: integer
+    WatchlistIdParam:
+      name: id
       in: path
       required: true
       schema:
-        type: string
-        format: uuid
-    AssetSymbolParam:
-      name: assetSymbol
+        type: integer
+    ItemIdParam:
+      name: itemId
       in: path
       required: true
       schema:
-        type: string
-        example: "THYAO"
-    OrderIdParam:
-      name: orderId
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
+        type: integer
     AlertIdParam:
       name: alertId
       in: path
       required: true
       schema:
-        type: string
-        format: uuid
-    AssetIdParam:
-      name: assetId
+        type: integer
+    PositionIdParam:
+      name: positionId
+      in: path
+      required: true
+      schema:
+        type: integer
+    SymbolParam:
+      name: symbol
       in: path
       required: true
       schema:
         type: string
-        format: uuid
-    PageParam:
-      name: page
-      in: query
-      schema:
-        type: integer
-        minimum: 1
-        default: 1
-    LimitParam:
-      name: limit
-      in: query
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
+        example: "BTC"
 
   schemas:
     User:
@@ -776,11 +907,10 @@ components:
         - id
         - email
         - fullName
-        - balance
+        - virtualBalance
       properties:
         id:
-          type: string
-          format: uuid
+          type: integer
         email:
           type: string
           format: email
@@ -791,16 +921,28 @@ components:
         phone:
           type: string
           example: "+905551234567"
-        balance:
+        virtualBalance:
           type: number
           format: float
           description: Sanal cüzdan bakiyesi (TRY)
           example: 100000.00
+        role:
+          type: string
+          example: "user"
+        riskLevel:
+          type: string
+          enum: [LOW, MEDIUM, HIGH]
+        investmentTerm:
+          type: string
+          enum: [SHORT_TERM, MEDIUM_TERM, LONG_TERM]
         createdAt:
           type: string
           format: date-time
+        updatedAt:
+          type: string
+          format: date-time
 
-    UserRegistration:
+    RegisterRequest:
       type: object
       required:
         - email
@@ -816,18 +958,9 @@ components:
           minLength: 8
         fullName:
           type: string
-          minLength: 3
+          minLength: 2
 
-    UserUpdate:
-      type: object
-      properties:
-        fullName:
-          type: string
-          minLength: 3
-        phone:
-          type: string
-
-    LoginCredentials:
+    LoginRequest:
       type: object
       required:
         - email
@@ -840,36 +973,20 @@ components:
           type: string
           format: password
 
-    AuthToken:
+    UpdateProfileRequest:
+      type: object
+      properties:
+        fullName:
+          type: string
+          minLength: 2
+        phone:
+          type: string
+
+    AIPreferencesRequest:
       type: object
       required:
-        - token
-        - expiresIn
-        - user
-      properties:
-        token:
-          type: string
-        expiresIn:
-          type: integer
-          example: 3600
-        user:
-          $ref: '#/components/schemas/User'
-
-    LogEntry:
-      type: object
-      properties:
-        ipAddress:
-          type: string
-          example: "192.168.1.1"
-        deviceInfo:
-          type: string
-          example: "Chrome / Windows 11"
-        loginTime:
-          type: string
-          format: date-time
-
-    AIPreference:
-      type: object
+        - riskLevel
+        - investmentTerm
       properties:
         riskLevel:
           type: string
@@ -878,19 +995,153 @@ components:
           type: string
           enum: [SHORT_TERM, MEDIUM_TERM, LONG_TERM]
 
+    AuthResponse:
+      type: object
+      required:
+        - token
+        - user
+      properties:
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+    Trade:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        symbol:
+          type: string
+          example: "BTC"
+        side:
+          type: string
+          enum: [BUY, SELL]
+        quantity:
+          type: number
+          format: float
+        price:
+          type: number
+          format: float
+        total:
+          type: number
+          format: float
+        createdAt:
+          type: string
+          format: date-time
+
+    OrderRequest:
+      type: object
+      required:
+        - symbol
+        - side
+        - quantity
+      properties:
+        symbol:
+          type: string
+          example: "BTC"
+        side:
+          type: string
+          enum: [BUY, SELL]
+        quantity:
+          type: number
+          format: float
+          example: 0.5
+
+    Position:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        symbol:
+          type: string
+        quantity:
+          type: number
+          format: float
+        avgEntryPrice:
+          type: number
+          format: float
+        createdAt:
+          type: string
+          format: date-time
+
+    PositionDetail:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Position'
+        - type: object
+          properties:
+            currentPrice:
+              type: number
+              format: float
+            marketValue:
+              type: number
+              format: float
+            pnl:
+              type: number
+              format: float
+            pnlPercent:
+              type: number
+              format: float
+
+    PortfolioResponse:
+      type: object
+      properties:
+        balance:
+          type: number
+          format: float
+        inPositions:
+          type: number
+          format: float
+        totalValue:
+          type: number
+          format: float
+        pnl:
+          type: number
+          format: float
+        pnlPercent:
+          type: number
+          format: float
+        positions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PositionDetail'
+
     Watchlist:
       type: object
       properties:
         id:
-          type: string
-          format: uuid
+          type: integer
+        userId:
+          type: integer
         name:
           type: string
           example: "Kriptolarım"
-        assets:
+        items:
           type: array
           items:
-            $ref: '#/components/schemas/MarketAsset'
+            $ref: '#/components/schemas/WatchlistItem'
+        createdAt:
+          type: string
+          format: date-time
+
+    WatchlistItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        watchlistId:
+          type: integer
+        symbol:
+          type: string
+          example: "BTC"
+        createdAt:
+          type: string
+          format: date-time
 
     WatchlistCreate:
       type: object
@@ -901,177 +1152,99 @@ components:
           type: string
           example: "Kriptolarım"
 
-    WatchlistUpdate:
-      type: object
-      properties:
-        name:
-          type: string
-
-    Order:
+    Alert:
       type: object
       properties:
         id:
-          type: string
-          format: uuid
+          type: integer
+        userId:
+          type: integer
+        watchlist_id:
+          type: integer
         symbol:
           type: string
-          example: "BTCUSDT"
-        side:
-          type: string
-          enum: [BUY, SELL]
-        type:
-          type: string
-          enum: [MARKET, LIMIT]
-        quantity:
+          example: "BTC"
+        target_price:
           type: number
           format: float
-        targetPrice:
-          type: number
-          format: float
-        status:
+        condition:
           type: string
-          enum: [PENDING, COMPLETED, CANCELLED]
+          enum: [ABOVE, BELOW]
+        is_active:
+          type: boolean
         createdAt:
           type: string
           format: date-time
-
-    MarketOrderCreate:
-      type: object
-      required:
-        - symbol
-        - side
-        - quantity
-      properties:
-        symbol:
-          type: string
-        side:
-          type: string
-          enum: [BUY, SELL]
-        quantity:
-          type: number
-          format: float
-
-    LimitOrderCreate:
-      type: object
-      required:
-        - symbol
-        - side
-        - quantity
-        - targetPrice
-      properties:
-        symbol:
-          type: string
-        side:
-          type: string
-          enum: [BUY, SELL]
-        quantity:
-          type: number
-          format: float
-        targetPrice:
-          type: number
-          format: float
-
-    OrderUpdate:
-      type: object
-      properties:
-        quantity:
-          type: number
-          format: float
-        targetPrice:
-          type: number
-          format: float
-
-    OrderList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Order'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
 
     AlertCreate:
       type: object
       required:
         - symbol
-        - targetPrice
+        - target_price
         - condition
       properties:
         symbol:
           type: string
-          example: "THYAO"
-        targetPrice:
+          example: "BTC"
+        target_price:
           type: number
           format: float
         condition:
           type: string
-          enum: [GREATER_THAN, LESS_THAN]
-
-    AlertUpdate:
-      type: object
-      properties:
-        targetPrice:
-          type: number
-          format: float
-        isActive:
-          type: boolean
+          enum: [ABOVE, BELOW]
+        watchlist_id:
+          type: integer
 
     MarketAsset:
       type: object
       properties:
         symbol:
           type: string
-          example: "ASELS"
+          example: "BTC"
         name:
           type: string
-          example: "Aselsan"
-        type:
-          type: string
-          enum: [BIST, CRYPTO]
-        currentPrice:
+          example: "Bitcoin"
+        price:
           type: number
           format: float
         change24h:
           type: number
           format: float
-        isActive:
-          type: boolean
 
     MarketAssetCreate:
       type: object
       required:
         - symbol
         - name
-        - type
+        - price
       properties:
         symbol:
           type: string
         name:
           type: string
-        type:
-          type: string
-          enum: [BIST, CRYPTO]
+        price:
+          type: number
+          format: float
 
     MarketAssetUpdate:
       type: object
       properties:
-        description:
+        name:
           type: string
-        isActive:
-          type: boolean
+        price:
+          type: number
+          format: float
 
-    MarketDataList:
+    AIAdviceRequest:
       type: object
+      required:
+        - symbol
       properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/MarketAsset'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
+        symbol:
+          type: string
+          example: "BTC"
 
-    AIStatusReport:
+    AIAdviceResponse:
       type: object
       properties:
         symbol:
@@ -1079,93 +1252,104 @@ components:
         recommendation:
           type: string
           enum: [BUY, HOLD, SELL]
-        sentimentScore:
-          type: integer
-          example: 85
-        analysisText:
+        analysis:
           type: string
-          example: "Teknik göstergeler aşırı alım bölgesinde, kısa vadeli düzeltme beklenebilir."
 
-    AIPortfolioReport:
+    AIReportResponse:
       type: object
       properties:
-        riskScore:
-          type: integer
-          example: 40
-        diversificationAdvice:
+        report:
           type: string
-          example: "Portföyünüz teknoloji ağırlıklı, emtia ekleyerek riski dağıtabilirsiniz."
-        expectedReturn:
-          type: number
-          format: float
+        provider:
+          type: string
+          description: Hangi AI sağlayıcısının yanıt verdiği (gemini, anthropic, rules-engine)
 
-    AIChatMessage:
+    AIChatRequest:
       type: object
       required:
         - message
       properties:
         message:
           type: string
-        sender:
+          example: "BTC hakkında ne düşünüyorsun?"
+
+    AIChatResponse:
+      type: object
+      properties:
+        reply:
           type: string
-          enum: [USER, AI]
-        timestamp:
+        provider:
+          type: string
+
+    AnnouncementCreate:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+
+    LeaderboardEntry:
+      type: object
+      properties:
+        rank:
+          type: integer
+        userId:
+          type: integer
+        fullName:
+          type: string
+        totalValue:
+          type: number
+          format: float
+        pnl:
+          type: number
+          format: float
+        pnlPercent:
+          type: number
+          format: float
+        tradeCount:
+          type: integer
+
+    UserAchievement:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        achievementId:
+          type: integer
+        achievement:
+          $ref: '#/components/schemas/Achievement'
+        earnedAt:
           type: string
           format: date-time
 
-    HealthStatus:
+    Achievement:
       type: object
       properties:
-        status:
+        id:
+          type: integer
+        code:
           type: string
-          enum: [UP, DOWN]
-        services:
-          type: object
-          properties:
-            database:
-              type: string
-              example: "UP"
-            kafka:
-              type: string
-              example: "UP"
-            redis:
-              type: string
-              example: "UP"
-
-    Pagination:
-      type: object
-      properties:
-        page:
-          type: integer
-          example: 1
-        limit:
-          type: integer
-          example: 20
-        totalItems:
-          type: integer
-          example: 45
+        name:
+          type: string
+        description:
+          type: string
+        icon:
+          type: string
 
     Error:
       type: object
       required:
-        - code
-        - message
+        - error
       properties:
-        code:
-          type: string
-          example: "VALIDATION_ERROR"
-        message:
+        error:
           type: string
           example: "Eksik parametre gönderildi."
-        details:
-          type: array
-          items:
-            type: object
-            properties:
-              field:
-                type: string
-              message:
-                type: string
 
   responses:
     BadRequest:
@@ -1175,8 +1359,7 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
           example:
-            code: "BAD_REQUEST"
-            message: "İstek parametreleri geçersiz"
+            error: "İstek parametreleri geçersiz"
     
     Unauthorized:
       description: Yetkisiz erişim veya Token süresi dolmuş
@@ -1185,8 +1368,7 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
           example:
-            code: "UNAUTHORIZED"
-            message: "Kimlik doğrulama başarısız"
+            error: "Kimlik doğrulama başarısız"
     
     NotFound:
       description: Kaynak bulunamadı
@@ -1195,8 +1377,7 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
           example:
-            code: "NOT_FOUND"
-            message: "İstenen kaynak bulunamadı"
+            error: "İstenen kaynak bulunamadı"
     
     Forbidden:
       description: Bu işlem için Yönetici (Admin) yetkisi gerekiyor
@@ -1205,5 +1386,5 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
           example:
-            code: "FORBIDDEN"
-            message: "Bu işlem için yetkiniz bulunmamaktadır"
+            error: "Bu işlem için yetkiniz bulunmamaktadır"
+```
