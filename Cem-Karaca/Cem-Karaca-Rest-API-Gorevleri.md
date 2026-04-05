@@ -2,7 +2,7 @@
 
 
 **Site Link :** https://frontend-bose.vercel.app/login
-**API Test Videosu:** [https://www.youtube.com/watch?v=rVRbulYMh5I(#)]
+**API Test Videosu:** [https://www.youtube.com/watch?v=rVRbulYMh5I]
 
 ### 11. Emir Oluşturma
 
