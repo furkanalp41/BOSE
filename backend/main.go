@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"os"
@@ -13,6 +14,8 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/uraniumz/bose/config"
 	"github.com/uraniumz/bose/routes"
+	"github.com/uraniumz/bose/services/ai"
+	alertsvc "github.com/uraniumz/bose/services/alert"
 	"github.com/uraniumz/bose/services/leaderboard"
 	"github.com/uraniumz/bose/services/market"
 )
@@ -31,6 +34,15 @@ func main() {
 	// Initialize market engine and WebSocket hub
 	engine := market.NewPriceEngine()
 	hub := market.NewHub()
+
+	// Initialize AI provider chain (Gemini → Anthropic → rules engine fallback)
+	providers := ai.NewProviderChain()
+
+	// Initialize and start alert checker daemon
+	alertChecker := alertsvc.NewAlertChecker(engine)
+	alertCtx, alertCancel := context.WithCancel(context.Background())
+	defer alertCancel()
+	go alertChecker.Start(alertCtx)
 
 	// Background ticker: advance prices every 2 seconds and broadcast
 	go func() {
@@ -74,7 +86,7 @@ func main() {
 	}))
 
 	// Routes
-	routes.SetupRoutes(app, engine, hub)
+	routes.SetupRoutes(app, engine, hub, providers, alertChecker)
 
 	// Health check
 	app.Get("/health", func(c *fiber.Ctx) error {

@@ -5,11 +5,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/uraniumz/bose/controllers"
 	"github.com/uraniumz/bose/middleware"
+	"github.com/uraniumz/bose/services/ai"
+	alertsvc "github.com/uraniumz/bose/services/alert"
 	"github.com/uraniumz/bose/services/market"
 )
 
 // SetupRoutes registers all API routes on the Fiber app.
-func SetupRoutes(app *fiber.App, engine *market.PriceEngine, hub *market.Hub) {
+func SetupRoutes(app *fiber.App, engine *market.PriceEngine, hub *market.Hub, providers *ai.ProviderChain, alertChecker *alertsvc.AlertChecker) {
 	api := app.Group("/api/v1")
 
 	// ── Public: Authentication ─────────────────────────────────────────────
@@ -31,6 +33,8 @@ func SetupRoutes(app *fiber.App, engine *market.PriceEngine, hub *market.Hub) {
 	app.Get("/ws/market", websocket.New(controllers.MarketWebSocket(engine, hub)))
 
 	// ── Protected: User Profile ────────────────────────────────────────────
+	// Register /me BEFORE the parameterized group to avoid /:userId shadowing
+	api.Get("/users/me", middleware.Protected(), controllers.GetMe)
 	users := api.Group("/users", middleware.Protected())
 	users.Get("/:userId", controllers.GetUser)
 	users.Put("/:userId", controllers.UpdateUser)
@@ -49,16 +53,21 @@ func SetupRoutes(app *fiber.App, engine *market.PriceEngine, hub *market.Hub) {
 	wl := api.Group("/watchlist", middleware.Protected())
 	wl.Post("/", controllers.CreateWatchlist)
 	wl.Get("/", controllers.GetWatchlists)
-	wl.Post("/alerts", controllers.CreateAlert)
+	wl.Delete("/:id", controllers.DeleteWatchlist)
 	wl.Post("/:id/items", controllers.AddWatchlistItem)
+	wl.Delete("/:id/items/:itemId", controllers.DeleteWatchlistItem)
+	wl.Post("/alerts", controllers.CreateAlert)
+	wl.Get("/alerts", controllers.GetAlerts)
+	wl.Delete("/alerts/:alertId", controllers.DeleteAlert)
+	wl.Get("/alerts/triggered", controllers.GetTriggeredAlerts(alertChecker))
 
 	// ── Protected: AI Advisor & Reports ────────────────────────────────────
 	aiGroup := api.Group("/ai", middleware.Protected())
 	aiGroup.Post("/advice", controllers.GetAdvice(engine))
-	aiGroup.Post("/reports/portfolio", controllers.AnalyzePortfolio(engine))
-	aiGroup.Post("/reports/watchlist", controllers.AnalyzeWatchlist(engine))
-	aiGroup.Post("/reports/transactions", controllers.AnalyzeTransactions(engine))
-	aiGroup.Post("/chat", controllers.AIChat(engine))
+	aiGroup.Post("/reports/portfolio", controllers.AnalyzePortfolio(engine, providers))
+	aiGroup.Post("/reports/watchlist", controllers.AnalyzeWatchlist(engine, providers))
+	aiGroup.Post("/reports/transactions", controllers.AnalyzeTransactions(engine, providers))
+	aiGroup.Post("/chat", controllers.AIChat(engine, providers))
 
 	// ── Protected: Admin ───────────────────────────────────────────────────
 	admin := api.Group("/admin", middleware.Protected(), controllers.AdminRequired)

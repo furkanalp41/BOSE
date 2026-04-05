@@ -12,22 +12,22 @@ type Watchlist struct {
 	UpdatedAt time.Time       `json:"updatedAt"`
 }
 
-// WatchlistItem links a market asset to a watchlist.
+// WatchlistItem links a market asset (by symbol) to a watchlist.
 type WatchlistItem struct {
-	ID           uint      `gorm:"primaryKey" json:"id"`
-	WatchlistID  uint      `gorm:"index;not null" json:"watchlistId"`
-	MarketItemID uint      `gorm:"not null" json:"market_item_id"`
-	CreatedAt    time.Time `json:"createdAt"`
+	ID          uint      `gorm:"primaryKey" json:"id"`
+	WatchlistID uint      `gorm:"index;not null" json:"watchlistId"`
+	Symbol      string    `gorm:"type:varchar(20);not null" json:"symbol"`
+	CreatedAt   time.Time `json:"createdAt"`
 }
 
 // Alert tracks a price target for a market asset.
 type Alert struct {
-	ID           uint      `gorm:"primaryKey" json:"id"`
-	UserID       uint      `gorm:"index;not null" json:"userId"`
-	WatchlistID  uint      `json:"watchlist_id"`
-	MarketItemID uint      `gorm:"not null" json:"market_item_id"`
-	TargetPrice  float64   `gorm:"type:decimal(18,2);not null" json:"target_price"`
-	Condition    string    `gorm:"type:varchar(10);not null" json:"condition"`
-	IsActive     bool      `gorm:"default:true" json:"is_active"`
-	CreatedAt    time.Time `json:"createdAt"`
+	ID          uint      `gorm:"primaryKey" json:"id"`
+	UserID      uint      `gorm:"index;not null" json:"userId"`
+	WatchlistID uint      `json:"watchlist_id"`
+	Symbol      string    `gorm:"type:varchar(20);not null" json:"symbol"`
+	TargetPrice float64   `gorm:"type:decimal(18,2);not null" json:"target_price"`
+	Condition   string    `gorm:"type:varchar(10);not null" json:"condition"`
+	IsActive    bool      `gorm:"default:true" json:"is_active"`
+	CreatedAt   time.Time `json:"createdAt"`
 }

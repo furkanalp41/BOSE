@@ -10,7 +10,6 @@ import (
 )
 
 // CreateWatchlist handles POST /api/v1/watchlist/
-// Uses find-or-create so repeated calls with the same name are idempotent.
 func CreateWatchlist(c *fiber.Ctx) error {
 	claims := c.Locals("claims").(*middleware.Claims)
 
@@ -31,6 +30,8 @@ func CreateWatchlist(c *fiber.Ctx) error {
 		}
 	}
 
+	// Reload with items
+	config.DB.Preload("Items").First(&wl, wl.ID)
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": wl})
 }
 
@@ -59,25 +60,83 @@ func AddWatchlistItem(c *fiber.Ctx) error {
 	}
 
 	var body struct {
-		MarketItemID uint `json:"market_item_id"`
+		Symbol string `json:"symbol"`
 	}
-	if err := c.BodyParser(&body); err != nil || body.MarketItemID == 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "market_item_id is required")
+	if err := c.BodyParser(&body); err != nil || strings.TrimSpace(body.Symbol) == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "symbol is required")
 	}
+	symbol := strings.ToUpper(strings.TrimSpace(body.Symbol))
 
 	// Check for duplicate
 	var existing models.WatchlistItem
-	if err := config.DB.Where("watchlist_id = ? AND market_item_id = ?", wlID, body.MarketItemID).First(&existing).Error; err == nil {
+	if err := config.DB.Where("watchlist_id = ? AND symbol = ?", wlID, symbol).First(&existing).Error; err == nil {
 		return fiber.NewError(fiber.StatusConflict, "item already exists in watchlist")
 	}
 
 	item := models.WatchlistItem{
-		WatchlistID:  uint(wlID),
-		MarketItemID: body.MarketItemID,
+		WatchlistID: uint(wlID),
+		Symbol:      symbol,
 	}
 	if err := config.DB.Create(&item).Error; err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "failed to add item")
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": item})
+}
+
+// DeleteWatchlist handles DELETE /api/v1/watchlist/:id
+func DeleteWatchlist(c *fiber.Ctx) error {
+	claims := c.Locals("claims").(*middleware.Claims)
+
+	wlID, err := c.ParamsInt("id")
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid watchlist id")
+	}
+
+	var wl models.Watchlist
+	if err := config.DB.Where("id = ? AND user_id = ?", wlID, claims.UserID).First(&wl).Error; err != nil {
+		return fiber.NewError(fiber.StatusNotFound, "watchlist not found")
+	}
+
+	// Delete all items first, then the watchlist
+	config.DB.Where("watchlist_id = ?", wlID).Delete(&models.WatchlistItem{})
+	config.DB.Delete(&wl)
+
+	return c.JSON(fiber.Map{"message": "watchlist deleted"})
+}
+
+// DeleteWatchlistItem handles DELETE /api/v1/watchlist/:id/items/:itemId
+func DeleteWatchlistItem(c *fiber.Ctx) error {
+	claims := c.Locals("claims").(*middleware.Claims)
+
+	wlID, err := c.ParamsInt("id")
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid watchlist id")
+	}
+
+	var wl models.Watchlist
+	if err := config.DB.Where("id = ? AND user_id = ?", wlID, claims.UserID).First(&wl).Error; err != nil {
+		return fiber.NewError(fiber.StatusNotFound, "watchlist not found")
+	}
+
+	itemID, err := c.ParamsInt("itemId")
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid item id")
+	}
+
+	if err := config.DB.Where("id = ? AND watchlist_id = ?", itemID, wlID).Delete(&models.WatchlistItem{}).Error; err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "failed to remove item")
+	}
+
+	return c.JSON(fiber.Map{"message": "item removed"})
+}
+
+// GetAlerts handles GET /api/v1/watchlist/alerts
+func GetAlerts(c *fiber.Ctx) error {
+	claims := c.Locals("claims").(*middleware.Claims)
+
+	var alerts []models.Alert
+	config.DB.Where("user_id = ?", claims.UserID).Order("created_at desc").Find(&alerts)
+
+	return c.JSON(fiber.Map{"data": alerts})
 }

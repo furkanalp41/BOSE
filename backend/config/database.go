@@ -28,6 +28,11 @@ func ConnectDB() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
+	// Drop stale columns left over from previous schema.
+	// GORM AutoMigrate never removes columns, so we do it explicitly.
+	db.Exec("ALTER TABLE watchlist_items DROP COLUMN IF EXISTS market_item_id")
+	db.Exec("ALTER TABLE alerts DROP COLUMN IF EXISTS market_item_id")
+
 	if err := db.AutoMigrate(
 		&models.User{},
 		&models.Trade{},

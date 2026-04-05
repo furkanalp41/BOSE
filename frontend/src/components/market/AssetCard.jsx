@@ -39,7 +39,7 @@ export default function AssetCard({ asset, price, history, selected, onSelect })
     try {
       const { data } = await watchlistApi.create('Favorites')
       const wlId = data?.data?.ID || data?.data?.id || data?.ID || data?.id
-      if (wlId) await watchlistApi.addItem(wlId, asset.id || asset.ID)
+      if (wlId) await watchlistApi.addItem(wlId, asset.symbol)
       setStarred(true)
       setToast('Added to Favorites')
       setTimeout(() => setToast(null), 2000)

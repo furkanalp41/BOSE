@@ -27,7 +27,6 @@ export default function AIChat() {
 
     try {
       const { data } = await aiChatApi.send({
-        user_context: { user_id: user?.id || 'anonymous', risk_preference: 5 },
         messages: newMessages.map(m => ({ role: m.role, content: m.content })),
         language,
       })
@@ -37,6 +36,7 @@ export default function AIChat() {
         referenced_symbols: data.referenced_symbols,
         suggested_actions: data.suggested_actions,
         follow_up_questions: data.follow_up_questions,
+        model_used: data.model_used,
       }])
     } catch (err) {
       setMessages(prev => [...prev, {
@@ -135,6 +135,10 @@ export default function AIChat() {
                       </button>
                     ))}
                   </div>
+                )}
+
+                {msg.model_used && (
+                  <p className="text-silver/30 text-[9px] font-mono mt-1">{msg.model_used}</p>
                 )}
               </div>
             </motion.div>

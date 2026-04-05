@@ -59,7 +59,7 @@ export default function DetailPanel({ asset, price, history }) {
       const { data } = await watchlistApi.create('Favorites')
       const wlId = data?.data?.ID || data?.data?.id || data?.ID || data?.id
       if (wlId) {
-        await watchlistApi.addItem(wlId, asset.id || asset.ID)
+        await watchlistApi.addItem(wlId, asset.symbol)
         showToast(`${asset.symbol} added to Favorites`)
       }
     } catch (err) {
@@ -78,7 +78,7 @@ export default function DetailPanel({ asset, price, history }) {
     setAlertLoading(true)
     try {
       await alertApi.create({
-        market_item_id: asset.id || asset.ID,
+        symbol: asset.symbol,
         target_price: tp,
         condition: alertCondition,
       })

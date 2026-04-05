@@ -8,9 +8,9 @@ const api = axios.create({
   timeout: 10_000,
 })
 
-// ── AI client (Enes's /ai/* routes, longer timeout for LLM) ────────────────
+// ── AI client (same backend, longer timeout for AI analysis) ────────────────
 const aiClient = axios.create({
-  baseURL: '/ai',
+  baseURL: '/api/ai',
   headers: { 'Content-Type': 'application/json' },
   timeout: 60_000,
 })
@@ -95,16 +95,21 @@ export const marketApi = {
   getBySymbol: (sym)  => api.get(`/market/${sym}`),
 }
 
-// ── Watchlist endpoints (Arda) ──────────────────────────────────────────────
+// ── Watchlist endpoints ─────────────────────────────────────────────────────
 export const watchlistApi = {
-  getAll:  ()              => api.get('/watchlist/'),
-  create:  (name)          => api.post('/watchlist/', { name }),
-  addItem: (wlId, itemId)  => api.post(`/watchlist/${wlId}/items`, { market_item_id: itemId }),
+  getAll:      ()              => api.get('/watchlist/'),
+  create:      (name)          => api.post('/watchlist/', { name }),
+  delete:      (wlId)          => api.delete(`/watchlist/${wlId}`),
+  addItem:     (wlId, symbol)  => api.post(`/watchlist/${wlId}/items`, { symbol }),
+  deleteItem:  (wlId, itemId)  => api.delete(`/watchlist/${wlId}/items/${itemId}`),
 }
 
-// ── Alert endpoints (Arda) ──────────────────────────────────────────────────
+// ── Alert endpoints ─────────────────────────────────────────────────────────
 export const alertApi = {
-  create: (data) => api.post('/watchlist/alerts', data),
+  getAll:       ()     => api.get('/watchlist/alerts'),
+  create:       (data) => api.post('/watchlist/alerts', data),
+  delete:       (id)   => api.delete(`/watchlist/alerts/${id}`),
+  getTriggered: ()     => api.get('/watchlist/alerts/triggered'),
 }
 
 // ── AI Report endpoints (Enes — uses aiClient) ─────────────────────────────

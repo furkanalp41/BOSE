@@ -1,32 +1,31 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { ordersApi } from '../../services/api'
+import { tradingApi } from '../../services/api'
 
 export default function PositionsList({ refreshKey }) {
-  const [stats, setStats] = useState({ total: 0, pending: 0, filled: 0, cancelled: 0 })
+  const [stats, setStats] = useState({ total: 0, buys: 0, sells: 0, volume: 0 })
   const [loading, setLoading] = useState(true)
 
   const fetchStats = useCallback(async () => {
     try {
-      const { data } = await ordersApi.getAll()
-      const orders = data.data || []
-      setStats({
-        total: orders.length,
-        pending: orders.filter(o => o.status === 'pending').length,
-        filled: orders.filter(o => o.status === 'filled').length,
-        cancelled: orders.filter(o => o.status === 'cancelled').length,
-      })
-    } catch { setStats({ total: 0, pending: 0, filled: 0, cancelled: 0 }) }
+      const { data } = await tradingApi.getHistory()
+      const trades = data.trades || data.history || data || []
+      const list = Array.isArray(trades) ? trades : []
+      const buys = list.filter(t => (t.side || t.Side) === 'BUY').length
+      const sells = list.filter(t => (t.side || t.Side) === 'SELL').length
+      const volume = list.reduce((sum, t) => sum + (t.total || t.Total || 0), 0)
+      setStats({ total: list.length, buys, sells, volume: Math.round(volume * 100) / 100 })
+    } catch { setStats({ total: 0, buys: 0, sells: 0, volume: 0 }) }
     finally { setLoading(false) }
   }, [])
 
   useEffect(() => { fetchStats() }, [fetchStats, refreshKey])
 
   const cards = [
-    { label: 'Total Orders', value: stats.total, color: 'text-cloud', border: 'border-border' },
-    { label: 'Filled', value: stats.filled, color: 'text-neon', border: 'border-neon/20' },
-    { label: 'Pending', value: stats.pending, color: 'text-amber-400', border: 'border-amber-400/20' },
-    { label: 'Cancelled', value: stats.cancelled, color: 'text-silver', border: 'border-border' },
+    { label: 'Total Trades', value: stats.total, color: 'text-cloud', border: 'border-border' },
+    { label: 'Buys', value: stats.buys, color: 'text-neon', border: 'border-neon/20' },
+    { label: 'Sells', value: stats.sells, color: 'text-crimson', border: 'border-crimson/20' },
+    { label: 'Volume', value: `$${stats.volume.toLocaleString()}`, color: 'text-ice', border: 'border-ice/20' },
   ]
 
   return (
@@ -41,8 +40,8 @@ export default function PositionsList({ refreshKey }) {
           </svg>
         </div>
         <div>
-          <h3 className="text-lg font-bold text-cloud">Order Summary</h3>
-          <p className="text-silver text-xs">Overview of your orders</p>
+          <h3 className="text-lg font-bold text-cloud">Trade Summary</h3>
+          <p className="text-silver text-xs">Overview of your trading activity</p>
         </div>
       </div>
 
