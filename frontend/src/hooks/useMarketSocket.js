@@ -2,12 +2,17 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 
 const MAX_HISTORY = 60
 
-// Derive WebSocket URL from VITE_API_URL (https://x → wss://x) or fallback to same host
+// Derive WebSocket URL from VITE_WS_URL or VITE_API_URL
 function resolveWsUrl() {
   if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL
   const api = import.meta.env.VITE_API_URL
   if (api) {
-    return api.replace(/^https:/, 'wss:').replace(/^http:/, 'ws:').replace(/\/api\/v1$/, '') + '/ws/market'
+    try {
+      const u = new URL(api)
+      u.protocol = u.protocol === 'https:' ? 'wss:' : 'ws:'
+      u.pathname = '/ws/market'
+      return u.toString()
+    } catch (_) { /* fallback below */ }
   }
   return `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/market`
 }
