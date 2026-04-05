@@ -1,6 +1,6 @@
 # Web Frontend Görev Dağılımı
 
-**Web Frontend Adresi:** `frontend.simulasyon.com` *(Canlıya alındığında güncellenecek)*
+**Web Frontend Adresi:** `https://frontend-bose.vercel.app/` 
 
 Bu dokümanda, **AI Destekli Borsa ve Kripto Simülasyonu** web uygulamasının kullanıcı arayüzü (UI) ve kullanıcı deneyimi (UX) görevleri listelenmektedir. Her grup üyesi (UraniumZ ekibi), kendisine atanan sayfaların tasarımı, gerçek zamanlı verilerin (Kafka/Redis) arayüze entegrasyonu ve kullanıcı etkileşimlerinden sorumludur.
 
