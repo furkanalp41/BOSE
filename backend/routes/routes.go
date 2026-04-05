@@ -75,6 +75,10 @@ func SetupRoutes(app *fiber.App, engine *market.PriceEngine, hub *market.Hub, pr
 	admin.Delete("/users/:id", controllers.AdminDeleteUser)
 	admin.Put("/users/:id/role", controllers.AdminUpdateRole)
 	admin.Post("/announcements", controllers.CreateAnnouncement)
+	admin.Get("/market/assets", controllers.AdminGetAssets(engine))
+	admin.Post("/market/assets", controllers.AdminCreateAsset(engine))
+	admin.Put("/market/assets/:symbol", controllers.AdminUpdateAsset(engine))
+	admin.Delete("/market/assets/:symbol", controllers.AdminDeleteAsset(engine))
 
 	// ── Protected: Leaderboard ─────────────────────────────────────────────
 	lb := api.Group("/leaderboard", middleware.Protected())

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/uraniumz/bose/config"
 	"github.com/uraniumz/bose/middleware"
 	"github.com/uraniumz/bose/models"
+	"github.com/uraniumz/bose/services/market"
 )
 
 // In-memory announcement store (sufficient for dev/staging)
@@ -89,6 +91,74 @@ func AdminUpdateRole(c *fiber.Ctx) error {
 	config.DB.Model(&user).Update("role", body.Role)
 
 	return c.JSON(fiber.Map{"message": fmt.Sprintf("User %d role updated to %s", id, body.Role)})
+}
+
+// ── Admin Asset Management ─────────────────────────────────────────────────
+
+// AdminGetAssets handles GET /api/v1/admin/market/assets
+func AdminGetAssets(engine *market.PriceEngine) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		assets := market.BuildAssetCatalogue(engine)
+		return c.JSON(fiber.Map{"data": assets})
+	}
+}
+
+// AdminCreateAsset handles POST /api/v1/admin/market/assets
+func AdminCreateAsset(engine *market.PriceEngine) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		var body struct {
+			Symbol     string  `json:"symbol"`
+			Price      float64 `json:"price"`
+			Drift      float64 `json:"drift"`
+			Volatility float64 `json:"volatility"`
+		}
+		if err := c.BodyParser(&body); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, "invalid request body")
+		}
+		body.Symbol = strings.ToUpper(strings.TrimSpace(body.Symbol))
+		if body.Symbol == "" || body.Price <= 0 {
+			return fiber.NewError(fiber.StatusBadRequest, "symbol and a positive price are required")
+		}
+		if body.Volatility == 0 {
+			body.Volatility = 0.0015
+		}
+		if !engine.AddSymbol(body.Symbol, body.Price, body.Drift, body.Volatility) {
+			return fiber.NewError(fiber.StatusConflict, "symbol already exists")
+		}
+		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+			"message": fmt.Sprintf("asset %s created at $%.2f", body.Symbol, body.Price),
+		})
+	}
+}
+
+// AdminUpdateAsset handles PUT /api/v1/admin/market/assets/:symbol
+func AdminUpdateAsset(engine *market.PriceEngine) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		symbol := strings.ToUpper(c.Params("symbol"))
+		var body struct {
+			Price      float64 `json:"price"`
+			Drift      float64 `json:"drift"`
+			Volatility float64 `json:"volatility"`
+		}
+		if err := c.BodyParser(&body); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, "invalid request body")
+		}
+		if !engine.UpdateSymbol(symbol, body.Price, body.Drift, body.Volatility) {
+			return fiber.NewError(fiber.StatusNotFound, "symbol not found")
+		}
+		return c.JSON(fiber.Map{"message": fmt.Sprintf("asset %s updated", symbol)})
+	}
+}
+
+// AdminDeleteAsset handles DELETE /api/v1/admin/market/assets/:symbol
+func AdminDeleteAsset(engine *market.PriceEngine) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		symbol := strings.ToUpper(c.Params("symbol"))
+		if !engine.RemoveSymbol(symbol) {
+			return fiber.NewError(fiber.StatusNotFound, "symbol not found")
+		}
+		return c.JSON(fiber.Map{"message": fmt.Sprintf("asset %s removed", symbol)})
+	}
 }
 
 // CreateAnnouncement handles POST /api/v1/admin/announcements

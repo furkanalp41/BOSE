@@ -81,6 +81,44 @@ func (e *PriceEngine) CurrentPrices() map[string]float64 {
 	return m
 }
 
+// AddSymbol registers a new symbol in the engine. Returns false if it already exists.
+func (e *PriceEngine) AddSymbol(symbol string, price, drift, volatility float64) bool {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	if _, exists := e.states[symbol]; exists {
+		return false
+	}
+	e.states[symbol] = &priceState{price: price, drift: drift, volatility: volatility}
+	return true
+}
+
+// UpdateSymbol modifies an existing symbol's parameters. Returns false if it doesn't exist.
+func (e *PriceEngine) UpdateSymbol(symbol string, price, drift, volatility float64) bool {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	s, exists := e.states[symbol]
+	if !exists {
+		return false
+	}
+	if price > 0 {
+		s.price = price
+	}
+	s.drift = drift
+	s.volatility = volatility
+	return true
+}
+
+// RemoveSymbol deletes a symbol from the engine. Returns false if it doesn't exist.
+func (e *PriceEngine) RemoveSymbol(symbol string) bool {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	if _, exists := e.states[symbol]; !exists {
+		return false
+	}
+	delete(e.states, symbol)
+	return true
+}
+
 func roundTo(v float64, decimals int) float64 {
 	factor := math.Pow(10, float64(decimals))
 	return math.Round(v*factor) / factor

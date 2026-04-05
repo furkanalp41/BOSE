@@ -97,6 +97,24 @@ func main() {
 		})
 	})
 
+	// ── Single-Domain: Serve React build ──────────────────────────────────
+	// Serves the Vite production build. Checks two common locations:
+	// - ../frontend/dist  (local development: running from backend/)
+	// - ./frontend/dist   (Docker / production: running from /app)
+	distPath := "../frontend/dist"
+	if _, err := os.Stat(distPath); os.IsNotExist(err) {
+		distPath = "./frontend/dist"
+	}
+	if info, err := os.Stat(distPath); err == nil && info.IsDir() {
+		app.Static("/", distPath)
+		app.Get("/*", func(c *fiber.Ctx) error {
+			return c.SendFile(distPath + "/index.html")
+		})
+		log.Printf("Serving frontend from %s", distPath)
+	} else {
+		log.Println("No frontend build found — API-only mode")
+	}
+
 	// Start server
 	port := os.Getenv("PORT")
 	if port == "" {
