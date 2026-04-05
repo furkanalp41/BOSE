@@ -1,0 +1,98 @@
+package main
+
+import (
+	"encoding/json"
+	"log"
+	"os"
+	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/joho/godotenv"
+	"github.com/uraniumz/bose/config"
+	"github.com/uraniumz/bose/routes"
+	"github.com/uraniumz/bose/services/leaderboard"
+	"github.com/uraniumz/bose/services/market"
+)
+
+func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
+
+	// Initialize database
+	config.ConnectDB()
+
+	// Seed achievements
+	leaderboard.SeedAchievements(config.DB)
+
+	// Initialize market engine and WebSocket hub
+	engine := market.NewPriceEngine()
+	hub := market.NewHub()
+
+	// Background ticker: advance prices every 2 seconds and broadcast
+	go func() {
+		ticker := time.NewTicker(2 * time.Second)
+		defer ticker.Stop()
+		for range ticker.C {
+			ticks := engine.Tick()
+			snap := market.MarketSnapshot{Ticks: ticks}
+			data, err := json.Marshal(snap)
+			if err != nil {
+				log.Printf("marshal error: %v", err)
+				continue
+			}
+			hub.Broadcast(data)
+		}
+	}()
+
+	// Create Fiber app
+	app := fiber.New(fiber.Config{
+		AppName: "BOSE Trading Platform API v1.0",
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			code := fiber.StatusInternalServerError
+			if e, ok := err.(*fiber.Error); ok {
+				code = e.Code
+			}
+			return c.Status(code).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		},
+	})
+
+	// Global Middleware
+	app.Use(recover.New())
+	app.Use(logger.New(logger.Config{
+		Format: "[${time}] ${status} ${method} ${path} - ${latency}\n",
+	}))
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:5173,http://localhost:3000,https://bose.uraniumz.com",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
+	}))
+
+	// Routes
+	routes.SetupRoutes(app, engine, hub)
+
+	// Health check
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"status":  "ok",
+			"service": "BOSE Trading API",
+			"time":    time.Now().UnixMilli(),
+		})
+	})
+
+	// Start server
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("BOSE API server starting on port %s", port)
+	if err := app.Listen(":" + port); err != nil {
+		log.Fatalf("Server failed to start: %v", err)
+	}
+}
