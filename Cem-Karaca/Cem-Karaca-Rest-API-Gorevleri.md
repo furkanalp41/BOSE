@@ -1,6 +1,6 @@
 # Cem Karaca'nın REST API Metotları
 
-**API Test Videosu:** [Link buraya eklenecek](#)
+**API Test Videosu:** [[https://youtu.be/rVRbulYMh5I]](#)
 
 ### 11. Emir Oluşturma
 
