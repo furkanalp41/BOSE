@@ -1,5 +1,5 @@
 Salih Arda Katırcıoğlu'nun Web Frontend Görevleri
-
+Site Linki: [https://frontend-bose.vercel.app/]
 Front-end Test Videosu: [https://youtu.be/28jhHzgf9sc]
 
 Yeni İzleme Listesi Oluşturma Sayfası
