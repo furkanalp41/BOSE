@@ -1,3 +1,6 @@
+Rest API Dokümasyon [https://bose-platform.onrender.com/]
+
+
 **API Test Videosu:** [https://youtu.be/tmX6SkjJaSQ]
 
 ### 17. Yeni İzleme Listesi Oluşturma
