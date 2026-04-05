@@ -2,6 +2,11 @@
 
 ![Proje Tanıtım Afişi](https://github.com/furkanalp41/BOSE/raw/main/proje.png)
 
+**REST API Adresi:** `https://bose-platform.onrender.com/api/v1`
+**REST API SWAGGER UI:** `https://bose-platform.onrender.com/docs`
+**Web Frontend Adresi:** `https://frontend-bose.vercel.app`
+
+
 **Not:** Bu proje, Borsa İstanbul ve kripto piyasalarının dinamiklerini yapay zeka analizleriyle birleştiren, gerçek zamanlı bir pazar simülasyonudur.
 
 ## Proje Hakkında

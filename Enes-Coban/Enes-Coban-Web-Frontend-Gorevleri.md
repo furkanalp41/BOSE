@@ -1,120 +1,78 @@
 # Front-end Dokümantasyonu
 
-**Front-end Test Videosu:** [Link buraya eklenecek](#)
+**Front-end Test Videosu:** [https://youtu.be/E67RtxMqKa0](#)
+**Front-end Bağlantısı:** [https://frontend-bose.vercel.app/login] (#)
+---
+
+## 26. AI Yatırım Tavsiyesi Ekranı
+
+**API Endpoint:** `POST /ai/advice`
+
+**Görev:**
+Varlık detay sayfasında AI destekli al/sat tavsiyesinin gösterilmesi.
+
+*   **UI Bileşenleri:**
+    *   Tavsiyeyi (AL/SAT/TUT) belirten renkli butonlar veya indikatör.
+    *   AI analiz özeti için metin alanı.
+*   **Kullanıcı Deneyimi:**
+    *   Analiz isteği gönderildiğinde loading spinner gösterilir.
+*   **Teknik Detaylar:**
+    *   Axios ile POST isteği yapılıp sonucun anlık State'e kaydedilmesi.
 
 ---
 
-## 1. Yeni İzleme Listesi Oluşturma Sayfası
+## 27. AI Portföy Raporu Dashboard'u
 
-**API Endpoint:** `POST /watchlists`
+**API Endpoint:** `POST /ai/reports/portfolio`
 
 **Görev:**
-Kullanıcının özel hisse/kripto klasörleri oluşturması için arayüz tasarımı.
+Dashboard üzerindeki portföy analiz alanının tasarımı.
 
 *   **UI Bileşenleri:**
-    *   Kenar çubuğunda (Sidebar) "Yeni Liste Ekle" butonu.
-    *   Liste adı giriş modal'ı.
-    *   "Oluştur" butonu.
-*   **Form Validasyonu:**
-    *   Liste adı boş olamaz.
-    *   Liste adı 20 karakteri geçemez.
+    *   "Portföyü Analiz Et" butonu.
+    *   Rapor sonuç paneli.
 *   **Kullanıcı Deneyimi:**
-    *   Oluşturulan liste sayfa yenilenmeden kenar çubuğuna eklenmelidir.
-    *   Klavye "Enter" tuşu ile form gönderme (submit) desteği sağlanmalıdır.
+    *   Yapay zeka analiz yaparken daktilo veya skeleton screen efekti gösterimi.
 *   **Teknik Detaylar:**
-    *   Modal component state yönetimi.
-    *   Sidebar component'i ile global state senkronizasyonu.
+    *   Asenkron veriyi özel Hook'lar üzerinden yönetme.
 
 ---
 
-## 2. İzleme Listesine Varlık Ekleme Bileşeni
+## 28. AI Watchlist Raporu 
 
-**API Endpoint:** `POST /watchlists/{listId}/assets`
+**API Endpoint:** `POST /ai/reports/watchlist`
 
 **Görev:**
-Piyasadan varlık aratıp listeye ekleme tasarımı.
+Kullanıcının izleme listesinden yola çıkarak fırsat/tehdit analizi bileşeni.
 
 *   **UI Bileşenleri:**
-    *   Arama çubuğu (Search bar).
-    *   Arama sonuçları dropdown listesi.
-    *   Her sonucun yanında "+" ekle butonu.
-*   **Kullanıcı Deneyimi:**
-    *   Yazı yazarken anında filtreleme (Search Debounce).
-    *   Eklendiğinde "+" ikonunun tik işaretine dönüşmesi.
-*   **Teknik Detaylar:**
-    *   Debounce hook kullanımı (API'yi yormamak için).
-    *   Dropdown dışına tıklandığında menünün kapanması (click outside).
+    *   Watchlist sekmesinde rapor gösterim alanı.
 
 ---
 
-## 3. İzleme Listelerini Görüntüleme Sayfası
+## 29. AI İşlem Geçmişi Raporu
 
-**API Endpoint:** `GET /watchlists`
+**API Endpoint:** `POST /ai/reports/transactions`
 
 **Görev:**
-Takip edilen varlıkların detaylı tabloda gösterimi.
+Geçmiş işlemlerin kar/zarar analizi ve AI özet geri bildirimi ekranı.
 
 *   **UI Bileşenleri:**
-    *   Liste isimleri arasında geçiş yapmayı sağlayan Tabs (Sekmeler).
-    *   Sembol, Son Fiyat, 24s Değişim % sütunlarından oluşan Data Table.
-    *   Yükselişler için yeşil, düşüşler için kırmızı metinler.
-*   **Kullanıcı Deneyimi:**
-    *   Fiyat değiştiğinde hücre arka planının yeşil/kırmızı parlayıp sönmesi (Flash effect).
-    *   Veriler yüklenirken skeleton tablo görünümü.
-*   **Teknik Detaylar:**
-    *   WebSocket veya Polling verisinin tablo ile entegrasyonu.
-    *   React Table veya benzeri grid kütüphanesi kullanımı.
+    *   Geçmiş sayfasında "Performansımı Analiz Et" modal'ı.
 
 ---
 
-## 4. Liste Adı Güncelleme Etkileşimi
+## 30. AI Chatbot Paneli
 
-**API Endpoint:** `PUT /watchlists/{listId}`
-
-**Görev:**
-Mevcut liste adını düzenleme etkileşimi.
-
-*   **UI Bileşenleri:**
-    *   Liste başlığının yanında beliren "Kalem" (Edit) ikonu.
-    *   İkona tıklandığında başlığın input alanına dönüşmesi (Inline editing).
-*   **Kullanıcı Deneyimi:**
-    *   Input dışına tıklandığında (blur) değişikliğin otomatik kaydedilmesi.
-    *   Hata olursa eski isme geri dönülmesi.
-*   **Teknik Detaylar:**
-    *   Inline edit state yönetimi (isEditing boolean).
-
----
-
-## 5. İzleme Listesini Silme Akışı
-
-**API Endpoint:** `DELETE /watchlists/{listId}`
+**API Endpoint:** `POST /ai/chat`
 
 **Görev:**
-İzleme listesini tamamen kaldırma UI akışı.
+Platform içi yüzen veya tüm ekranlık chatbot arayüzü tasarımı.
 
 *   **UI Bileşenleri:**
-    *   Sekme veya menü içinde "Listeyi Sil" butonu (Çöp kutusu ikonu).
-    *   Silme onayı isteyen uyarı Modal'ı.
+    *   Mesaj geçmişi alanı, Input kutusu, Gönder butonu.
+    *   Sağ altta açılıp kapanan chat balonu.
 *   **Kullanıcı Deneyimi:**
-    *   Silme işlemi sonrası kullanıcının otomatik olarak "Varsayılan" listeye yönlendirilmesi.
+    *   Mesajlar type-writer efekti ile akmalı.
 *   **Teknik Detaylar:**
-    *   Active Tab state'inin silinme sonrası güncellenmesi.
-
----
-
-## 6. AI Durum Raporu Görüntüleme Sayfası
-
-**API Endpoint:** `GET /ai/report/status/{assetSymbol}`
-
-**Görev:**
-Bir hisseye tıklandığında sağ panelde açılan yapay zeka analiz özeti.
-
-*   **UI Bileşenleri:**
-    *   Slide-over (sağdan açılan) panel veya Modal.
-    *   AI "AL/SAT/TUT" tavsiyesini gösteren hız göstergesi (Gauge chart).
-    *   Yapay zeka analiz metni alanı.
-*   **Kullanıcı Deneyimi:**
-    *   AI metninin daktilo efektiyle (typewriter) ekrana yazdırılması.
-*   **Teknik Detaylar:**
-    *   Chart.js veya Recharts ile Gauge grafik entegrasyonu.
-    *   Asenkron AI yanıtı için özel yükleme (loading) animasyonu.
+    *   Zustand ile chat state'inin tutulması.

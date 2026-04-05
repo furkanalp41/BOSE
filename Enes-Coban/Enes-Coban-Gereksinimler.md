@@ -1,23 +1,19 @@
-# Yeni İzleme Listesi Oluşturma
-    API Metodu: POST /watchlists
-Açıklama: Kullanıcının "Favorilerim" veya "Hisselerim" gibi isimlerle özel izleme listeleri oluşturmasını sağlar. Bu sayede piyasadaki varlıklar gruplandırılabilir. İşlemi yapabilmek için sisteme giriş yapmış olmak gerekir.
+# AI Yatırım Tavsiyesi Alma
+    API Metodu: POST /ai/advice
+Açıklama: Belirtilen varlık için yapay zeka tabanlı AL/SAT/TUT tavsiyesi alır. İşlemi yapabilmek için sisteme giriş yapmış olmak gerekir.
 
-# İzleme Listesine Varlık Ekleme
-    API Metodu: POST /watchlists/{listId}/assets
-Açıklama: Kullanıcının daha önce oluşturduğu bir izleme listesine piyasada işlem gören yeni bir BİST hissesi veya Kripto para sembolü eklemesini sağlar. Güvenlik için giriş yapmış olmak gerekir ve kullanıcı yalnızca kendi listesine ekleme yapabilir.
+# AI Portföy Raporu Alma
+    API Metodu: POST /ai/reports/portfolio
+Açıklama: ProviderChain (Gemini → Claude → Rules Engine) altyapısı kullanılarak kullanıcının mevcut portföy risk analizi ve strateji önerisi raporlanır. Güvenlik için giriş yapmış olmak gerekir.
 
-# İzleme Listelerini Görüntüleme
-    API Metodu: GET /watchlists
-Açıklama: Kullanıcıya ait tüm izleme listelerini ve bu listelerin içerisindeki varlıkların o anki canlı piyasa fiyatlarını getirir. Kullanıcı sadece kendi oluşturduğu listeleri görüntüleyebilir. Güvenlik için giriş yapmış olmak gerekir.
+# AI Watchlist Raporu Alma
+    API Metodu: POST /ai/reports/watchlist
+Açıklama: İzleme listesindeki varlıklar için yapay zeka analizi sağlar. Kullanıcı sadece giriş yapmışsa sonuçları görüntüleyebilir.
 
-# Liste Adı Güncelleme
-    API Metodu: PUT /watchlists/{listId}
-Açıklama: Mevcut bir izleme listesinin başlığını (örn: "Kriptolarım" -> "Yatırımlarım") kullanıcının isteğine göre değiştirir. Güvenlik için giriş yapmış olmak gerekir ve yalnızca liste sahibi bu işlemi gerçekleştirebilir.
+# AI İşlem Geçmişi Raporu Alma
+    API Metodu: POST /ai/reports/transactions
+Açıklama: Kullanıcının işlem geçmişi üzerinden yapay zeka performans ve alışkanlık analizi oluşturur. Güvenlik için giriş yapmış olmak gerekir.
 
-# İzleme Listesini Silme
-    API Metodu: DELETE /watchlists/{listId}
-Açıklama: Kullanıcının oluşturduğu bir izleme listesini kalıcı olarak sistemden kaldırmasını sağlar. Bu işlemle beraber liste içindeki tüm kayıtlı varlık takipleri de silinir. Güvenlik için giriş yapmış olmak gerekir.
-
-# AI Durum Raporu Almak
-    API Metodu: GET /ai/report/status/{assetSymbol}
-Açıklama: Kullanıcının belirli zaman aralığında yatırımcı davranışlarını analiz ederek sahip olduğu alışkanlıkları iyileştirmek üzere rapor hazırlar.
+# AI Chatbot ile Sohbet
+    API Metodu: POST /ai/chat
+Açıklama: Yapay zeka asistanı ile serbest metin üzerinden finansal konular hakkında sohbet edilmesini sağlar. Giriş yapmak gereklidir.

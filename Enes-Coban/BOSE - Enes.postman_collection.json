@@ -1,0 +1,231 @@
+{
+  "info": {
+    "_postman_id": "3ed297b1-c49d-4aa8-9e68-285e7f457e5c",
+    "name": "BOSE - Enes",
+    "description": "AI Reports & Chat endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53571008",
+    "_collection_link": "https://go.postman.co/collection/53571008-3ed297b1-c49d-4aa8-9e68-285e7f457e5c?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "POST /ai/advice",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "https://bose-platform.onrender.com/api/v1/ai/advice",
+          "protocol": "https",
+          "host": [
+            "bose-platform",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "ai",
+            "advice"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /ai/chat",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"message\":\"BTC hakkinda ne dusunuyorsun?\"}"
+        },
+        "url": {
+          "raw": "https://bose-platform.onrender.com/api/v1/ai/chat",
+          "protocol": "https",
+          "host": [
+            "bose-platform",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "ai",
+            "chat"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /ai/reports/portfolio",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "https://bose-platform.onrender.com/api/v1/ai/reports/portfolio",
+          "protocol": "https",
+          "host": [
+            "bose-platform",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "ai",
+            "reports",
+            "portfolio"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /ai/reports/transactions",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "https://bose-platform.onrender.com/api/v1/ai/reports/transactions",
+          "protocol": "https",
+          "host": [
+            "bose-platform",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "ai",
+            "reports",
+            "transactions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /ai/reports/watchlist",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": ".eyJ1c2VyX2lkIjo0NiwiZW1haWwiOiJlbmVzX3Rlc3RAYm9zZS5kZXYiLCJyb2xlIjoidXNlciIsImlzcyI6ImJvc2UtYXBpIiwiZXhwIjoxNzc1NDc3ODcwLCJpYXQiOjE3NzUzOTE0NzB9.Jnk6e1dKlesIkj-Aht0dZ_Vij41fEV5lnU2HALgrAmg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"watchlist_id\":33}"
+        },
+        "url": {
+          "raw": "https://bose-platform.onrender.com/api/v1/ai/reports/watchlist",
+          "protocol": "https",
+          "host": [
+            "bose-platform",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "ai",
+            "reports",
+            "watchlist"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://bose-platform.onrender.com/api/v1"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}
