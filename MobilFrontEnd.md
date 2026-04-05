@@ -1,6 +1,12 @@
 # Mobil Frontend Görev Dağılımı
 
-Bu dokümanda, **AI Destekli Borsa ve Kripto Simülasyonu** mobil uygulamasının kullanıcı arayüzü (UI) ve kullanıcı deneyimi (UX) görevleri listelenmektedir. Her grup üyesi (UraniumZ ekibi), kendisine atanan ekranların tasarımı, API entegrasyonlarının arayüze yansıtılması ve kullanıcı etkileşimlerinden sorumludur.
+**Frontend Adresi:** `https://frontend-bose.vercel.app`
+**Backend API:** `https://bose-platform.onrender.com/api/v1`
+**WebSocket:** `wss://bose-platform.onrender.com/ws/market`
+
+Bu dokümanda, **BOSE — AI Destekli Borsa ve Kripto Simülasyonu** mobil uygulamasının kullanıcı arayüzü (UI) ve kullanıcı deneyimi (UX) görevleri listelenmektedir.
+
+---
 
 ## Grup Üyelerinin Mobil Frontend Görevleri
 
@@ -52,3 +58,32 @@ Bu dokümanda, **AI Destekli Borsa ve Kripto Simülasyonu** mobil uygulamasını
 **8. Platform Özellikleri**
 * **Android:** Material Design 3 guidelines ve native komponentler.
 * **iOS:** Human Interface Guidelines ve iOS'e özgü kaydırma/navigasyon hissinin (Native feel) sağlanması.
+
+---
+
+## Mevcut Web Frontend Teknoloji Yığını
+
+Web frontend aşağıdaki teknolojilerle geliştirilmiştir ve mobil uygulama bu API entegrasyonlarını temel alacaktır:
+
+| Bileşen | Teknoloji |
+|---------|-----------|
+| Framework | React 18 + Vite 5 |
+| Styling | Tailwind CSS (custom dark theme) |
+| State | Zustand (auth store) |
+| Routing | React Router v6 (SPA) |
+| HTTP Client | Axios (api + aiClient instances) |
+| Animasyon | Framer Motion |
+| Canlı Veri | Native WebSocket (`useMarketSocket` hook) |
+| Deploy | Vercel |
+
+---
+
+## API Entegrasyon Prensipleri
+
+- **Base URL:** `https://bose-platform.onrender.com/api/v1`
+- **WebSocket:** `wss://bose-platform.onrender.com/ws/market` (2sn tick aralığı)
+- **Content-Type:** `application/json`
+- **Auth:** JWT token `Authorization: Bearer {token}` header'ı ile gönderilir
+- **AI İstekleri:** 60sn timeout (normal istekler 10sn)
+- **AI Provider Chain:** Gemini 2.0 Flash → Anthropic Claude Sonnet → Rules Engine (fallback)
+- **Fiyat Motoru:** Geometric Brownian Motion simülasyonu, 8 default asset (BTC, ETH, SOL, THYAO, ASELS, AAPL, NVDA, GOOGL)

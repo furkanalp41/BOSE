@@ -1,76 +1,106 @@
 # Web Frontend Görev Dağılımı
 
-**Web Frontend Adresi:** `frontend.simulasyon.com` *(Canlıya alındığında güncellenecek)*
+**Frontend Adresi:** `https://frontend-bose.vercel.app`
+**Backend API:** `https://bose-platform.onrender.com/api/v1`
 
-Bu dokümanda, **AI Destekli Borsa ve Kripto Simülasyonu** web uygulamasının kullanıcı arayüzü (UI) ve kullanıcı deneyimi (UX) görevleri listelenmektedir. Her grup üyesi (UraniumZ ekibi), kendisine atanan sayfaların tasarımı, gerçek zamanlı verilerin (Kafka/Redis) arayüze entegrasyonu ve kullanıcı etkileşimlerinden sorumludur.
-
-## Grup Üyelerinin Web Frontend Görevleri
-
-1. [Furkan Alp Günay'ın Web Frontend Görevleri](./Furkan-Alp-Gunay/Furkan-Alp-Gunay-Web-Frontend-Gorevleri.md)
-2. [Enes Çoban'ın Web Frontend Görevleri](./Enes-Coban/Enes-Coban-Web-Frontend-Gorevleri.md)
-3. [Cem Karaca'nın Web Frontend Görevleri](./Cem-Karaca/Cem-Karaca-Web-Frontend-Gorevleri.md)
-4. [Salih Arda Katırcıoğlu'nun Web Frontend Görevleri](./Salih-Arda-Katircioglu/Salih-Arda-Katircioglu-Web-Frontend-Gorevleri.md)
-5. [Yakup Efe Çelebi'nin Web Frontend Görevleri](./Yakup-Efe-Celebi/Yakup-Efe-Celebi-Web-Frontend-Gorevleri.md)
+Bu dokümanda, **BOSE — AI Destekli Borsa ve Kripto Simülasyonu** web uygulamasının React + Vite tabanlı kullanıcı arayüzü görevleri listelenmektedir.
 
 ---
 
-## Genel Web Frontend Prensipleri
+## 1. Furkan Alp Günay — Auth, Profil, Admin Sayfaları
 
+| Sayfa/Bileşen | Dosya | Açıklama |
+|----------------|-------|----------|
+| Login Sayfası | `LoginPage.jsx` | Email/şifre ile giriş, JWT token Zustand'a kayıt |
+| Register Sayfası | `RegisterPage.jsx` | Yeni kullanıcı kaydı formu |
+| Profil Kartı | `ProfileCard.jsx` | Kullanıcı bilgileri, bakiye gösterimi |
+| AI Tercihleri | `AIPreferences.jsx` | Risk seviyesi ve yatırım vadesi seçimi |
+| Hesap Silme | `DangerZone.jsx` | Hesap silme onay modalı |
+| Admin Panel | `AdminPanel.jsx` | Kullanıcı yönetimi, log görüntüleme, duyuru |
+| Sidebar | `Sidebar.jsx` | Navigasyon menüsü, aktif sayfa göstergesi |
+| Dashboard Layout | `DashboardPage.jsx` | Ana sayfa düzeni, section routing |
 
+**Sorumluluklar:** Auth flow, Zustand store, protected route guard, admin role kontrolü, responsive sidebar.
 
-**1. Responsive (Duyarlı) Tasarım**
-* **Mobile-First Approach:** Önce mobil cihazlar için optimize edilmiş ticaret panelleri, ardından tablet ve geniş ekranlı masaüstü görünümleri.
-* **Breakpoints:** Mobile (< 768px), Tablet (768px - 1024px), Desktop (> 1024px). Geniş ekranlarda (Desktop) çoklu grafik ve derinlik tablosu gösterimi.
-* **Flexible Layouts:** Alım-satım panelleri ve AI analiz modülleri için CSS Grid ve Flexbox mimarisi.
-* **Touch-Friendly:** Mobilde hızlı emir girebilmek için minimum 44x44px dokunmatik hedef (touch target) alanları.
+---
 
-**2. Tasarım Sistemi ve Finansal Temalar**
-* **CSS Framework:** Tailwind CSS, Bootstrap veya Material-UI.
-* **Renk Paleti & Tema:** Borsa standartlarına uygun yeşil/kırmızı tonlar, AI modülleri için fütüristik renkler. Göz yormaması için zorunlu **Dark Mode (Karanlık Tema)** desteği (CSS variables ile).
-* **Tipografi:** Rakamların ve fiyatların hizalı görünmesi için Monospaced (eşit aralıklı) font destekli tipografi.
-* **Component Library:** Emir defteri, fiyat grafiği, portföy özeti gibi tekrar kullanılabilir (reusable) UI bileşenleri.
+## 2. Cem Karaca — Trading Sayfaları
 
-**3. Performans Optimizasyonu**
-* **Canlı Grafik Performansı:** Saniyede birden fazla güncellenen borsa grafikleri için DOM manipülasyonu yerine Canvas/WebGL tabanlı kütüphaneler (örn. Lightweight Charts).
-* **Code Splitting & Lazy Loading:** Sadece kullanıcının girdiği sayfaların (Route-based) ve ağır grafik bileşenlerinin sonradan yüklenmesi.
-* **Minification & Compression:** Gzip/Brotli sıkıştırma, CSS ve JS küçültme (minification).
-* **Caching:** Hızlı açılış için tarayıcı önbellekleme ve PWA (Service Worker) altyapısı.
+| Sayfa/Bileşen | Dosya | Açıklama |
+|----------------|-------|----------|
+| Order Form | `OrderForm.jsx` | BUY/SELL form, sembol seçimi, miktar girişi |
+| Positions List | `PositionsList.jsx` | Açık pozisyonlar, canlı P&L, close butonu |
+| Trade History | `TradeHistory.jsx` | İşlem geçmişi tablosu |
+| Order Summary | `OrderSummary.jsx` | Portföy özeti kartları |
 
-**4. SEO (Search Engine Optimization)**
-* **Meta Tags & Dinamik Başlıklar:** Her hisse/kripto detay sayfası için dinamik title ve description yönetimi (Örn: "BTC/USDT Anlık Fiyat ve AI Analizi").
-* **Semantic HTML:** Ekran okuyucular ve arama motorları için doğru HTML5 etiketleri (nav, main, article).
-* **Sitemap & Robots.txt:** Arama motoru tarama kuralları.
+**Sorumluluklar:** Trading API entegrasyonu, canlı fiyat ile P&L hesaplama, pozisyon kapatma akışı.
 
-**5. Erişilebilirlik (Accessibility)**
-* **WCAG 2.1 AA Compliance:** Minimum erişilebilirlik standardına uyum.
-* **Klavye Navigasyonu:** Fare kullanmadan "Tab" tuşuyla alım-satım formları arasında hızlı geçiş (Focus management).
-* **Renk Kontrastı:** Fiyat değişim renklerinin (yeşil/kırmızı) renk körü kullanıcılar için uygun kontrastta veya ikon/ok işaretleriyle desteklenmesi.
+---
 
-**6. Browser Compatibility (Tarayıcı Uyumluluğu)**
-* **Modern Browsers:** Chrome, Firefox, Safari, Edge (son 2 versiyon).
-* **Graceful Degradation:** Eski tarayıcılarda WebSocket veya gelişmiş grafikler desteklenmiyorsa standart REST tabanlı yedek (fallback) gösterimler.
+## 3. Salih Arda Katırcıoğlu — Watchlist & Alert Sayfaları
 
-**7. State Management (Durum Yönetimi)**
-* **Global State:** Kullanıcı bakiyesi ve oturum bilgileri için Redux, Zustand veya Context API.
-* **Server & Real-time State:** REST istekleri için React Query/SWR ve anlık WebSocket fiyat akışları için özel hook'lar.
-* **Form State:** Karmaşık alım-satım ve limit emri formları için formik veya React Hook Form.
+| Sayfa/Bileşen | Dosya | Açıklama |
+|----------------|-------|----------|
+| Watchlist Manager | `WatchlistManager.jsx` | Liste CRUD, sembol ekleme (dropdown öneriler), canlı fiyatlar |
+| Alerts Manager | `AlertsManager.jsx` | Alert oluşturma (ABOVE/BELOW), progress bar, tetiklenen alarmlar |
 
-**8. Routing (Yönlendirme)**
-* **Protected Routes:** Sadece giriş yapmış kullanıcıların Portföy ve İşlem panellerine erişebilmesi (Authentication guards).
-* **Client-Side Routing:** Sayfa yenilenmeden hisseler arası anında geçiş (React Router, Vue Router).
-* **404 Handling:** Olmayan bir hisse veya sayfa arandığında özel 404 sayfası.
+**Sorumluluklar:** Canlı fiyat entegrasyonu, sembol validasyonu, hedef fiyat proximity göstergesi, triggered alerts polling.
 
-**9. API ve WebSocket Entegrasyonu**
-* **Gerçek Zamanlı Veri (WebSocket/SSE):** Saniyelik fiyat güncellemeleri, anlık emir defteri ve AI bildirimleri için kesintisiz bağlantı yönetimi.
-* **HTTP Client:** Güvenli REST istekleri için Axios veya Fetch API.
-* **Interceptors:** API isteklerine otomatik JWT Token ekleme ve yetki (401) hatasında otomatik Token yenileme (Refresh Token).
-* **Loading States:** API cevabı veya AI analizi beklenirken arayüzde iskelet yükleme (skeleton loader) gösterimi.
+---
 
-**10. Testing (Test Süreçleri)**
-* **Unit Tests:** Alım-satım hesaplama fonksiyonları (komisyon, toplam tutar) için Jest/Vitest.
-* **E2E Tests:** Kullanıcının giriş yapıp hisse alma senaryosunun baştan sona testi (Cypress veya Playwright).
+## 4. Enes Çoban — AI Analiz & Chat Sayfaları
 
-**11. Build ve Deployment (Derleme ve Dağıtım)**
-* **Build Tool:** Yüksek hız için Vite, Next.js veya Webpack.
-* **Environment Variables:** API URL'leri ve gizli anahtarlar için `.env` yapılandırması.
-* **CI/CD & Hosting:** GitHub Actions üzerinden Vercel, Netlify veya AWS'ye otomatik dağıtım süreçleri.
+| Sayfa/Bileşen | Dosya | Açıklama |
+|----------------|-------|----------|
+| Portfolio Analysis | `PortfolioAnalysis.jsx` | AI portföy analizi, score barlar, model badge |
+| Watchlist Analysis | `WatchlistAnalysis.jsx` | AI sinyal analizi (AL/SAT/TUT/İZLE), confidence |
+| Transaction Analysis | `TransactionAnalysis.jsx` | AI davranış analizi, pattern'ler |
+| AI Chat | `AIChat.jsx` | Chatbot, dil seçimi (EN/TR), suggested actions |
+
+**Sorumluluklar:** AI Reports API entegrasyonu, LLM vs Rules Engine model göstergesi, markdown rendering, 60sn timeout.
+
+---
+
+## 5. Yakup Efe Çelebi — Market & Leaderboard Sayfaları
+
+| Sayfa/Bileşen | Dosya | Açıklama |
+|----------------|-------|----------|
+| Asset Card | `AssetCard.jsx` | Tek asset kartı (fiyat, değişim, sparkline) |
+| Detail Panel | `DetailPanel.jsx` | Seçili asset detay paneli |
+| Ticker Tape | `TickerTape.jsx` | Üst kayan fiyat bandı |
+| Status Bar | `StatusBar.jsx` | WebSocket bağlantı durumu |
+| Rank Table | `RankTable.jsx` | Liderlik tablosu sıralaması |
+| Badge Display | `BadgeDisplay.jsx` | Başarım rozetleri |
+
+**Sorumluluklar:** WebSocket canlı veri akışı (useMarketSocket hook), Geometric Brownian Motion fiyat görselleştirme, 2sn tick update.
+
+---
+
+## Genel Frontend Prensipleri
+
+### Teknoloji Yığını
+- **Framework:** React 18 + Vite 5
+- **Styling:** Tailwind CSS (custom dark theme)
+- **State:** Zustand (auth store)
+- **Routing:** React Router v6 (SPA)
+- **HTTP:** Axios (api + aiClient instances)
+- **Animasyon:** Framer Motion
+- **Canlı Veri:** Native WebSocket (`useMarketSocket` hook)
+
+### Tasarım Sistemi
+- **Tema:** Dark mode (void/coal background), neon/ice/crimson accent colors
+- **Font:** System font + monospace for fiyatlar
+- **Responsive:** Mobile-first, CSS Grid + Flexbox
+- **Glass Effect:** `backdrop-blur` + semi-transparent borders
+
+### API Entegrasyonu
+- `VITE_API_URL` environment variable ile backend URL konfigürasyonu
+- JWT token otomatik ekleme (Axios interceptor)
+- 401 hatalarında auto-logout (sadece auth route'ları)
+- AI istekleri için ayrı client (60sn timeout)
+
+### Deploy
+- **Platform:** Vercel
+- **Build:** `npm run build` → `dist/`
+- **Domain:** `https://frontend-bose.vercel.app`
+- **Env:** `VITE_API_URL=https://bose-platform.onrender.com/api/v1`
