@@ -1,4 +1,4 @@
-**API Test Videosu:** [Link buraya eklenecek](#)
+**API Test Videosu:** [Link](#https://youtu.be/tmX6SkjJaSQ)
 
 ### 17. Yeni İzleme Listesi Oluşturma
 * **Endpoint:** `POST /watchlist`
