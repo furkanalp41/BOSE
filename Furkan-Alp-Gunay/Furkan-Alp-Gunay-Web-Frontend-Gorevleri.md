@@ -1,6 +1,6 @@
 Furkan Alp Günay'ın Web Frontend Görevleri
 
-Front-end Test Videosu: Link buraya eklenecek
+Front-end Test Videosu: https://www.youtube.com/watch?v=bMAp1wuyE1c
 
 Üye Olma (Kayıt) Sayfası
 API Endpoint: POST /auth/register
