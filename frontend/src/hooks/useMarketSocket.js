@@ -2,6 +2,19 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 
 const MAX_HISTORY = 60
 
+// Derive WebSocket URL from VITE_API_URL (https://x → wss://x) or fallback to same host
+function resolveWsUrl() {
+  if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL
+  const api = import.meta.env.VITE_API_URL
+  if (api) {
+    return api.replace(/^https:/, 'wss:').replace(/^http:/, 'ws:').replace(/\/api\/v1$/, '') + '/ws/market'
+  }
+  return `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/market`
+}
+
+// Derive REST base from VITE_API_URL or fallback
+const API_BASE = import.meta.env.VITE_API_URL || '/api'
+
 export function useMarketSocket() {
   const [prices, setPrices] = useState({})
   const [history, setHistory] = useState({})
@@ -12,7 +25,7 @@ export function useMarketSocket() {
 
   // Fetch REST assets once
   useEffect(() => {
-    fetch('/api/market/assets')
+    fetch(`${API_BASE}/market/assets`)
       .then(r => r.json())
       .then(json => setAssets(json.data ?? []))
       .catch(() => setAssets([]))
@@ -25,9 +38,7 @@ export function useMarketSocket() {
     }
 
     setStatus('connecting')
-    const wsUrl = import.meta.env.VITE_WS_URL
-      || `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/market`
-    const ws = new WebSocket(wsUrl)
+    const ws = new WebSocket(resolveWsUrl())
     wsRef.current = ws
 
     ws.onopen = () => setStatus('live')
