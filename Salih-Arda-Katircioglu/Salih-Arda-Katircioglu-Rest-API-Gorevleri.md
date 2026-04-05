@@ -1,4 +1,4 @@
-**API Test Videosu:** [#https://youtu.be/tmX6SkjJaSQ](#https://youtu.be/tmX6SkjJaSQ)
+**API Test Videosu:** [#https://youtu.be/tmX6SkjJaSQ](#)
 
 ### 17. Yeni İzleme Listesi Oluşturma
 * **Endpoint:** `POST /watchlist`
