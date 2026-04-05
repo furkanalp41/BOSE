@@ -9,25 +9,25 @@
 
   ```json
   {
+    "fullName": "Furkan Alp Günay",
     "email": "furkan@example.com",
-    "password": "GucluSifre123!",
-    "fullName": "Furkan Alp Günay"
+    "password": "GucluSifre123!"
   }
   ```
 
-  Response: 201 Created - Kullanıcı başarıyla oluşturuldu ve başlangıç bakiyesi tanımlandı.
+Authentication: Gerekmiyor
 
-  2. Giriş Yapma
+Response: 201 Created - Kullanıcı başarıyla oluşturuldu, JWT token ve kullanıcı bilgileri döner. Başlangıç bakiyesi 100.000 TRY tanımlanır.
+
+2. Giriş Yapma
 Endpoint: POST /auth/login
 
 Request Body:
 ```json
-
 {
   "email": "furkan@example.com",
   "password": "GucluSifre123!"
 }
-
 ```
 
 Authentication: Gerekmiyor
@@ -35,64 +35,98 @@ Authentication: Gerekmiyor
 Response: 200 OK - Giriş başarılı, JWT Token döndürüldü.
 
 3. Profil Görüntüleme
-Endpoint: GET /users/{userId}
+Endpoint: GET /users/me
+
+Authentication: Bearer Token gerekli
+
+Response: 200 OK - Aktif kullanıcının profil bilgileri (id, email, full_name, role, balance) getirildi.
+
+4. Kullanıcı Detayı
+Endpoint: GET /users/:userId
 
 Path Parameters:
-
-userId (string, required) - Kullanıcı ID'si
+userId (integer, required) - Kullanıcı ID'si
 
 Authentication: Bearer Token gerekli
 
 Response: 200 OK - Kullanıcı bilgileri ve sanal bakiye başarıyla getirildi.
 
-4. Profil Bilgilerini Güncelleme
-Endpoint: PUT /users/{userId}
+5. Profil Bilgilerini Güncelleme
+Endpoint: PUT /users/:userId
 
 Path Parameters:
-
-userId (string, required) - Kullanıcı ID'si
+userId (integer, required) - Kullanıcı ID'si
 
 Request Body:
 ```json
 {
-  "fullName": "Furkan Alp Günay",
-  "phone": "+905551234567"
+  "full_name": "Furkan Alp Günay",
+  "risk_level": "HIGH"
 }
-
 ```
+
 Authentication: Bearer Token gerekli
 
 Response: 200 OK - Kullanıcı başarıyla güncellendi.
 
-5. Hesap Silme
-Endpoint: DELETE /users/{userId}
+6. Hesap Silme
+Endpoint: DELETE /users/:userId
 
 Path Parameters:
+userId (integer, required) - Kullanıcı ID'si
 
-userId (string, required) - Kullanıcı ID'si
+Authentication: Bearer Token gerekli
 
-Authentication: Bearer Token gerekli (Kendi hesabını silme yetkisi)
+Response: 200 OK - Kullanıcı başarıyla silindi.
 
-Response: 204 No Content - Kullanıcı başarıyla silindi.
-
-6. AI Tercihlerini Kaydetme
-Endpoint: POST /users/{userId}/ai-preferences
+7. AI Tercihlerini Kaydetme
+Endpoint: POST /users/:userId/ai-preferences
 
 Path Parameters:
-
-userId (string, required) - Kullanıcı ID'si
+userId (integer, required) - Kullanıcı ID'si
 
 Request Body:
-
 ```json
 {
   "riskLevel": "HIGH",
-  "investmentTerm": "LONG_TERM"
+  "investmentTerm": "SHORT_TERM"
 }
-
 ```
+
 Authentication: Bearer Token gerekli
 
 Response: 200 OK - Yapay zeka tercihleri kaydedildi.
 
+8. Admin Log Görüntüleme
+Endpoint: GET /admin/logs
 
+Authentication: Bearer Token gerekli (Admin rolü)
+
+Response: 200 OK - Sistem audit logları listelendi.
+
+9. Admin Kullanıcı Rolü Güncelleme
+Endpoint: PUT /admin/users/:id/role
+
+Path Parameters:
+id (integer, required) - Kullanıcı ID'si
+
+Request Body:
+```json
+{
+  "role": "admin"
+}
+```
+
+Authentication: Bearer Token gerekli (Admin rolü)
+
+Response: 200 OK - Kullanıcı rolü güncellendi.
+
+10. Admin Kullanıcı Silme
+Endpoint: DELETE /admin/users/:id
+
+Path Parameters:
+id (integer, required) - Kullanıcı ID'si
+
+Authentication: Bearer Token gerekli (Admin rolü)
+
+Response: 200 OK - Kullanıcı silindi.

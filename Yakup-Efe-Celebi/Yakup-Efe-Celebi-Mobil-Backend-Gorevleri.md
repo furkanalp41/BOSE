@@ -1,51 +1,57 @@
-**1. Yeni Market Varlığı Ekleme (Admin)**
-* **API Endpoint:** `POST /market/assets`
-* **Görev:** Yönetici paneli (Admin) üzerinden sisteme yeni hisse veya coin tanımlama.
-* **İşlevler:**
-  * Yönetici arayüzünden form verilerini (Sembol, Ad, Kategori) toplayıp API'ye iletme.
-  * Form validasyonu.
-* **Teknik Detaylar:**
-  * Yetkisiz bir kullanıcı bu uç noktaya ulaştığında dönen `403 Forbidden` hatasını yönetme.
+# Yakup Efe Çelebi'nin Mobil Backend Görevleri
 
-**2. Market Verilerini Listeleme**
-* **API Endpoint:** `GET /market/prices`
-* **Görev:** Tüm varlıkların anlık fiyatlarını ve % değişimlerini Redis üzerinden çekip arayüze basma.
+**Mobil Front-end ile Back-end Bağlanmış Test Videosu:** `Link buraya eklenecek`
+
+**1. Piyasa Verilerini Listeleme**
+* **API Endpoint:** `GET /market/assets`
+* **Görev:** Tüm varlıkların anlık fiyatlarını ve değişim oranlarını PriceEngine'den çekip arayüze basma.
 * **İşlevler:**
   * Ana sayfada "Piyasa" ekranını sürekli güncel tutma.
   * Fiyat değiştiğinde yeşil/kırmızı yanıp sönme animasyonu için arayüzü uyarma.
 * **Teknik Detaylar:**
-  * REST API ile Polling (her 3-5 saniyede bir istek atma) veya WebSocket (gerçek zamanlı bağlantı) yönetimi.
-  * JSON parser optimizasyonu (Çok sayıda varlık verisi geleceği için cihazı yormama).
+  * WebSocket (wss://bose-platform.onrender.com/ws/market) ile gerçek zamanlı bağlantı yönetimi (2 saniye tick aralığı).
+  * JSON parser optimizasyonu.
 
-**3. Varlık Bilgilerini Güncelleme (Admin)**
-* **API Endpoint:** `PUT /market/assets/{assetId}`
-* **Görev:** Bir varlığın açıklamasını veya işlem (tahta) durumunu yönetici olarak güncelleme.
+**2. Liderlik Tablosu**
+* **API Endpoint:** `GET /leaderboard/rankings`
+* **Görev:** Global sıralama verilerini çekip listeleme.
 * **İşlevler:**
-  * Varlık detay düzenleme ekranından değişen verileri API'ye gönderme.
+  * Sıralama listesini çekme ve gösterme.
+  * Pull-to-refresh ile güncelleme.
 * **Teknik Detaylar:**
-  * `Authorization: Bearer {token}` yönetimi ve Admin Rolü kontrolü.
+  * JWT Token ile authorization sağlanması.
 
-**4. Sistem Sağlık Durumu Görüntüleme**
-* **API Endpoint:** `GET /admin/health`
-* **Görev:** Mobil uygulamanın gizli veya admin ekranında sistem durumunu gösterme.
+**3. Kullanıcı Sıralaması**
+* **API Endpoint:** `GET /leaderboard/user/:userId`
+* **Görev:** Kullanıcının kendi sıralama bilgisini alma.
 * **İşlevler:**
-  * Docker, Kafka ve Redis servislerinin "UP" veya "DOWN" durumlarını ekrana basma.
-* **Teknik Detaylar:**
-  * JSON'daki servis durumlarını okuyup yeşil/kırmızı ikonlarla eşleştirme.
+  * Profil ekranında sıralama bilgisini gösterme.
 
-**5. Giriş Hareketlerini Listeleme**
-* **API Endpoint:** `GET /users/{userId}/logs`
-* **Görev:** Kullanıcının hesaba giriş loglarını siber güvenlik menüsünde listeleme.
+**4. Başarımlar**
+* **API Endpoint:** `GET /leaderboard/achievements`
+* **Görev:** Başarım listesini çekme ve grid'e yerleştirme.
 * **İşlevler:**
-  * Profil -> Güvenlik sekmesinden API'ye istek atarak IP ve Tarih verilerini listeleme.
-* **Teknik Detaylar:**
-  * Tarih formatlarını (ISO 8601) mobil cihazın yerel saat dilimine (Local Timezone) çevirme.
+  * Rozet verilerini parse ederek kartlara yerleştirme.
 
-**6. AI Tahmin Geçmişini Temizleme**
-* **API Endpoint:** `DELETE /ai/history`
-* **Görev:** Yapay zeka asistanıyla yapılan sohbet ve analiz geçmişini silme işlemi.
+**5. Admin Asset Listesi**
+* **API Endpoint:** `GET /admin/market/assets`
+* **Görev:** Admin ekranında tüm asset'leri listeleme.
 * **İşlevler:**
-  * Profil -> Ayarlar sekmesinde "Sohbet Geçmişini Temizle" butonuna tıklandığında işlemi iletme.
-  * İşlem sonrası yerel arayüzdeki mesaj listesini (cache) sıfırlama.
+  * Asset listesini çekme ve admin arayüzünde gösterme.
 * **Teknik Detaylar:**
-  * Destructive action için (Yıkıcı işlem) onay penceresi entegrasyonu.
+  * 403 Forbidden hata yönetimi (admin değilse erişim engeli).
+
+**6. Admin Asset Ekleme**
+* **API Endpoint:** `POST /admin/market/assets`
+* **Görev:** Yönetici panelinden sisteme yeni asset tanımlama.
+* **İşlevler:**
+  * Sembol, fiyat, drift ve volatility form verilerini toplayıp API'ye iletme.
+  * Form validasyonu (sembol büyük harfe zorlanır).
+* **Teknik Detaylar:**
+  * Admin rolü kontrolü.
+
+**7. Admin Asset Silme**
+* **API Endpoint:** `DELETE /admin/market/assets/:symbol`
+* **Görev:** Bir asset'i PriceEngine'den ve sistemden kaldırma.
+* **İşlevler:**
+  * Onay dialog'u gösterme ve silme isteğini gönderme.

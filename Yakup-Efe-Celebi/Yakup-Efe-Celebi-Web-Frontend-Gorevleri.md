@@ -1,12 +1,64 @@
-Yeni Market Varlığı Ekleme Paneli (Admin)
-API Endpoint: POST /market/assets Görev: Yönetici paneli için yeni hisse/coin ekleme formu UI Bileşenleri: Sembol, İsim, Kategori (BİST/Kripto) form inputları Yönetici paneli layout'u (Sidebar'lı özel admin dashboard) "Piyasaya Ekle" butonu Form Validasyonu: Sembol alanının her zaman büyük harfe (Uppercase) zorlanması Kullanıcı Deneyimi: Sadece Admin rolündeki kullanıcıların bu sayfayı görebilmesi (Protected Route) Teknik Detaylar: Role-based Access Control (RBAC) ile frontend menü gizleme/gösterme
-Market Verilerini Listeleme Sayfası
-API Endpoint: GET /market/prices Görev: Uygulamanın ana ekranında (Piyasalar) tüm varlıkların listelenmesi UI Bileşenleri: BİST ve Kripto arası geçiş (Tabs) Gerçek zamanlı fiyatları gösteren ana DataGrid / Tablo Arama çubuğu (Filtreleme) Kullanıcı Deneyimi: Fiyat güncellendiğinde hücrenin yeşil/kırmızı yanıp sönmesi (Flash effect) Borsa temasına uygun Karanlık Tema (Dark Mode) desteği Teknik Detaylar: Performans: Çok fazla satır olduğunda React Virtualized veya Windowing kullanımı WebSocket entegrasyonu ile UI State'in saniyede bir güncellenmesi
-Varlık Bilgilerini Güncelleme Paneli (Admin)
-API Endpoint: PUT /market/assets/{assetId} Görev: Hisselerin işlem (tahta) durumunu yönetici olarak değiştirme UI Bileşenleri: Admin varlık listesinde "Durumu Değiştir" Switch/Toggle butonu Kullanıcı Deneyimi: Tahta kapatıldığında varlığın satır renginin gri (disabled) hale gelmesi Teknik Detaylar: PUT isteği ile boolean (isActive) değerinin anlık güncellenmesi
-Sistem Sağlık Durumu Görüntüleme (Admin)
-API Endpoint: GET /admin/health Görev: Sunucu altyapısının web üzerinden takibi için Dashboard UI Bileşenleri: Docker, Kafka, Redis ve PostgreSQL için durum kartları (Status Cards) Aktif (Yeşil) ve Hatalı (Kırmızı) durum ikonları Kullanıcı Deneyimi: Sayfanın her 10 saniyede bir otomatik yenilenerek güncel durumu göstermesi Teknik Detaylar: Polling (setInterval) mekanizması ile API isteği atılması
-Giriş Hareketlerini Listeleme Sayfası
-API Endpoint: GET /users/{userId}/logs Görev: Kullanıcı profilindeki "Güvenlik Geçmişi" listesi UI Bileşenleri: Tarih, Saat, IP adresi ve Tarayıcı bilgisini içeren basit tablo Kullanıcı Deneyimi: Temiz ve okunabilir tipografi kullanımı Teknik Detaylar: Gelen tarih string'inin (ISO 8601) kullanıcı tarayıcısının yerel formatına dönüştürülmesi (Date.toLocaleString)
-AI Tahmin Geçmişini Temizleme Akışı
-API Endpoint: DELETE /ai/history Görev: AI Chatbot ayarlarında geçmişi sıfırlama işlemi UI Bileşenleri: Chat penceresinin veya profil ayarlarının köşesinde "Sohbeti Temizle" butonu Onay penceresi (Confirmation Modal) Kullanıcı Deneyimi: Silme başarılı olduğunda chat penceresindeki mesajların animasyonla yok olması ve "Nasıl yardımcı olabilirim?" boş durum (empty state) metninin belirmesi Teknik Detaylar: Global chat state'inin boş array'e ([]) çekilmesi
+Yakup Efe Çelebi'nin Web Frontend Görevleri
+
+Front-end Test Videosu: Link buraya eklenecek
+
+Asset Card (AssetCard.jsx)
+
+API Endpoint: GET /market/assets
+Görev: Tek asset kartı tasarımı (fiyat, değişim, sparkline grafik)
+UI Bileşenleri:
+Sembol adı ve fiyat gösterimi
+24 saatlik değişim yüzdesi
+Sparkline mini grafik
+Karta tıklandığında DetailPanel açılır
+Kullanıcı Deneyimi:
+Yükselen yeşil, düşen kırmızı renk kodlaması
+Fiyat güncellendiğinde flash efekti
+Teknik Detaylar:
+WebSocket (useMarketSocket hook) ile 2 saniyede bir canlı fiyat güncellemesi
+
+Detail Panel (DetailPanel.jsx)
+
+API Endpoint: GET /market/assets
+Görev: Seçili asset detay paneli tasarımı
+UI Bileşenleri:
+Detaylı fiyat grafigi
+24h high/low bilgileri
+Drift ve volatility değerleri
+Slide-over panel tasarımı
+Kullanıcı Deneyimi:
+Kart tıklandığında sağdan açılan panel
+
+Ticker Tape (TickerTape.jsx)
+
+Görev: Üst kayan fiyat bandı (marquee efekti)
+UI Bileşenleri:
+Tüm asset'lerin fiyatlarının kayan bant halinde gösterimi
+Yükselen/düşen renk kodları
+Teknik Detaylar:
+WebSocket ile canlı veri akışı
+
+Status Bar (StatusBar.jsx)
+
+Görev: WebSocket bağlantı durumu göstergesi
+UI Bileşenleri:
+Connected (yeşil), Disconnected (kırmızı), Reconnecting (sarı) durumları
+Bağlantı durumu ikonu
+
+Rank Table (RankTable.jsx)
+
+API Endpoint: GET /leaderboard/rankings
+Görev: Liderlik tablosu sıralama tablosu tasarımı
+UI Bileşenleri:
+Sıra, kullanıcı adı, toplam değer ve işlem sayısı sütunları
+Aktif kullanıcının satırının vurgulanması
+Kullanıcı Deneyimi:
+Tablo yüklenirken skeleton gösterimi
+
+Badge Display (BadgeDisplay.jsx)
+
+API Endpoint: GET /leaderboard/achievements
+Görev: Başarım rozetleri grid gösterimi
+UI Bileşenleri:
+Her rozet için ikon ve açıklama kartı
+Grid layout gösterimi

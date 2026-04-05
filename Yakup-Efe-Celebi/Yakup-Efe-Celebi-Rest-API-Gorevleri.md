@@ -1,17 +1,69 @@
-  Yeni Market Varlığı Ekleme
-Endpoint: POST /market/assets Request Body:{ "symbol": "ASELS", "name": "Aselsan Elektronik", "type": "BIST" }  ```
+# Yakup Efe Çelebi'nin REST API Metotları
 
-Authentication: Bearer Token gerekli (Sadece Admin yetkisi) Response: 201 Created - Yeni varlık piyasa sistemine başarıyla eklendi 2. Market Verilerini Listeleme
+**API Test Videosu:** [Link buraya eklenecek](#)
 
-Endpoint: GET /market/prices Query Parameters: type (string, optional) - Varlık türü (BIST, CRYPTO) Response: 200 OK - Varlıkların anlık verileri Redis'ten getirildi 3. Varlık Bilgilerini Güncelleme
+### 1. Piyasa Verilerini Listeleme
 
-Endpoint: PUT /market/assets/{assetId} Path Parameters: assetId (string, required) - Varlık ID'si Request Body:```json{ "isActive": false, "description": "Tahta geçici olarak kapatılmıştır." }  ```
+* **Endpoint:** `GET /market/assets`
 
-Authentication: Bearer Token gerekli (Sadece Admin yetkisi) Response: 200 OK - Varlık bilgileri güncellendi 4. Sistem Sağlık Durumu Görüntüleme
+Authentication: Gerekmiyor (public endpoint)
 
-Endpoint: GET /admin/health Authentication: Bearer Token gerekli (Sadece Admin yetkisi) Response: 200 OK - Docker, Kafka ve Redis servislerinin güncel durum raporu döndürüldü 5. Giriş Hareketlerini Listeleme
+Response: 200 OK - Tüm varlıkların anlık fiyat, 24h değişim, drift ve volatility verileri döndürüldü. Default assets: BTC, ETH, SOL, THYAO, ASELS, AAPL, NVDA, GOOGL.
 
-Endpoint: GET /users/{userId}/logs Path Parameters: userId (string, required) - Kullanıcı ID'si Authentication: Bearer Token gerekli Response: 200 OK - Son giriş yapılan IP ve cihaz bilgileri listelendi 6. AI Tahmin Geçmişini Temizleme
+2. Liderlik Tablosu
+Endpoint: GET /leaderboard/rankings
 
-Endpoint: DELETE /ai/history Authentication: Bearer Token gerekli Response: 204 No Content - Kullanıcının AI sohbet geçmişi kalıcı olarak silindi 
+Authentication: Bearer Token gerekli
 
+Response: 200 OK - Global sıralama (user_id, full_name, total_value, rank, trade_count) listelendi.
+
+3. Kullanıcı Sıralaması
+Endpoint: GET /leaderboard/user/:userId
+
+Path Parameters:
+userId (integer, required) - Kullanıcı ID'si
+
+Authentication: Bearer Token gerekli
+
+Response: 200 OK - Kullanıcının sıralama bilgileri döndürüldü.
+
+4. Başarımlar
+Endpoint: GET /leaderboard/achievements
+
+Authentication: Bearer Token gerekli
+
+Response: 200 OK - Başarım listesi (id, name, description, icon) döndürüldü.
+
+5. Admin Asset Listesi
+Endpoint: GET /admin/market/assets
+
+Authentication: Bearer Token gerekli (Admin rolü)
+
+Response: 200 OK - Tüm asset'ler detaylı olarak listelendi.
+
+6. Admin Asset Ekleme
+Endpoint: POST /admin/market/assets
+
+Request Body:
+```json
+{
+  "symbol": "TSLA",
+  "price": 245.50,
+  "drift": 0.0001,
+  "volatility": 0.0015
+}
+```
+
+Authentication: Bearer Token gerekli (Admin rolü)
+
+Response: 201 Created - Yeni asset piyasa sistemine başarıyla eklendi.
+
+7. Admin Asset Silme
+Endpoint: DELETE /admin/market/assets/:symbol
+
+Path Parameters:
+symbol (string, required) - Asset sembolü (örn: TSLA)
+
+Authentication: Bearer Token gerekli (Admin rolü)
+
+Response: 200 OK - Asset sistemden kaldırıldı.

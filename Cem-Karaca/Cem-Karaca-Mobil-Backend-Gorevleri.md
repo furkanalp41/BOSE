@@ -1,57 +1,56 @@
+# Cem Karaca'nın Mobil Backend Görevleri
+
 **Mobil Front-end ile Back-end Bağlanmış Test Videosu:** `Link buraya eklenecek`
 
-**1. Piyasa Emri Oluşturma (Alım/Satım)**
-* **API Endpoint:** `POST /orders/market`
+**1. Alım/Satım Emri Oluşturma**
+* **API Endpoint:** `POST /trading/order`
 * **Görev:** Anlık fiyattan alım-satım emirlerini iletme.
 * **İşlevler:**
-  * Miktar ve İşlem Yönü (BUY/SELL) verilerini toplayıp API'ye gönderme.
-  * Emir başarılı olduğunda bakiyeyi güncellemek için Profil servisiyle senkronize çalışma.
+  * Sembol, miktar ve işlem yönü (BUY/SELL) verilerini toplayıp API'ye gönderme.
+  * Emir başarılı olduğunda bakiyeyi güncellemek için portföy servisiyle senkronize çalışma.
 * **Teknik Detaylar:**
-  * Çift tıklamayı veya art arda isteği önlemek için Buton kilitleme (Debounce).
-  * 400 Bad Request (Yetersiz bakiye) hatasının yönetimi.
+  * Çift tıklamayı önlemek için buton kilitleme (Debounce).
+  * 400 Bad Request (yetersiz bakiye) hatasının yönetimi.
 
-**2. Limit Emir Oluşturma**
-* **API Endpoint:** `POST /orders/limit`
-* **Görev:** İleri tarihli ve özel fiyatlı emirleri oluşturma.
+**2. Açık Pozisyonları Listeleme**
+* **API Endpoint:** `GET /trading/positions`
+* **G��rev:** Kullanıcının açık pozisyonlarını ve canlı P&L bilgilerini listeleme.
 * **İşlevler:**
-  * Hedef fiyat ve miktar bilgilerini doğrulayarak (Sıfırdan büyük olmalı) API'ye gönderme.
-  * Emrin "Bekleyen (Pending)" statüsünde kaydedildiğini arayüzde gösterme.
-* **Teknik Detaylar:**
-  * Float/Decimal veri tiplerinin JSON formatında hassasiyetini (Precision) koruyarak iletilmesi.
-
-**3. Açık Emirleri Listeleme**
-* **API Endpoint:** `GET /orders/open`
-* **Görev:** Henüz gerçekleşmemiş limit emirleri kullanıcı arayüzünde listeleme.
-* **İşlevler:**
-  * Bekleyen emirleri çekip bir sekmede (Tab) listeleme.
-  * Pull-to-refresh ile emir durumlarını (Gerçekleşti mi?) kontrol etme.
+  * Pozisyon listesini çekip canlı fiyatlarla P&L hesaplama.
+  * Pull-to-refresh ile pozisyon durumlarını güncelleme.
 * **Teknik Detaylar:**
   * JWT Token ile authorization sağlanması.
 
-**4. Limit Emir Güncelleme**
-* **API Endpoint:** `PUT /orders/{orderId}`
-* **Görev:** Bekleyen bir emrin hedef fiyatını veya lot miktarını değiştirme.
+**3. Pozisyon Kapatma**
+* **API Endpoint:** `POST /trading/positions/:positionId/close`
+* **Görev:** Açık bir pozisyonu güncel fiyattan kapatma.
 * **İşlevler:**
-  * Güncelleme modalından alınan verileri PUT metoduyla gönderme.
-  * Bloke bakiye değişimini kullanıcıya hissettirme.
+  * Onay dialog'u gösterme ve kapatma isteğini gönderme.
+  * Kâr/zarar bakiyeye yansıtıldığında arayüzü güncelleme.
 * **Teknik Detaylar:**
-  * Conflict resolution ve loading state yönetimi.
+  * Path parametresinin (positionId) doğru iletilmesi.
 
-**5. Bekleyen Emri İptal Etme**
-* **API Endpoint:** `DELETE /orders/{orderId}`
-* **Görev:** Gerçekleşmemiş bir emri iptal ederek bakiyeyi boşa çıkarma.
+**4. İşlem Geçmişi**
+* **API Endpoint:** `GET /trading/history`
+* **Görev:** Geçmiş alım/satım işlemlerini kronolojik olarak listeleme.
 * **İşlevler:**
-  * Listeden kaydırarak veya butona basarak silme eylemi.
-  * İptal başarılı olduğunda açık emirler listesini local olarak filtreleyip güncelleme.
+  * Verileri çekip borsa terminolojisine uygun listeye yansıtma.
+  * Çok fazla veri varsa Lazy Loading yapısı.
 * **Teknik Detaylar:**
-  * API'den 200/204 durum kodu geldiğinde UI State'i güncelleme.
+  * Tarih formatlarını yerel saat dilimine çevirme.
 
-**6. AI Portföy Raporu Almak**
-* **API Endpoint:** `GET /ai/report/portfolio/{userId}`
-* **Görev:** Kullanıcının yatırımlarının yapay zeka tarafından analiz edilip sunulması.
+**5. Portföy Özeti**
+* **API Endpoint:** `GET /trading/portfolio`
+* **Görev:** Kullanıcının toplam portföy değeri, P&L ve bakiye bilgilerini çekme.
 * **İşlevler:**
-  * Portföy risk skorunu ve dağılım pasta grafiğini besleyen verileri çekme.
-  * AI analiz yanıtını parse ederek strateji önerilerini arayüze basma.
+  * Portföy verilerini parse ederek özet kartlarını besleme.
 * **Teknik Detaylar:**
-  * Response caching stratejisi (Rapor her saniye değişmeyeceği için önbelleğe alma).
+  * Response caching stratejisi (hızlı yükleme için).
 
+**6. Admin Duyuru Oluşturma**
+* **API Endpoint:** `POST /admin/announcements`
+* **Görev:** Admin panelinden sistem duyurusu oluşturma.
+* **İşlevler:**
+  * Duyuru metnini toplayıp API'ye gönderme.
+* **Teknik Detaylar:**
+  * 403 Forbidden hata yönetimi (admin değilse erişim engeli).

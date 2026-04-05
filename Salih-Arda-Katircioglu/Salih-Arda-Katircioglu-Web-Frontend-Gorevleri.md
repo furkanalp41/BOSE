@@ -1,13 +1,45 @@
+Salih Arda Katırcıoğlu'nun Web Frontend Görevleri
+
 Front-end Test Videosu: Link buraya eklenecek
-Fiyat Alarmı Ekleme Formu
-API Endpoint: POST /alerts Görev: Varlıklar için hedef fiyat bildirim formu tasarımı UI Bileşenleri: Varlık arama/seçme Dropdown'ı Hedef fiyat input alanı "Şunun Üstüne Çıkarsa" / "Altına Düşerse" Radio butonları "Alarm Kur" butonu Kullanıcı Deneyimi: Varlık seçildiğinde anlık fiyatın otomatik inputun yanına yazılması Başarılı kayıtta "Alarm Kuruldu" toast mesajı Teknik Detaylar: Form validation ve API request yönetimi
-Fiyat Alarmı Güncelleme Etkileşimi
-API Endpoint: PUT /alerts/{alertId} Görev: Mevcut alarmı açma/kapatma arayüzü UI Bileşenleri: Alarmlar listesinde her satırda Switch (Aç/Kapa) toggle bileşeni Kullanıcı Deneyimi: Switch'e tıklandığında anında durum değişimi (Optimistic update) Teknik Detaylar: API'den hata dönerse Switch'in eski konumuna geri gelmesi (Rollback)
-Fiyat Alarmını Silme Akışı
-API Endpoint: DELETE /alerts/{alertId} Görev: Alarm listesinden öğe silme işlemi UI Bileşenleri: Satır sonunda "Sil" butonu veya ikon Kullanıcı Deneyimi: Silme işleminde onay penceresi sormadan hızlı silme (frictionless experience) Teknik Detaylar: List component'inde lokal state filtreleme işlemi
-İşlem Geçmişini Görüntüleme Sayfası
-API Endpoint: GET /orders/history Görev: Kullanıcının bitmiş işlemlerinin tarihsel dökümü UI Bileşenleri: Tarih, Sembol, İşlem Tipi (Al/Sat), Fiyat, Tutar sütunlu geniş Data Table Alış işlemleri yeşil, satış işlemleri kırmızı badge (etiket) ile gösterilir Sayfalama (Pagination) kontrolleri Kullanıcı Deneyimi: Sayfalar arası geçişlerde pürüzsüz tablo yüklenmesi Tablo başlıklarına tıklayarak sıralama (Sort by Date, Sort by Price) Teknik Detaylar: Server-side pagination entegrasyonu (?page=1&limit=20) React Table ile sorting ve pagination yönetimi
-Listeden Varlık Çıkarma Etkileşimi
-API Endpoint: DELETE /watchlists/{listId}/assets/{assetSymbol} Görev: İzleme listesi detay sayfasından bir varlığı çıkarma UI Bileşenleri: İzleme listesi tablosunda varlık satırında "Listeden Çıkar" ikonu Kullanıcı Deneyimi: Tıklandığında varlık satırının yavaşça kaybolması (opacity transition) Teknik Detaylar: İki farklı path parametresinin (listId ve assetSymbol) doğru iletilmesi
-AI Chatbot ile Sohbet Arayüzü
-API Endpoint: POST /ai/chat Görev: Finansal yapay zeka asistanı ile mesajlaşma arayüzü UI Bileşenleri: Ekranın sağ altında sabit duran chat balonu veya tam ekran sohbet penceresi Sağda kullanıcı, solda AI mesaj baloncukları Altta mesaj yazma inputu ve "Gönder" butonu Kullanıcı Deneyimi: Mesaj gönderildiğinde AI cevaplayana kadar "Asistan yazıyor..." (Typing indicator) animasyonu Yeni mesaj geldiğinde otomatik olarak en aşağı kaydırma (Auto-scroll to bottom) Teknik Detaylar: Chat mesaj geçmişinin state üzerinde tutulması Enter tuşuna basınca form submit engellemesi ve mesaj gönderme tetikleyicisi
+
+Watchlist Manager (WatchlistManager.jsx)
+
+API Endpoint: POST /watchlist/, GET /watchlist/, DELETE /watchlist/:id, POST /watchlist/:id/items, DELETE /watchlist/:id/items/:itemId
+Görev: İzleme listesi CRUD işlemleri ve canlı fiyat gösterimli arayüz tasarımı
+UI Bileşenleri:
+Yeni liste oluşturma butonu ve isim girişi
+Sembol ekleme dropdown'ı (PriceEngine'deki asset'lerden öneriler)
+Her sembol için canlı fiyat ve 24h değişim gösterimi (grid layout)
+Listeden sembol çıkarma ikonu
+Liste silme butonu (onay dialog'u ile)
+Ortalama değişim istatistikleri (watchlist bazında)
+Kullanıcı Deneyimi:
+Canlı fiyatlar marketApi ile 10 saniyede bir yenilenir
+Yükselen yeşil, düşen kırmızı renk kodlaması
+Sembol eklerken arama ve filtreleme
+Teknik Detaylar:
+marketApi entegrasyonu (fiyat çekme)
+WebSocket ile canlı fiyat güncellemesi
+Framer Motion animasyonları
+
+Alerts Manager (AlertsManager.jsx)
+
+API Endpoint: POST /watchlist/alerts, GET /watchlist/alerts, DELETE /watchlist/alerts/:alertId, GET /watchlist/alerts/triggered
+Görev: Fiyat alarmı oluşturma ve yönetim arayüzü tasarımı
+UI Bileşenleri:
+Sembol seçimi dropdown (PriceEngine asset'leri)
+Hedef fiyat input alanı
+ABOVE/BELOW koşul seçimi
+Güncel fiyat vs hedef fiyat karşılaştırması
+Progress bar: hedefe yakınlık göstergesi (animasyonlu, Framer Motion)
+Mesafe etiketi ("5.3% uzakta", "Hedefe ulaşıldı!")
+Fiyat bağlam ipucu ("BTC güncel fiyattan %5.3 yükseldiğinde alarm")
+Alarm silme butonu
+Tetiklenen alarmlar bölümü
+Kullanıcı Deneyimi:
+Alarm oluşturmada anlık fiyatın otomatik gösterimi
+Başarılı kayıtta toast mesajı
+Tetiklenen alarmlar polling ile güncellenir
+Teknik Detaylar:
+marketApi ile güncel fiyat çekme
+Progress bar hesaplama: abs(currentPrice - targetPrice) / targetPrice

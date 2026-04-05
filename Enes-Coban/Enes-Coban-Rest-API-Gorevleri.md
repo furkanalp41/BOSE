@@ -1,120 +1,56 @@
-# API Dokümantasyonu
+# Enes Çoban'ın REST API Metotları
 
 **API Test Videosu:** [Link buraya eklenecek](#)
 
----
+### 1. AI Yatırım Tavsiyesi
 
-## 1. Yeni İzleme Listesi Oluşturma
+* **Endpoint:** `POST /ai/advice`
 
-Yeni bir izleme listesi (watchlist) oluşturur.
+Authentication: Bearer Token gerekli
 
-*   **Endpoint:** `POST /watchlists`
-*   **Authentication:** Bearer Token gerekli
+Response: 200 OK - Kural tabanlı yatırım tavsiyesi ve model_used bilgisi döndürüldü.
 
-**Request Body:**
+2. AI Portföy Analizi
+Endpoint: POST /ai/reports/portfolio
+
+Authentication: Bearer Token gerekli
+
+Response: 200 OK - AI portföy analizi (analysis, model_used, scores) döndürüldü. ProviderChain: Gemini → Claude → Rules Engine.
+
+3. AI Watchlist Sinyal Analizi
+Endpoint: POST /ai/reports/watchlist
+
+Request Body:
 ```json
 {
-  "name": "Uzun Vadeli Kriptolarım"
+  "items": [
+    {"name": "BTC", "price": 67000},
+    {"name": "ETH", "price": 3500}
+  ]
 }
 ```
 
-**Response:**
-*   `201 Created` - İzleme listesi başarıyla oluşturuldu.
+Authentication: Bearer Token gerekli
 
----
+Response: 200 OK - AL/SAT/TUT/İZLE sinyalleri ve confidence skorları döndürüldü.
 
-## 2. İzleme Listesine Varlık Ekleme
+4. AI İşlem Davranış Analizi
+Endpoint: POST /ai/reports/transactions
 
-Mevcut bir listeye yeni bir varlık (sembol) ekler.
+Authentication: Bearer Token gerekli
 
-*   **Endpoint:** `POST /watchlists/{listId}/assets`
-*   **Authentication:** Bearer Token gerekli
+Response: 200 OK - İşlem davranış pattern'leri ve iyileştirme önerileri döndürüldü.
 
-**Path Parameters:**
+5. AI Chatbot
+Endpoint: POST /ai/chat
 
-| Parametre | Tip | Zorunlu | Açıklama |
-| :--- | :--- | :---: | :--- |
-| `listId` | string | Evet | İzleme listesi ID'si |
-
-**Request Body:**
+Request Body:
 ```json
 {
-  "symbol": "BTCUSDT"
+  "message": "BTC hakkında ne düşünüyorsun?"
 }
 ```
 
-**Response:**
-*   `201 Created` - Varlık listeye eklendi.
+Authentication: Bearer Token gerekli
 
----
-
-## 3. İzleme Listelerini Görüntüleme
-
-Kullanıcıya ait tüm listeleri ve içindeki varlıkların anlık fiyatlarını getirir.
-
-*   **Endpoint:** `GET /watchlists`
-*   **Authentication:** Bearer Token gerekli
-
-**Response:**
-*   `200 OK` - Tüm listeler ve anlık fiyatlar başarıyla getirildi.
-
----
-
-## 4. Liste Adı Güncelleme
-
-Mevcut bir izleme listesinin adını değiştirir.
-
-*   **Endpoint:** `PUT /watchlists/{listId}`
-*   **Authentication:** Bearer Token gerekli
-
-**Path Parameters:**
-
-| Parametre | Tip | Zorunlu | Açıklama |
-| :--- | :--- | :---: | :--- |
-| `listId` | string | Evet | İzleme listesi ID'si |
-
-**Request Body:**
-```json
-{
-  "name": "Favori Hisselerim"
-}
-```
-
-**Response:**
-*   `200 OK` - Liste adı başarıyla güncellendi.
-
----
-
-## 5. İzleme Listesini Silme
-
-Belirtilen izleme listesini siler (Sadece kendi listesini silme yetkisi vardır).
-
-*   **Endpoint:** `DELETE /watchlists/{listId}`
-*   **Authentication:** Bearer Token gerekli
-
-**Path Parameters:**
-
-| Parametre | Tip | Zorunlu | Açıklama |
-| :--- | :--- | :---: | :--- |
-| `listId` | string | Evet | İzleme listesi ID'si |
-
-**Response:**
-*   `204 No Content` - İzleme listesi başarıyla silindi.
-
----
-
-## 6. AI Durum Raporu Almak
-
-Kişinin yatırım alışkanlıkları için rapor oluşturur.
-
-*   **Endpoint:** `GET /ai/report/status/{assetSymbol}`
-*   **Authentication:** Bearer Token gerekli
-
-**Path Parameters:**
-
-| Parametre | Tip | Zorunlu | Açıklama |
-| :--- | :--- | :---: | :--- |
-| `assetSymbol` | string | Evet | - |
-
-**Response:**
-*   `200 OK` - AI teknik analiz ve durum özeti döndürüldü.
+Response: 200 OK - AI asistanın cevabı (response, model_used) döndürüldü. Timeout: 60 saniye.

@@ -1,55 +1,52 @@
-**1. Yeni İzleme Listesi Oluşturma**
-* **API Endpoint:** `POST /watchlists`
-* **Görev:** "Favorilerim", "Kriptolar" gibi yeni izleme klasörleri oluşturma entegrasyonu.
-* **İşlevler:**
-  * Kullanıcıdan alınan liste adını API'ye gönderme.
-  * Başarılı işlem sonrası UI'daki sekme (Tab) yapısını anında güncelleme.
-* **Teknik Detaylar:**
-  * `Authorization: Bearer {token}` yönetimi.
-  * Optimistic UI Update ile listeyi beklemeden ekranda gösterme.
+# Enes Çoban'ın Mobil Backend Görevleri
 
-**2. İzleme Listesine Varlık Ekleme**
-* **API Endpoint:** `POST /watchlists/{listId}/assets`
-* **Görev:** BİST veya Kripto varlıklarını seçilen listeye ekleme işlemi.
-* **İşlevler:**
-  * Varlık sembolünü (Örn: THYAO, BTC) ilgili listeye POST etme.
-  * Zaten ekli olan bir varlık için dönen 409 Conflict hatasını kullanıcıya Toast mesajı ile gösterme.
-* **Teknik Detaylar:**
-  * Error handling ve kullanıcıya anlık geri bildirim.
+**Mobil Front-end ile Back-end Bağlanmış Test Videosu:** `Link buraya eklenecek`
 
-**3. İzleme Listelerini Görüntüleme**
-* **API Endpoint:** `GET /watchlists`
-* **Görev:** Kullanıcının izleme listelerini ve içindeki anlık fiyatları çekme.
+**1. AI Yatırım Tavsiyesi Servisi**
+* **API Endpoint:** `POST /ai/advice`
+* **Görev:** Kural tabanlı yatırım tavsiyesi isteme entegrasyonu.
 * **İşlevler:**
-  * Tüm listeleri çekip ekranda yatay veya dikey kaydırılabilir (RecyclerView/UICollectionView) bir yapıda gösterme.
-  * Offline-first yaklaşımı ile son fiyatları cache'den okuma.
+  * Tavsiye isteğini API'ye gönderme.
+  * Response'daki analiz metnini ve model_used bilgisini parse etme.
 * **Teknik Detaylar:**
-  * Gelen karmaşık JSON array yapısını parse etme.
-  * Pull-to-refresh (Aşağı çekip yenileme) implementasyonu.
+  * Bearer Token ile kimlik doğrulama.
 
-**4. Liste Adı Güncelleme**
-* **API Endpoint:** `PUT /watchlists/{listId}`
-* **Görev:** Mevcut bir izleme listesinin adını değiştirme.
+**2. AI Portföy Analizi Servisi**
+* **API Endpoint:** `POST /ai/reports/portfolio`
+* **Görev:** Kullanıcının portföyünü yapay zeka ile analiz ettirme.
 * **İşlevler:**
-  * İsim değiştirme popup'ından gelen veriyi PUT isteği ile sunucuya iletme.
-  * Başarılı olduğunda lokal cache'i yenileme.
+  * Portföy analiz isteği gönderme ve skor değerlerini çekme.
+  * model_used ile LLM vs Rules Engine ayrımı gösterme.
 * **Teknik Detaylar:**
-  * 404 Not Found (Liste bulunamadı) veya 403 (Yetki yok) hatalarının yönetimi.
+  * Uzun AI response için yüksek timeout ayarı (60 saniye).
+  * ProviderChain: Gemini 2.0 Flash → Anthropic Claude Sonnet → Rules Engine fallback.
 
-**5. İzleme Listesini Silme**
-* **API Endpoint:** `DELETE /watchlists/{listId}`
-* **Görev:** İzleme listesini tamamen sistemden kaldırma.
+**3. AI Watchlist Sinyal Analizi Servisi**
+* **API Endpoint:** `POST /ai/reports/watchlist`
+* **Görev:** İzleme listesi verilerini analiz ettirerek sinyal üretme.
 * **İşlevler:**
-  * Kullanıcıya silme onayı (Dialog) gösterme.
-  * Silme sonrası sayfadaki listeleri yeniden render etme.
+  * İzleme listesi verilerini (sembol adı ve fiyat) request body'de gönderme.
+  * AL/SAT/TUT/İZLE sinyallerini parse etme.
+  * Confidence skorlarını UI'a yansıtma.
 * **Teknik Detaylar:**
-  * HTTP DELETE request yönetimi.
+  * JSON array yapısının doğru formatlanması.
 
-**6. AI Durum Raporu Almak**
-* **API Endpoint:** `GET /ai/report/status/{assetSymbol}`
-* **Görev:** Kullanıcı alışkanlıklarını yorumlama.
+**4. AI İşlem Davranış Analizi Servisi**
+* **API Endpoint:** `POST /ai/reports/transactions`
+* **Görev:** İşlem geçmişine dayalı davranış pattern'lerini analiz ettirme.
 * **İşlevler:**
-  * AI durum raporunun getirilmesi.
-  * AI analizi üretilirken ekranda Skeleton Loading (İskelet yükleyici) gösterme.
+  * Analiz isteği gönderme ve pattern verilerini çekme.
+  * Impact seviyelerini renk kodlarıyla eşleştirme.
 * **Teknik Detaylar:**
-  * Uzun sürebilecek AI requestleri için Timeout süresini ayarlama (Örn: 30 sn).
+  * Response parsing ve hata yönetimi.
+
+**5. AI Chatbot Servisi**
+* **API Endpoint:** `POST /ai/chat`
+* **Görev:** Yapay zeka asistanı ile mesajlaşma altyapısı.
+* **İşlevler:**
+  * Kullanıcının mesajını API'ye iletme ve dönen AI cevabını mesaj baloncuğunda gösterme.
+  * "Yapay zeka yazıyor..." (typing indicator) animasyonunu tetikleme.
+  * Chat geçmişini lokal state'te tutma.
+* **Teknik Detaylar:**
+  * 60 saniye HTTP timeout ayarı.
+  * Çoklu mesaj desteği ve dil seçimi (TR/EN).

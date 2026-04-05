@@ -1,120 +1,61 @@
-# Front-end Dokümantasyonu
+Enes Çoban'ın Web Frontend Görevleri
 
-**Front-end Test Videosu:** [Link buraya eklenecek](#)
+Front-end Test Videosu: Link buraya eklenecek
 
----
+Portfolio Analysis Sayfası (PortfolioAnalysis.jsx)
 
-## 1. Yeni İzleme Listesi Oluşturma Sayfası
+API Endpoint: POST /ai/reports/portfolio
+Görev: AI portföy analizi sonuçlarının görselleştirilmesi
+UI Bileşenleri:
+Score barları (risk, çeşitlendirme, performans) animasyonlu gösterim
+ModelBadge bileşeni (AI: gemini-2.0-flash veya Rules Engine gösterimi)
+AI analiz içeriği yeşil çerçeveli kutuda vurgulanır
+Skeleton loading (AI yanıtı beklerken)
+Kullanıcı Deneyimi:
+LLM vs Rules Engine ayrımının görsel olarak belirtilmesi
+Analiz metninin markdown formatında render edilmesi
+Teknik Detaylar:
+60 saniye timeout için ayrı aiClient axios instance kullanımı
+model_used alanına göre koşullu badge gösterimi
 
-**API Endpoint:** `POST /watchlists`
+Watchlist Analysis Sayfası (WatchlistAnalysis.jsx)
 
-**Görev:**
-Kullanıcının özel hisse/kripto klasörleri oluşturması için arayüz tasarımı.
+API Endpoint: POST /ai/reports/watchlist
+Görev: AI sinyal analizi sonuçlarının görselleştirilmesi
+UI Bileşenleri:
+Sembol bazlı sinyal kartları (AL/SAT/TUT/İZLE)
+Her sembol için confidence bar (animasyonlu)
+Renk kodları: AL yeşil, SAT kırmızı, TUT sarı, İZLE mavi
+ModelBadge ile LLM vs Rules Engine ayrımı
+Kullanıcı Deneyimi:
+Türkçe ve İngilizce sinyal desteği (AL/BUY, SAT/SELL, TUT/HOLD, İZLE/WATCH)
 
-*   **UI Bileşenleri:**
-    *   Kenar çubuğunda (Sidebar) "Yeni Liste Ekle" butonu.
-    *   Liste adı giriş modal'ı.
-    *   "Oluştur" butonu.
-*   **Form Validasyonu:**
-    *   Liste adı boş olamaz.
-    *   Liste adı 20 karakteri geçemez.
-*   **Kullanıcı Deneyimi:**
-    *   Oluşturulan liste sayfa yenilenmeden kenar çubuğuna eklenmelidir.
-    *   Klavye "Enter" tuşu ile form gönderme (submit) desteği sağlanmalıdır.
-*   **Teknik Detaylar:**
-    *   Modal component state yönetimi.
-    *   Sidebar component'i ile global state senkronizasyonu.
+Transaction Analysis Sayfası (TransactionAnalysis.jsx)
 
----
+API Endpoint: POST /ai/reports/transactions
+Görev: AI davranış analizi sonuçlarının görselleştirilmesi
+UI Bileşenleri:
+Davranış pattern'leri listesi
+Impact seviyeleri renkli badge'lerle gösterilir (HIGH kırmızı, MEDIUM sarı, LOW yeşil)
+AI analiz metni mor çerçeveli kutuda
+ModelBadge bileşeni
+Kullanıcı Deneyimi:
+Türkçe ve İngilizce impact etiketleri desteklenir
 
-## 2. İzleme Listesine Varlık Ekleme Bileşeni
+AI Chat Sayfası (AIChat.jsx)
 
-**API Endpoint:** `POST /watchlists/{listId}/assets`
-
-**Görev:**
-Piyasadan varlık aratıp listeye ekleme tasarımı.
-
-*   **UI Bileşenleri:**
-    *   Arama çubuğu (Search bar).
-    *   Arama sonuçları dropdown listesi.
-    *   Her sonucun yanında "+" ekle butonu.
-*   **Kullanıcı Deneyimi:**
-    *   Yazı yazarken anında filtreleme (Search Debounce).
-    *   Eklendiğinde "+" ikonunun tik işaretine dönüşmesi.
-*   **Teknik Detaylar:**
-    *   Debounce hook kullanımı (API'yi yormamak için).
-    *   Dropdown dışına tıklandığında menünün kapanması (click outside).
-
----
-
-## 3. İzleme Listelerini Görüntüleme Sayfası
-
-**API Endpoint:** `GET /watchlists`
-
-**Görev:**
-Takip edilen varlıkların detaylı tabloda gösterimi.
-
-*   **UI Bileşenleri:**
-    *   Liste isimleri arasında geçiş yapmayı sağlayan Tabs (Sekmeler).
-    *   Sembol, Son Fiyat, 24s Değişim % sütunlarından oluşan Data Table.
-    *   Yükselişler için yeşil, düşüşler için kırmızı metinler.
-*   **Kullanıcı Deneyimi:**
-    *   Fiyat değiştiğinde hücre arka planının yeşil/kırmızı parlayıp sönmesi (Flash effect).
-    *   Veriler yüklenirken skeleton tablo görünümü.
-*   **Teknik Detaylar:**
-    *   WebSocket veya Polling verisinin tablo ile entegrasyonu.
-    *   React Table veya benzeri grid kütüphanesi kullanımı.
-
----
-
-## 4. Liste Adı Güncelleme Etkileşimi
-
-**API Endpoint:** `PUT /watchlists/{listId}`
-
-**Görev:**
-Mevcut liste adını düzenleme etkileşimi.
-
-*   **UI Bileşenleri:**
-    *   Liste başlığının yanında beliren "Kalem" (Edit) ikonu.
-    *   İkona tıklandığında başlığın input alanına dönüşmesi (Inline editing).
-*   **Kullanıcı Deneyimi:**
-    *   Input dışına tıklandığında (blur) değişikliğin otomatik kaydedilmesi.
-    *   Hata olursa eski isme geri dönülmesi.
-*   **Teknik Detaylar:**
-    *   Inline edit state yönetimi (isEditing boolean).
-
----
-
-## 5. İzleme Listesini Silme Akışı
-
-**API Endpoint:** `DELETE /watchlists/{listId}`
-
-**Görev:**
-İzleme listesini tamamen kaldırma UI akışı.
-
-*   **UI Bileşenleri:**
-    *   Sekme veya menü içinde "Listeyi Sil" butonu (Çöp kutusu ikonu).
-    *   Silme onayı isteyen uyarı Modal'ı.
-*   **Kullanıcı Deneyimi:**
-    *   Silme işlemi sonrası kullanıcının otomatik olarak "Varsayılan" listeye yönlendirilmesi.
-*   **Teknik Detaylar:**
-    *   Active Tab state'inin silinme sonrası güncellenmesi.
-
----
-
-## 6. AI Durum Raporu Görüntüleme Sayfası
-
-**API Endpoint:** `GET /ai/report/status/{assetSymbol}`
-
-**Görev:**
-Bir hisseye tıklandığında sağ panelde açılan yapay zeka analiz özeti.
-
-*   **UI Bileşenleri:**
-    *   Slide-over (sağdan açılan) panel veya Modal.
-    *   AI "AL/SAT/TUT" tavsiyesini gösteren hız göstergesi (Gauge chart).
-    *   Yapay zeka analiz metni alanı.
-*   **Kullanıcı Deneyimi:**
-    *   AI metninin daktilo efektiyle (typewriter) ekrana yazdırılması.
-*   **Teknik Detaylar:**
-    *   Chart.js veya Recharts ile Gauge grafik entegrasyonu.
-    *   Asenkron AI yanıtı için özel yükleme (loading) animasyonu.
+API Endpoint: POST /ai/chat
+Görev: Finansal yapay zeka asistanı ile mesajlaşma arayüzü
+UI Bileşenleri:
+Sağda kullanıcı, solda AI mesaj baloncukları
+Dil seçimi toggle (TR/EN)
+Suggested actions (hazır soru önerileri)
+Mesaj yazma inputu ve "Gönder" butonu
+Kullanıcı Deneyimi:
+Mesaj gönderildiğinde "AI yazıyor..." (typing indicator) animasyonu
+Yeni mesaj geldiğinde otomatik olarak en aşağı kaydırma (auto-scroll)
+60 saniye timeout göstergesi
+Teknik Detaylar:
+Chat mesaj geçmişinin state üzerinde tutulması
+aiClient (60sn timeout) ile API isteği
+Markdown rendering

@@ -1,59 +1,103 @@
+# Salih Arda Katırcıoğlu'nun REST API Metotları
+
 **API Test Videosu:** [Link buraya eklenecek](#)
 
-### 1. Fiyat Alarmı Ekleme
+### 1. İzleme Listesi Oluşturma
 
-* **Endpoint:** `POST /alerts`
+* **Endpoint:** `POST /watchlist/`
 * **Request Body:**
 
   ```json
   {
-    "symbol": "ETHUSDT",
-    "targetPrice": 3000.00,
-    "condition": "GREATER_THAN"
+    "name": "Kripto Favori"
   }
   ```
 
 Authentication: Bearer Token gerekli
-Response: 201 Created - Fiyat alarmı sisteme başarıyla kaydedildi.
-2. Fiyat Alarmı Güncelleme
-Endpoint: PUT /alerts/{alertId}
+
+Response: 201 Created - İzleme listesi başarıyla oluşturuldu.
+
+2. İzleme Listelerini Görüntüleme
+Endpoint: GET /watchlist/
+
+Authentication: Bearer Token gerekli
+
+Response: 200 OK - Tüm listeler ve içerisindeki semboller başarıyla getirildi.
+
+3. İzleme Listesini Silme
+Endpoint: DELETE /watchlist/:id
+
 Path Parameters:
-alertId (string, required) - Alarm ID'si
+id (integer, required) - İzleme listesi ID'si
+
+Authentication: Bearer Token gerekli
+
+Response: 200 OK - İzleme listesi ve tüm sembol kayıtları silindi (cascade).
+
+4. Listeye Sembol Ekleme
+Endpoint: POST /watchlist/:id/items
+
+Path Parameters:
+id (integer, required) - İzleme listesi ID'si
+
 Request Body:
-JSON
+```json
 {
-  "targetPrice": 3100.00,
-  "isActive": false
+  "symbol": "BTC"
 }
+```
 
+Authentication: Bearer Token gerekli
+
+Response: 201 Created - Sembol listeye eklendi. PriceEngine'den sembol validasyonu yapılır.
+
+5. Listeden Sembol Çıkarma
+Endpoint: DELETE /watchlist/:id/items/:itemId
+
+Path Parameters:
+id (integer, required) - İzleme listesi ID'si
+itemId (integer, required) - Sembol kayıt ID'si
 
 Authentication: Bearer Token gerekli
-Response: 200 OK - Alarm başarıyla güncellendi.
-3. Fiyat Alarmını Silme
-Endpoint: DELETE /alerts/{alertId}
-Path Parameters:
-alertId (string, required) - Alarm ID'si
-Authentication: Bearer Token gerekli
-Response: 204 No Content - Alarm başarıyla silindi.
-4. İşlem Geçmişini Görüntüleme
-Endpoint: GET /orders/history
-Authentication: Bearer Token gerekli
-Response: 200 OK - Başarılı ve iptal edilen emirler kronolojik olarak getirildi.
-5. Listeden Varlık Çıkarma
-Endpoint: DELETE /watchlists/{listId}/assets/{assetSymbol}
-Path Parameters:
-listId (string, required) - İzleme listesi ID'si
-assetSymbol (string, required) - Çıkarılacak varlık (Örn: BTCUSDT)
-Authentication: Bearer Token gerekli
-Response: 204 No Content - Varlık başarıyla izleme listesinden çıkarıldı.
-6. AI Chatbot ile Sohbet
-Endpoint: POST /ai/chat
+
+Response: 200 OK - Sembol başarıyla listeden çıkarıldı.
+
+6. Fiyat Alarmı Oluşturma
+Endpoint: POST /watchlist/alerts
+
 Request Body:
-JSON
+```json
 {
-  "message": "Borsa İstanbul bugün neden düştü?"
+  "symbol": "BTC",
+  "target_price": 70000,
+  "condition": "ABOVE"
 }
-
+```
 
 Authentication: Bearer Token gerekli
-Response: 200 OK - AI asistanın cevabı döndürüldü.
+
+Response: 201 Created - Fiyat alarmı sisteme kaydedildi.
+
+7. Alarmları Listeleme
+Endpoint: GET /watchlist/alerts
+
+Authentication: Bearer Token gerekli
+
+Response: 200 OK - Tüm alarmlar (id, symbol, target_price, condition, is_active) listelendi.
+
+8. Alarm Silme
+Endpoint: DELETE /watchlist/alerts/:alertId
+
+Path Parameters:
+alertId (integer, required) - Alarm ID'si
+
+Authentication: Bearer Token gerekli
+
+Response: 200 OK - Alarm başarıyla silindi.
+
+9. Tetiklenen Alarmları Görüntüleme
+Endpoint: GET /watchlist/alerts/triggered
+
+Authentication: Bearer Token gerekli
+
+Response: 200 OK - Tetiklenen alarmlar (alert_id, symbol, triggered_price, triggered_at) listelendi.

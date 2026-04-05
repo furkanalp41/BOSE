@@ -1,53 +1,75 @@
+# Salih Arda Katırcıoğlu'nun Mobil Backend Görevleri
+
 **Mobil Front-end ile Back-end Bağlanmış Test Videosu:** `Link buraya eklenecek`
 
-**1. Fiyat Alarmı Ekleme**
-* **API Endpoint:** `POST /alerts`
-* **Görev:** Belirli bir varlık için fiyat seviyesinde alarm kurma entegrasyonu.
+**1. İzleme Listesi Oluşturma**
+* **API Endpoint:** `POST /watchlist/`
+* **Görev:** Yeni izleme listesi oluşturma entegrasyonu.
 * **İşlevler:**
-  * Hedef fiyat ve varlık sembolünü (Örn: BTCUSDT > 95000) API'ye gönderme.
-  * Başarılı kayıtta "Alarm kuruldu" snackbar/toast uyarısı gösterme.
+  * Kullanıcıdan alınan liste adını API'ye gönderme.
+  * Başarılı işlem sonrası UI'daki sekme yapısını anında güncelleme.
 * **Teknik Detaylar:**
-  * HTTP Client kullanımı ve request payload'unun JSON olarak formatlanması.
+  * `Authorization: Bearer {token}` yönetimi.
 
-**2. Fiyat Alarmı Güncelleme**
-* **API Endpoint:** `PUT /alerts/{alertId}`
-* **Görev:** Mevcut bir alarmın fiyat seviyesini veya aktiflik durumunu (aç/kapa) güncelleme.
+**2. İzleme Listelerini Görüntüleme**
+* **API Endpoint:** `GET /watchlist/`
+* **Görev:** Kullanıcının izleme listelerini ve içindeki sembol kayıtlarını çekme.
 * **İşlevler:**
-  * Alarm listesindeki toggle (switch) butonuna basıldığında API'ye anlık istek atma.
+  * Tüm listeleri çekip ekranda kaydırılabilir yapıda gösterme.
+  * Pull-to-refresh ile güncelleme.
 * **Teknik Detaylar:**
-  * Optimistic Update (API cevabını beklemeden butonu açık/kapalı konuma getirme, hata olursa geri alma).
+  * JSON array yapısını parse etme.
 
-**3. Fiyat Alarmını Silme**
-* **API Endpoint:** `DELETE /alerts/{alertId}`
-* **Görev:** Kullanıcının alarmını kalıcı olarak silme işlemini yönetme.
+**3. İzleme Listesi Silme**
+* **API Endpoint:** `DELETE /watchlist/:id`
+* **Görev:** İzleme listesini tamamen sistemden kaldırma.
 * **İşlevler:**
-  * Alarm listesinden Swipe-to-delete (yana kaydırarak silme) eylemi.
-  * Başarılı işlem sonrası cihazdaki lokal listeyi güncelleme.
-* **Teknik Detaylar:**
-  * 404 (Alarm bulunamadı) hatası kontrolü.
+  * Kullanıcıya silme onayı (Dialog) gösterme.
+  * Silme sonrası sayfadaki listeleri yeniden render etme.
 
-**4. İşlem Geçmişini Görüntüleme**
-* **API Endpoint:** `GET /orders/history`
-* **Görev:** Geçmiş alım/satım işlemlerini kronolojik olarak listeleme.
+**4. Listeye Sembol Ekleme**
+* **API Endpoint:** `POST /watchlist/:id/items`
+* **Görev:** Sembol arama ve seçilen sembolü listeye ekleme.
 * **İşlevler:**
-  * Verileri çekip, borsa terminolojisine uygun tasarlanmış listeye (RecyclerView) yansıtma.
-  * Çok fazla veri varsa Lazy Loading (sayfa aşağı indikçe veri çekme) (Pagination) yapısı.
+  * Sembol adını ilgili listeye POST etme.
+  * PriceEngine'de tanımlı olmayan sembol hatası yönetimi.
 * **Teknik Detaylar:**
-  * Query parametreleri ile sayfalama (`?page=1&limit=20`) kullanımı.
+  * Error handling ve kullanıcıya anlık geri bildirim.
 
-**5. Listeden Varlık Çıkarma (İzleme Listesi Ortak Görevi)**
-* **API Endpoint:** `DELETE /watchlists/{listId}/assets/{assetSymbol}`
-* **Görev:** İzleme listesi detay ekranından bir varlığı çıkarma.
+**5. Listeden Sembol Çıkarma**
+* **API Endpoint:** `DELETE /watchlist/:id/items/:itemId`
+* **Görev:** İzleme listesinden bir sembolü çıkarma.
 * **İşlevler:**
-  * İzleme listesinde bir coinin üzerine basılı tutup veya ikonuna basıp listeden çıkarma.
+  * Swipe-to-delete veya ikona basarak silme eylemi.
+  * Başarılı işlem sonrası lokal listeyi güncelleme.
 * **Teknik Detaylar:**
-  * Path parametrelerini (`{listId}`, `{assetSymbol}`) URL encode ederek doğru iletme.
+  * İki path parametresinin (id, itemId) doğru iletilmesi.
 
-**6. AI Chatbot ile Sohbet**
-* **API Endpoint:** `POST /ai/chat`
-* **Görev:** OpenAI / LLM destekli yapay zeka asistanı ile mesajlaşma altyapısı.
+**6. Fiyat Alarmı Oluşturma**
+* **API Endpoint:** `POST /watchlist/alerts`
+* **Görev:** Belirli bir sembol için ABOVE/BELOW fiyat alarmı kurma.
 * **İşlevler:**
-  * Kullanıcının mesajını API'ye iletme ve dönen AI cevabını mesaj baloncuğunda gösterme.
-  * "Yapay zeka yazıyor..." (Typing indicator) animasyonunu tetikleme.
+  * Sembol, hedef fiyat ve koşul bilgilerini API'ye gönderme.
+  * Başarılı kayıtta "Alarm kuruldu" toast bildirimi gösterme.
 * **Teknik Detaylar:**
-  * Uzun yanıt sürelerine karşı HTTP Timeout süresini yüksek tutma (veya SSE - Server Sent Events yapısına hazırlık).
+  * Request payload'unun JSON olarak formatlanması.
+
+**7. Alarmları Listeleme**
+* **API Endpoint:** `GET /watchlist/alerts`
+* **Görev:** Aktif ve pasif alarmları listeleme.
+* **İşlevler:**
+  * Alarmları çekip canlı fiyatla hedefe yakınlık hesaplama.
+
+**8. Alarm Silme**
+* **API Endpoint:** `DELETE /watchlist/alerts/:alertId`
+* **Görev:** Kullanıcının alarmını kalıcı olarak silme.
+* **İşlevler:**
+  * Alarm listesinden swipe-to-delete eylemi.
+  * Başarılı işlem sonrası lokal listeyi güncelleme.
+
+**9. Tetiklenen Alarmları Görüntüleme**
+* **API Endpoint:** `GET /watchlist/alerts/triggered`
+* **Görev:** AlertChecker daemon tarafından tetiklenen alarmları gösterme.
+* **İşlevler:**
+  * Polling ile tetiklenen alarmları kontrol etme.
+  * Push notification entegrasyonu.

@@ -1,35 +1,40 @@
-**1. Yeni Market Varlığı Ekleme Ekranı (Admin)**
-* **API Endpoint:** `POST /market/assets`
-* **Görev:** Admin paneli için yeni hisse/coin ekleme formu.
-* **UI Bileşenleri:** Sembol inputu (Örn: AAPL), İsim inputu, Kategori (BİST/Kripto) seçici, "Piyasaya Ekle" butonu.
-* **Form Validasyonu:** Sembollerin tamamı büyük harf olmaya zorlanmalı (Auto-capitalize).
-* **Kullanıcı Deneyimi:** Sadece Yönetici rolündeki hesaplarda ayarlar menüsünde "Admin Paneli" sekmesinin görünür olması.
+# Yakup Efe Çelebi'nin Mobil Frontend Görevleri
 
-**2. Market Verilerini Listeleme (Ana Ekran)**
-* **API Endpoint:** `GET /market/prices`
-* **Görev:** Uygulamanın ana ekranında (Piyasalar) tüm varlıkların listelenmesi.
-* **UI Bileşenleri:** Arama çubuğu, BİST ve Kripto arası geçiş (Tab/Segmented Control), Fiyatı ve 24s değişimi gösteren dinamik satırlar.
-* **Kullanıcı Deneyimi:** Anlık veri akışı geldiğinde fiyatı artanların yeşil, düşenlerin kırmızı bir arka plan flaşıyla (Flash effect) saniyelik parlayıp sönmesi.
-* **Teknik Detaylar:** Yüksek performanslı render (Recomposition optimizasyonu).
+**Mobile Front-end Demo Videosu:** `Link buraya eklenecek`
 
-**3. Varlık Bilgilerini Güncelleme (Admin)**
-* **API Endpoint:** `PUT /market/assets/{assetId}`
-* **Görev:** Hisselerin işlem durumunu değiştirme arayüzü.
-* **UI Bileşenleri:** Admin listesindeki hisseye tıklandığında açılan özellikler sayfası, "İşleme Açık/Kapalı" Switch butonu.
+**1. Market Ana Ekranı**
+* **API Endpoint:** `GET /market/assets`
+* **Görev:** Uygulamanın ana ekranında tüm varlıkların listelenmesi.
+* **UI Bileşenleri:** Arama çubuğu, fiyat ve 24 saatlik değişimi gösteren dinamik asset kartları, sparkline mini grafikler.
+* **Kullanıcı Deneyimi:** Anlık veri akışı geldiğinde fiyatı artanların yeşil, düşenlerin kırmızı flash efektiyle parlayıp sönmesi.
+* **Teknik Detaylar:** WebSocket (useMarketSocket hook) ile 2 saniyede bir canlı güncelleme. Yüksek performanslı render.
 
-**4. Sistem Sağlık Durumu Görüntüleme (Admin)**
-* **API Endpoint:** `GET /admin/health`
-* **Görev:** Sunucu (Go/Kafka/Redis) altyapısının mobil cihazdan takibi.
-* **UI Bileşenleri:** Servis adları (Kafka, Database) ve yanlarında yanıp sönen durum ikonları (Yeşil nokta = Aktif, Kırmızı nokta = Hata). Dashboard görünümü.
+**2. Asset Detay Ekranı**
+* **API Endpoint:** `GET /market/assets`
+* **Görev:** Seçili asset'in detaylı fiyat bilgilerini gösteren ekran.
+* **UI Bileşenleri:** Detaylı fiyat grafiği, 24h high/low bilgileri, drift ve volatility değerleri.
 
-**5. Giriş Hareketlerini Listeleme Ekranı**
-* **API Endpoint:** `GET /users/{userId}/logs`
-* **Görev:** Kullanıcı profilindeki "Güvenlik Geçmişi" listesi.
-* **UI Bileşenleri:** Tarih, Saat, IP adresi ve Cihaz bilgisini gösteren alt alta sıralanmış temiz bir liste arayüzü.
-* **Kullanıcı Deneyimi:** Bilinmeyen bir cihazdan giriş yapılmışsa IP satırının rengini dikkat çekici (Sarı/Turuncu) yapma.
+**3. Ticker Tape (Üst Kayan Bant)**
+* **Görev:** Tüm asset'lerin fiyatlarının kayan bant halinde gösterimi.
+* **UI Bileşenleri:** Marquee efektli fiyat bandı, yükselen/düşen renk kodları.
 
-**6. AI Tahmin Geçmişini Temizleme Akışı (AI Görevi)**
-* **API Endpoint:** `DELETE /ai/history`
-* **Görev:** AI Chatbot ayarlarında geçmişi sıfırlama işlemi.
-* **UI Bileşenleri:** Sohbet ekranının sağ üstündeki menüden "Sohbeti Temizle" seçeneği.
-* **Kullanıcı Deneyimi:** Çift onaylı bir modal ("Tüm AI analiz geçmişiniz silinecek, emin misiniz?"). Silme başarılı olduğunda mesajlaşma ekranının anında boş (Empty state) hale gelmesi.
+**4. WebSocket Durum Göstergesi**
+* **Görev:** WebSocket bağlantı durumunun gösterimi.
+* **UI Bileşenleri:** Connected (yeşil nokta), Disconnected (kırmızı nokta), Reconnecting (sarı nokta) durumları.
+
+**5. Liderlik Tablosu Ekranı**
+* **API Endpoint:** `GET /leaderboard/rankings`
+* **Görev:** Global sıralama listesinin mobil arayüz tasarımı.
+* **UI Bileşenleri:** Sıra, kullanıcı adı, toplam değer ve işlem sayısını içeren liste. Aktif kullanıcının satırının vurgulanması.
+* **Kullanıcı Deneyimi:** Pull-to-refresh ile güncelleme.
+
+**6. Başarım Rozetleri Ekranı**
+* **API Endpoint:** `GET /leaderboard/achievements`
+* **Görev:** Başarım rozetlerinin grid görünümle gösterimi.
+* **UI Bileşenleri:** Her rozet için ikon, isim ve açıklama kartı. Grid layout.
+
+**7. Admin Asset Yönetimi Ekranı**
+* **API Endpoint:** `GET /admin/market/assets`, `POST /admin/market/assets`, `DELETE /admin/market/assets/:symbol`
+* **Görev:** Admin panelinden asset ekleme ve silme arayüzü.
+* **UI Bileşenleri:** Asset listesi, yeni asset formu (sembol, fiyat, drift, volatility inputları), "Piyasaya Ekle" butonu, swipe-to-delete ile asset silme.
+* **Kullanıcı Deneyimi:** Sadece admin rolündeki hesaplarda görünür. Sembol büyük harfe zorlanır (auto-capitalize).
