@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
 	"log"
 	"os"
@@ -19,6 +20,9 @@ import (
 	"github.com/uraniumz/bose/services/leaderboard"
 	"github.com/uraniumz/bose/services/market"
 )
+
+//go:embed static/swagger.html
+var swaggerHTML embed.FS
 
 func main() {
 	if err := godotenv.Load(); err != nil {
@@ -92,7 +96,9 @@ func main() {
 
 	// API Docs (Swagger-style)
 	app.Get("/docs", func(c *fiber.Ctx) error {
-		return c.SendFile("./static/swagger.html")
+		data, _ := swaggerHTML.ReadFile("static/swagger.html")
+		c.Set("Content-Type", "text/html; charset=utf-8")
+		return c.Send(data)
 	})
 
 	// Routes
