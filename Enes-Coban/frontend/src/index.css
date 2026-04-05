@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Global resets & base ──────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    @apply bg-void text-cloud font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { @apply bg-abyss; }
+  ::-webkit-scrollbar-thumb { @apply bg-neonDim rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-neon; }
+
+  ::selection { background: rgba(0, 255, 136, 0.25); color: #fff; }
+}
+
+/* ── Reusable utility classes ──────────────────────────────────────────────── */
+@layer components {
+  /* Glassmorphism card */
+  .glass {
+    @apply bg-white/[0.04] backdrop-blur-glass border border-white/[0.08]
+           rounded-2xl shadow-glass;
+  }
+
+  /* Neon glow text */
+  .text-glow-neon {
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.8),
+                 0 0 40px rgba(0, 255, 136, 0.4);
+  }
+  .text-glow-ice {
+    text-shadow: 0 0 20px rgba(0, 207, 255, 0.8),
+                 0 0 40px rgba(0, 207, 255, 0.4);
+  }
+  .text-glow-crimson {
+    text-shadow: 0 0 20px rgba(255, 59, 92, 0.8);
+  }
+
+  /* Neon border glow */
+  .border-glow-neon  { box-shadow: 0 0 0 1px #00ff88, 0 0 20px rgba(0,255,136,0.35); }
+  .border-glow-ice   { box-shadow: 0 0 0 1px #00cfff, 0 0 20px rgba(0,207,255,0.3); }
+  .border-glow-crimson { box-shadow: 0 0 0 1px #ff3b5c, 0 0 20px rgba(255,59,92,0.35); }
+
+  /* Primary CTA button */
+  .btn-primary {
+    @apply relative overflow-hidden px-6 py-3 rounded-xl font-semibold text-sm
+           bg-gradient-to-r from-neon to-ice text-void
+           transition-all duration-300
+           hover:shadow-neon-md hover:scale-[1.02]
+           active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Ghost / outline button */
+  .btn-ghost {
+    @apply px-6 py-3 rounded-xl font-semibold text-sm
+           border border-border text-silver
+           transition-all duration-300
+           hover:border-neon hover:text-neon hover:shadow-neon-sm
+           active:scale-[0.98];
+  }
+
+  /* Danger button */
+  .btn-danger {
+    @apply px-6 py-3 rounded-xl font-semibold text-sm
+           border border-crimson/50 text-crimson
+           transition-all duration-300
+           hover:bg-crimson/10 hover:border-crimson hover:shadow-crimson-sm
+           active:scale-[0.98];
+  }
+
+  /* Input base */
+  .input-base {
+    @apply w-full bg-white/[0.04] border border-border rounded-xl
+           px-4 py-3 text-cloud text-sm outline-none
+           transition-all duration-300 placeholder-transparent
+           focus:border-neon focus:shadow-neon-sm;
+  }
+}
+
+/* ── Animated cyber grid background ───────────────────────────────────────── */
+.cyber-grid {
+  background-image:
+    linear-gradient(rgba(0, 255, 136, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 136, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: grid-flow 12s linear infinite;
+}
+
+/* ── Gradient orb ─────────────────────────────────────────────────────────── */
+.orb {
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: float 6s ease-in-out infinite;
+}
+
+/* ── Flash animations for market price changes ────────────────────────────── */
+.flash-bull {
+  animation: flashBull 0.6s ease-out;
+}
+.flash-bear {
+  animation: flashBear 0.6s ease-out;
+}
+@keyframes flashBull {
+  0% { box-shadow: inset 0 0 20px rgba(0,255,136,0.3); }
+  100% { box-shadow: none; }
+}
+@keyframes flashBear {
+  0% { box-shadow: inset 0 0 20px rgba(255,59,92,0.3); }
+  100% { box-shadow: none; }
+}
