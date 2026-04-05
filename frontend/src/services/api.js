@@ -79,20 +79,9 @@ export const tradingApi = {
   getPortfolio:  ()     => api.get('/trading/portfolio'),
 }
 
-// ── Order endpoints (Cem) ───────────────────────────────────────────────────
-export const ordersApi = {
-  place:    (data) => api.post('/orders/', data),   // { symbol, order_type: "buy"|"sell", quantity }
-  getAll:   ()     => api.get('/orders/'),
-  getBuy:   ()     => api.get('/orders/buy'),
-  getSell:  ()     => api.get('/orders/sell'),
-  cancel:   (id)   => api.delete(`/orders/${id}`),
-}
-
 // ── Market endpoints (public) ───────────────────────────────────────────────
 export const marketApi = {
-  getAll:      ()     => api.get('/market/'),
-  getByType:   (type) => api.get(`/market/type/${type}`),
-  getBySymbol: (sym)  => api.get(`/market/${sym}`),
+  getAll: () => api.get('/market/assets'),
 }
 
 // ── Watchlist endpoints ─────────────────────────────────────────────────────
@@ -117,7 +106,6 @@ export const aiReportsApi = {
   analyzePortfolio:    (data) => aiClient.post('/reports/portfolio', data),
   analyzeWatchlist:    (data) => aiClient.post('/reports/watchlist', data),
   analyzeTransactions: (data) => aiClient.post('/reports/transactions', data),
-  testPortfolio:       ()     => aiClient.get('/reports/portfolio/test'),
 }
 
 // ── AI Chat endpoint (Enes — uses aiClient) ─────────────────────────────────

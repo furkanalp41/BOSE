@@ -25,8 +25,9 @@ export function useMarketSocket() {
     }
 
     setStatus('connecting')
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    const ws = new WebSocket(`${protocol}//${window.location.host}/ws/market`)
+    const wsUrl = import.meta.env.VITE_WS_URL
+      || `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/market`
+    const ws = new WebSocket(wsUrl)
     wsRef.current = ws
 
     ws.onopen = () => setStatus('live')

@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: bose-backend
+    runtime: go
+    repo: https://github.com/furkanalp41/BOSE
+    branch: feature/furkan-core-admin
+    rootDir: backend
+    buildCommand: go build -o server .
+    startCommand: ./server
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: DB_URL
+        fromDatabase:
+          name: bosedb
+          property: connectionString
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+
+databases:
+  - name: bosedb
+    plan: free
+    databaseName: bosedb
+    user: boseadmin
