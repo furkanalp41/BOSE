@@ -1,13 +1,18 @@
 Front-end Test Videosu: Link buraya eklenecek
 Emir Oluşturma Sayfası
 API Endpoint: POST /api/v1/trading/order Görev: Anlık piyasa fiyatından alım-satım panelinin tasarımı UI Bileşenleri: Al (Yeşil) ve Sat (Kırmızı) sekmeleri Miktar (Lot/Adet) input alanı İşlem tutarı özeti (Miktar * Anlık Fiyat) Büyük ve dikkat çekici "Alış Emri Gönder" butonu Form Validasyonu: Miktar 0'dan büyük olmalı Kullanıcının bakiyesi işlem tutarını karşılamıyorsa buton disabled olmalı Kullanıcı Deneyimi: Geçersiz miktar girildiğinde input altında kırmızı uyarı Başarılı işlemde konfeti efekti veya success toast mesajı Teknik Detaylar: Gerçek zamanlı fiyat verisiyle işlem tutarının anlık hesaplanması Number formatting (Binlik ayraçlar ve ondalık kısımlar)
+
 Açık Pozisyonları Listeleme Paneli
 API Endpoint: GET /api/v1/trading/positions Görev: Tüm açık pozisyonların listelendiği tablo UI Bileşenleri: Varlık, Miktar, Ortalama Giriş, Güncel Fiyat, PnL sütunları Her satırın sonunda "Kapat" butonu Liste boşsa "Açık pozisyonunuz yok" yazan empty state Kullanıcı Deneyimi: Yüksek kazançta yeşil, zararda kırmızı PnL renk belirteçleri Teknik Detaylar: Gerçek zamanlı websocket entegrasyonu ile pnl güncellemeleri
+
 Pozisyon Kapatma İşlemi
 API Endpoint: POST /api/v1/trading/positions/{positionId}/close Görev: Pozisyon kapatıldığında kar/zarar netleştirilmesi UI Bileşenleri: Tablodaki kapat butonuna basılınca çıkan onay modal'ı Kullanıcı Deneyimi: Başarılı işlemde pozisyonun kaybolması ve bakiye artışı/azalışı Teknik Detaylar: POST isteği sonrası yerel bakiyenin anlık güncellenmesi
+
 İşlem Geçmişini Görüntüleme 
 API Endpoint: GET /api/v1/trading/history Görev: Geçmiş alım-satım emirlerinin listesi tablosu UI Bileşenleri: Varlık, Yön, Fiyat, Miktar, Tutar ve Tarih Kullanıcı Deneyimi: Tarihe göre kronolojik gösterim Teknik Detaylar: Sayfalama desteği (Pagination) ile veri çekme
 Portföy Özeti Görüntüleme Dashboard'u
+
 API Endpoint: GET /api/v1/trading/portfolio Görev: Kullanıcının toplam bakiye ve pozisyon değerini özetleyen dashboard tasarımı UI Bileşenleri: Toplam Bakiye (Büyük Punto), In-Positions Value, Toplam Varlık, Kar/Zarar Yüzdesi Kullanıcı Deneyimi: Sayfa yüklendiğinde grafiklerin sıfırdan dolma animasyonu Teknik Detaylar: Recharts veya Chart.js entegrasyonu ile portföy pasta grafiği
+
 Duyuru Oluşturma (Admin)
 API Endpoint: POST /api/v1/admin/announcements Görev: Adminlerin sisteme duyuru girmesi için form UI Bileşenleri: Başlık inputu ve İçerik textarea'sı, Kaydet butonu Kullanıcı Deneyimi: Başarılı kayıttan sonra uyarı verilip formun temizlenmesi Teknik Detaylar: Admin token kontrolü ve unauthorized durumunda dashboard'a geri atma
