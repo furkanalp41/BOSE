@@ -33,6 +33,10 @@ func ConnectDB() {
 	db.Exec("ALTER TABLE watchlist_items DROP COLUMN IF EXISTS market_item_id")
 	db.Exec("ALTER TABLE alerts DROP COLUMN IF EXISTS market_item_id")
 
+	// Backfill NULL symbols so the NOT NULL constraint can be applied by AutoMigrate.
+	db.Exec("UPDATE watchlist_items SET symbol = 'UNKNOWN' WHERE symbol IS NULL OR symbol = ''")
+	db.Exec("UPDATE alerts SET symbol = 'UNKNOWN' WHERE symbol IS NULL OR symbol = ''")
+
 	if err := db.AutoMigrate(
 		&models.User{},
 		&models.Trade{},

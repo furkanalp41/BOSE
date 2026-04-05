@@ -16,7 +16,7 @@ type Watchlist struct {
 type WatchlistItem struct {
 	ID          uint      `gorm:"primaryKey" json:"id"`
 	WatchlistID uint      `gorm:"index;not null" json:"watchlistId"`
-	Symbol      string    `gorm:"type:varchar(20);not null" json:"symbol"`
+	Symbol      string    `gorm:"type:varchar(20);not null;default:'UNKNOWN'" json:"symbol"`
 	CreatedAt   time.Time `json:"createdAt"`
 }
 
@@ -25,7 +25,7 @@ type Alert struct {
 	ID          uint      `gorm:"primaryKey" json:"id"`
 	UserID      uint      `gorm:"index;not null" json:"userId"`
 	WatchlistID uint      `json:"watchlist_id"`
-	Symbol      string    `gorm:"type:varchar(20);not null" json:"symbol"`
+	Symbol      string    `gorm:"type:varchar(20);not null;default:'UNKNOWN'" json:"symbol"`
 	TargetPrice float64   `gorm:"type:decimal(18,2);not null" json:"target_price"`
 	Condition   string    `gorm:"type:varchar(10);not null" json:"condition"`
 	IsActive    bool      `gorm:"default:true" json:"is_active"`
