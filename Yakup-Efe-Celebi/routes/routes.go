@@ -1,23 +1,39 @@
 package routes
 
 import (
-	"bose-backend/controllers"
-	"bose-backend/middlewares"
+	"bose-efe/controllers"
+	"bose-efe/middlewares"
 
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 )
 
+// SetupRoutes wires every endpoint owned by the Yakup service under /api/v1.
 func SetupRoutes(app *fiber.App) {
-	api := app.Group("/api")
+	api := app.Group("/api/v1")
 
-	// Auth (Herkes erişebilir)
-	auth := api.Group("/auth")
-	auth.Post("/register", controllers.Register)
-	auth.Post("/login", controllers.Login)
+	// Market — prices are public; mutations require admin.
+	market := api.Group("/market")
+	market.Get("/prices", controllers.GetMarketPrices)
+	market.Post("/assets", middlewares.RequireAuth, middlewares.RequireAdmin, controllers.CreateMarketAsset)
+	market.Put("/assets/:id", middlewares.RequireAuth, middlewares.RequireAdmin, controllers.UpdateMarketAsset)
 
-	// Users (Sadece giriş yapmış - JWT sahibi kullanıcılar erişebilir)
-	users := api.Group("/users", middlewares.Protected())
-	users.Get("/me", controllers.GetProfile)
-	users.Put("/me", controllers.UpdateProfile)
-	users.Delete("/me", controllers.DeleteUser)
+	// WebSocket — single stream endpoint, no auth gate (read-only public ticks).
+	market.Use("/stream", func(c *fiber.Ctx) error {
+		if websocket.IsWebSocketUpgrade(c) {
+			c.Locals("allowed", true)
+			return c.Next()
+		}
+		return fiber.ErrUpgradeRequired
+	})
+	market.Get("/stream", websocket.New(controllers.HandleMarketStream))
+
+	// Admin health probe — exposed publicly so dashboards can poll it.
+	api.Get("/admin/health", controllers.GetSystemHealth)
+
+	// User login logs — JWT required, owner-only.
+	api.Get("/users/:id/logs", middlewares.RequireAuth, controllers.GetUserLogs)
+
+	// AI history purge — JWT required, current user only.
+	api.Delete("/ai/history", middlewares.RequireAuth, controllers.ClearAIHistory)
 }

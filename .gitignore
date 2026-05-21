@@ -1,0 +1,33 @@
+# Environment
+.env
+*.env.local
+*.env.production
+
+# Build artifacts
+*/bin/
+*/dist/
+*/build/
+*/node_modules/
+*.log
+*.test
+*.out
+
+# Go
+*.exe
+vendor/
+
+# Flutter
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/build/
+mobile/.idea/
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/ios/Pods/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+.DS_Store

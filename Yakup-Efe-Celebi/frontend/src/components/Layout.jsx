@@ -31,9 +31,9 @@ export default function Layout() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
               <Wallet size={14} className="text-emerald-400" />
-              <span className="text-sm font-mono text-emerald-400">{fmt(user?.virtualBalance)}</span>
+              <span className="text-sm font-mono text-emerald-400">{fmt(user?.virtual_balance ?? user?.virtualBalance)}</span>
             </div>
-            <span className="text-sm text-slate-400">{user?.fullName}</span>
+            <span className="text-sm text-slate-400">{user?.full_name ?? user?.fullName}</span>
             <button onClick={logout} className="p-2 text-slate-400 hover:text-red-400 transition-colors"><LogOut size={18} /></button>
           </div>
         </div>

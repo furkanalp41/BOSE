@@ -7,7 +7,9 @@ type User struct {
 	FullName       string  `json:"full_name"`
 	Email          string  `json:"email" gorm:"uniqueIndex;not null"`
 	Password       string  `json:"-" gorm:"not null"`
+	Phone          string  `json:"phone"`
 	VirtualBalance float64 `json:"virtual_balance" gorm:"default:100000.0"`
 	Role           string  `json:"role" gorm:"default:'user'"`
 	RiskLevel      string  `json:"risk_level" gorm:"default:'Medium'"`
+	AIPreferences  string  `json:"ai_preferences" gorm:"type:text"`
 }

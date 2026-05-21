@@ -4,36 +4,50 @@ import (
 	"log"
 	"os"
 
-	"bose-backend/config"
-	"bose-backend/models"
-	"bose-backend/routes"
+	"bose-efe/config"
+	"bose-efe/messaging"
+	"bose-efe/routes"
+	"bose-efe/streamer"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	// 1. Ortam Değişkenlerini Yükle
-	godotenv.Load()
+	_ = godotenv.Load()
 
-	// 2. Veritabanına Bağlan ve Tabloları Oluştur
 	config.ConnectDB()
-	config.DB.AutoMigrate(&models.User{}) // User tablosunu Render DB'sinde oluşturur
+	config.ConnectRedis()
+	messaging.Connect()
+	streamer.Seed()
+	streamer.Start()
 
-	// 3. Web Sunucusunu Başlat
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		AppName: "BOSE Efe service",
+	})
 	app.Use(logger.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
+	}))
 
-	// 4. Rotaları Ayarla
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"service": "bose-efe",
+			"status":  "ok",
+			"version": "v1",
+		})
+	})
+
 	routes.SetupRoutes(app)
 
-	// 5. Sunucuyu Dinlemeye Başla
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "8084"
 	}
-
-	log.Printf("🚀 Bose Backend çalışıyor: http://localhost:%s", port)
+	log.Printf("🚀 bose-efe listening on :%s/api/v1", port)
 	log.Fatal(app.Listen(":" + port))
 }

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # ============================================================
 # BOSE Project — Full Ecosystem Bootstrapper
-# Starts all available Go backends and Vite frontends
+# Starts shared infra (Postgres + Redis + RabbitMQ via Docker),
+# all 5 Go backends, and all 5 Vite frontends.
 # Usage: ./start_project.sh
 # Stop:  Ctrl+C (gracefully kills all child processes)
 # ============================================================
@@ -19,6 +20,8 @@ cleanup() {
   done
   wait 2>/dev/null
   echo "All servers stopped."
+  echo ""
+  echo "Infra containers still running. To stop them: docker compose down"
 }
 
 trap cleanup EXIT INT TERM
@@ -58,13 +61,24 @@ echo "  BOSE — Full Ecosystem Bootstrapper"
 echo "============================================"
 echo ""
 
+# ---- Shared Infra ----
+if command -v docker >/dev/null 2>&1; then
+  echo "Starting shared infra (Postgres + Redis + RabbitMQ)..."
+  (cd "$ROOT_DIR" && docker compose up -d postgres redis rabbitmq) || \
+    echo "  [WARN] docker compose failed — assuming infra is already running or env is using remote services."
+  echo ""
+else
+  echo "  [WARN] docker not found — relying on remote DB/Redis/RabbitMQ from .env."
+  echo ""
+fi
+
 # ---- Backends ----
 echo "Starting Go backends..."
 start_backend "Furkan"  "$ROOT_DIR/Furkan-Alp-Gunay"         8080
-start_backend "Cem"     "$ROOT_DIR/Cem-Karaca"               3000
-start_backend "Arda"    "$ROOT_DIR/Salih-Arda-Katircioglu"   8081
-start_backend "Enes"    "$ROOT_DIR/Enes-Coban"               8082
-start_backend "Efe"     "$ROOT_DIR/Yakup-Efe-Celebi"         8083
+start_backend "Cem"     "$ROOT_DIR/Cem-Karaca"               8081
+start_backend "Arda"    "$ROOT_DIR/Salih-Arda-Katircioglu"   8082
+start_backend "Enes"    "$ROOT_DIR/Enes-Coban"               8083
+start_backend "Efe"     "$ROOT_DIR/Yakup-Efe-Celebi"         8084
 echo ""
 
 # ---- Frontends ----
@@ -80,11 +94,11 @@ echo "============================================"
 echo "  All available servers are running!"
 echo ""
 echo "  Backends:"
-echo "    Furkan  → http://localhost:8080"
-echo "    Cem     → http://localhost:3000"
-echo "    Arda    → http://localhost:8081"
-echo "    Enes    → http://localhost:8082"
-echo "    Efe     → http://localhost:8083"
+echo "    Furkan  → http://localhost:8080/api/v1"
+echo "    Cem     → http://localhost:8081/api/v1"
+echo "    Arda    → http://localhost:8082/api/v1"
+echo "    Enes    → http://localhost:8083/api/v1"
+echo "    Efe     → http://localhost:8084/api/v1"
 echo ""
 echo "  Frontends:"
 echo "    Furkan  → http://localhost:5173"
@@ -92,6 +106,11 @@ echo "    Cem     → http://localhost:5174"
 echo "    Arda    → http://localhost:5175"
 echo "    Enes    → http://localhost:5176"
 echo "    Efe     → http://localhost:5177"
+echo ""
+echo "  Infra:"
+echo "    Postgres   → localhost:5432  (user=bose, pass=bose, db=bose)"
+echo "    Redis      → localhost:6379"
+echo "    RabbitMQ   → localhost:5672  (mgmt UI: http://localhost:15672, guest/guest)"
 echo ""
 echo "  Press Ctrl+C to stop all servers."
 echo "============================================"

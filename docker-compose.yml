@@ -1,0 +1,143 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: bose
+      POSTGRES_PASSWORD: bose
+      POSTGRES_DB: bose
+    ports:
+      - "5432:5432"
+    volumes:
+      - bose_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bose -d bose"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  furkan:
+    build:
+      context: ./Furkan-Alp-Gunay
+    environment:
+      DB_URL: postgres://bose:bose@postgres:5432/bose?sslmode=disable
+      JWT_SECRET: bose_super_gizli_anahtar_2026
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      PORT: "8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  cem:
+    build:
+      context: ./Cem-Karaca
+    environment:
+      DB_URL: postgres://bose:bose@postgres:5432/bose?sslmode=disable
+      JWT_SECRET: bose_super_gizli_anahtar_2026
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      PORT: "8081"
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      furkan:
+        condition: service_started
+
+  salih:
+    build:
+      context: ./Salih-Arda-Katircioglu
+    environment:
+      DB_URL: postgres://bose:bose@postgres:5432/bose?sslmode=disable
+      JWT_SECRET: bose_super_gizli_anahtar_2026
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      PORT: "8082"
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      furkan:
+        condition: service_started
+
+  enes:
+    build:
+      context: ./Enes-Coban
+    environment:
+      DB_URL: postgres://bose:bose@postgres:5432/bose?sslmode=disable
+      JWT_SECRET: bose_super_gizli_anahtar_2026
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      PORT: "8083"
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      furkan:
+        condition: service_started
+
+  efe:
+    build:
+      context: ./Yakup-Efe-Celebi
+    environment:
+      DB_URL: postgres://bose:bose@postgres:5432/bose?sslmode=disable
+      JWT_SECRET: bose_super_gizli_anahtar_2026
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      PORT: "8084"
+    ports:
+      - "8084:8084"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      furkan:
+        condition: service_started
+
+volumes:
+  bose_pg_data:
