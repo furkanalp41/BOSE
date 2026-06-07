@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../../core/api_client.dart';
 import '../../core/auth_store.dart';
+import '../../core/theme.dart';
+import '../../widgets/widgets.dart';
 import 'profile_screen.dart';
 import 'register_screen.dart';
 
@@ -50,38 +52,81 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('BOSE — Giriş')),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            const SizedBox(height: 24),
-            TextField(
-              controller: _email,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _password,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Şifre'),
-            ),
-            const SizedBox(height: 24),
-            if (_error != null)
-              Text(_error!, style: const TextStyle(color: Colors.redAccent)),
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: _loading ? null : _submit,
-              child: Text(_loading ? 'Giriş yapılıyor...' : 'Giriş Yap'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const RegisterScreen()),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 440),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const BrandHeader(subtitle: 'Borsa & Kripto Simülasyonu'),
+                  const SizedBox(height: 32),
+                  GlassCard(
+                    glow: true,
+                    padding: const EdgeInsets.all(22),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          'Tekrar hoş geldin',
+                          style: TextStyle(
+                            color: BoseColors.text,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Hesabına giriş yap ve işleme başla.',
+                          style: TextStyle(color: BoseColors.muted, fontSize: 13),
+                        ),
+                        const SizedBox(height: 22),
+                        AppTextField(
+                          controller: _email,
+                          label: 'Email',
+                          hint: 'ornek@bose.com',
+                          icon: Icons.alternate_email,
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                        ),
+                        const SizedBox(height: 16),
+                        AppTextField(
+                          controller: _password,
+                          label: 'Şifre',
+                          hint: '••••••••',
+                          icon: Icons.lock_outline,
+                          obscureText: true,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => _loading ? null : _submit(),
+                        ),
+                        if (_error != null) ...[
+                          const SizedBox(height: 16),
+                          ErrorBanner(message: _error!),
+                        ],
+                        const SizedBox(height: 24),
+                        NeonButton(
+                          label: _loading ? 'Giriş yapılıyor...' : 'Giriş Yap',
+                          icon: Icons.login,
+                          loading: _loading,
+                          onPressed: _loading ? null : _submit,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                    ),
+                    child: const Text('Hesabınız yok mu? Kayıt olun'),
+                  ),
+                ],
               ),
-              child: const Text('Hesabınız yok mu? Kayıt olun'),
             ),
-          ],
+          ),
         ),
       ),
     );

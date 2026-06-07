@@ -1,26 +1,31 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { Brain, MessageCircle } from 'lucide-react'
+import { Brain, MessageCircle, ListChecks } from 'lucide-react'
 import DevLoginBar from './DevLoginBar'
 
 const navItems = [
-  { to: '/analysis', label: 'Rapor Olustur', icon: Brain },
+  { to: '/analysis', label: 'Durum Raporu', icon: Brain },
+  { to: '/watchlists', label: 'Izleme Listeleri', icon: ListChecks },
   { to: '/chat', label: 'AI Chat', icon: MessageCircle },
 ]
 
 export default function Layout() {
   const { pathname } = useLocation()
 
+  const linkClass = (active) =>
+    `px-3 py-2 rounded-lg text-sm font-medium transition-all inline-flex items-center gap-2 ${
+      active ? 'bg-neon/10 text-neon shadow-neon-sm' : 'text-silver hover:text-cloud hover:bg-white/5'
+    }`
+
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-void">
       <DevLoginBar />
-      <nav className="bg-slate-900 border-b border-slate-800">
+      <nav className="sticky top-0 z-20 border-b border-edge/60 bg-abyss/70 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <span className="text-xl font-bold text-purple-400 tracking-wider">BOSE AI</span>
+            <span className="font-mono text-xl font-black tracking-[0.25em] text-neon text-glow-neon">BOSE AI</span>
             <div className="flex gap-1">
               {navItems.map(({ to, label, icon: Icon }) => (
-                <Link key={to} to={to}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-2 ${pathname === to ? 'bg-slate-800 text-purple-400' : 'text-slate-400 hover:text-slate-200'}`}>
+                <Link key={to} to={to} className={linkClass(pathname === to)}>
                   <Icon size={16} /> {label}
                 </Link>
               ))}
@@ -28,7 +33,7 @@ export default function Layout() {
           </div>
         </div>
       </nav>
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-8 animate-fade-in">
         <Outlet />
       </main>
     </div>

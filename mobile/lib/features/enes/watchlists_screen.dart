@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../core/api_client.dart';
+import '../../core/theme.dart';
+import '../../widgets/widgets.dart';
 
 /// Watchlists screen — owned by Enes.
 /// Hits GET/POST/PUT/DELETE /api/v1/watchlists on port 8083.
@@ -45,10 +47,18 @@ class _WatchlistsScreenState extends State<WatchlistsScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Yeni İzleme Listesi'),
-        content: TextField(controller: ctl, decoration: const InputDecoration(labelText: 'Liste Adı')),
+        content: AppTextField(
+          controller: ctl,
+          label: 'Liste Adı',
+          icon: Icons.bookmark_outline,
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('İptal')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Oluştur')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('İptal')),
+          FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Oluştur')),
         ],
       ),
     );
@@ -74,40 +84,131 @@ class _WatchlistsScreenState extends State<WatchlistsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('İzleme Listeleri')),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _create,
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.playlist_add),
+        label: const Text('Yeni Liste',
+            style: TextStyle(fontWeight: FontWeight.w800)),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(child: Text(_error!, style: const TextStyle(color: Colors.redAccent)))
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: ErrorBanner(message: _error!),
+                  ),
+                )
               : RefreshIndicator(
                   onRefresh: _refresh,
-                  child: ListView.separated(
-                    itemCount: _lists.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
-                    itemBuilder: (_, i) {
-                      final w = _lists[i];
-                      final assets = (w['assets'] as List?)?.cast<Map<String, dynamic>>() ?? [];
-                      return Dismissible(
-                        key: ValueKey(w['id']),
-                        background: Container(
-                          color: Colors.redAccent,
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: const Icon(Icons.delete, color: Colors.white),
+                  color: BoseColors.neon,
+                  backgroundColor: BoseColors.surface,
+                  child: _lists.isEmpty
+                      ? _emptyState()
+                      : ListView.separated(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+                          itemCount: _lists.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (_, i) {
+                            final w = _lists[i];
+                            final assets = (w['assets'] as List?)
+                                    ?.cast<Map<String, dynamic>>() ??
+                                [];
+                            return Dismissible(
+                              key: ValueKey(w['id']),
+                              direction: DismissDirection.endToStart,
+                              onDismissed: (_) =>
+                                  _delete((w['id'] as num).toInt()),
+                              background: Container(
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24),
+                                decoration: BoxDecoration(
+                                  color: BoseColors.loss.withValues(alpha: 0.18),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                      color: BoseColors.loss
+                                          .withValues(alpha: 0.4)),
+                                ),
+                                child: const Icon(Icons.delete_outline,
+                                    color: BoseColors.loss),
+                              ),
+                              child: _listCard(w, assets.length),
+                            );
+                          },
                         ),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (_) => _delete((w['id'] as num).toInt()),
-                        child: ListTile(
-                          title: Text(w['name']?.toString() ?? '-'),
-                          subtitle: Text('${assets.length} varlık'),
-                        ),
-                      );
-                    },
+                ),
+    );
+  }
+
+  Widget _listCard(Map<String, dynamic> w, int assetCount) {
+    return GlassCard(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            height: 44,
+            width: 44,
+            decoration: BoxDecoration(
+              color: BoseColors.cyan.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.bookmarks_outlined,
+                color: BoseColors.cyan, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  w['name']?.toString() ?? '-',
+                  style: const TextStyle(
+                    color: BoseColors.text,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
+                const SizedBox(height: 4),
+                Text(
+                  '$assetCount varlık',
+                  style:
+                      const TextStyle(color: BoseColors.muted, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.chevron_right, color: BoseColors.muted),
+        ],
+      ),
+    );
+  }
+
+  Widget _emptyState() {
+    return ListView(
+      children: const [
+        SizedBox(height: 120),
+        Icon(Icons.bookmark_border, color: BoseColors.muted, size: 48),
+        SizedBox(height: 16),
+        Center(
+          child: Text(
+            'Henüz izleme listesi yok',
+            style: TextStyle(
+              color: BoseColors.text,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        SizedBox(height: 6),
+        Center(
+          child: Text(
+            'İlk listeni oluşturmak için sağ alttaki butonu kullan.',
+            style: TextStyle(color: BoseColors.muted, fontSize: 13),
+          ),
+        ),
+      ],
     );
   }
 }

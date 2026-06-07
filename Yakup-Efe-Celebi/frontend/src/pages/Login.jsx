@@ -3,6 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Eye, EyeOff } from 'lucide-react'
 import toast from 'react-hot-toast'
+import AuthShell from '../ui/AuthShell'
+import GlassCard from '../ui/GlassCard'
+import FloatingInput from '../ui/FloatingInput'
+import NeonButton from '../ui/NeonButton'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -25,42 +29,48 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-emerald-400 tracking-wider">BOSE</h1>
-          <p className="text-slate-400 mt-1 text-sm">Kullanici Yonetim Paneli</p>
-        </div>
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
-          <h2 className="text-xl font-semibold text-slate-100 mb-6">Giris Yap</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
-                className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="ornek@email.com" />
-            </div>
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Sifre</label>
-              <div className="relative">
-                <input type={show ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required
-                  className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-12"
-                  placeholder="Sifreniz" />
-                <button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
-                  {show ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
-            <button type="submit" disabled={loading}
-              className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-800 text-white font-medium rounded-lg transition-colors">
-              {loading ? 'Giris yapiliyor...' : 'Giris Yap'}
-            </button>
-          </form>
-          <p className="mt-6 text-center text-sm text-slate-400">
-            Hesabiniz yok mu? <Link to="/register" className="text-emerald-400 hover:text-emerald-300">Kayit Ol</Link>
-          </p>
-        </div>
+    <AuthShell>
+      <div className="mb-8 text-center">
+        <h1 className="font-mono text-4xl font-black tracking-[0.3em] text-neon text-glow-neon">BOSE</h1>
+        <p className="mt-2 text-sm text-silver">Kullanici Yonetim Paneli</p>
       </div>
-    </div>
+
+      <GlassCard className="p-8" glow>
+        <h2 className="mb-6 text-xl font-semibold text-cloud">Giris Yap</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <FloatingInput
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="ornek@email.com"
+          />
+
+          <FloatingInput
+            label="Sifre"
+            type={show ? 'text' : 'password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="Sifreniz"
+            trailing={
+              <button type="button" onClick={() => setShow(!show)} className="transition-colors hover:text-neon">
+                {show ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            }
+          />
+
+          <NeonButton type="submit" disabled={loading} className="w-full">
+            {loading ? 'Giris yapiliyor...' : 'Giris Yap'}
+          </NeonButton>
+        </form>
+
+        <p className="mt-6 text-center text-sm text-silver">
+          Hesabiniz yok mu?{' '}
+          <Link to="/register" className="font-medium text-neon hover:text-ice">Kayit Ol</Link>
+        </p>
+      </GlassCard>
+    </AuthShell>
   )
 }

@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
+import GlassCard from '../ui/GlassCard'
+import FloatingInput from '../ui/FloatingInput'
+import NeonButton from '../ui/NeonButton'
 
 export default function Profile() {
   const { user, updateUser, logout } = useAuth()
@@ -64,149 +67,132 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-gray-100">Profil</h1>
+    <div className="mx-auto max-w-2xl animate-fade-in space-y-6">
+      <h1 className="text-2xl font-bold text-cloud">Profil</h1>
 
       {message && (
-        <div className="p-3 bg-emerald-900/30 border border-emerald-800 rounded-lg text-emerald-400 text-sm">
+        <div className="rounded-lg border border-neon/40 bg-neon/10 p-3 text-sm text-neon">
           {message}
         </div>
       )}
       {error && (
-        <div className="p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-400 text-sm">
+        <div className="rounded-lg border border-crimson/40 bg-crimson/10 p-3 text-sm text-crimson">
           {error}
         </div>
       )}
 
-      <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+      <GlassCard className="space-y-4 p-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-100">Kisisel Bilgiler</h2>
+          <h2 className="text-lg font-semibold text-cloud">Kisisel Bilgiler</h2>
           {!editing && (
-            <button
-              onClick={() => setEditing(true)}
-              className="px-4 py-1.5 text-sm bg-gray-800 text-emerald-400 rounded-lg hover:bg-gray-700 transition-colors"
-            >
+            <NeonButton variant="ghost" onClick={() => setEditing(true)} className="px-4 py-1.5 text-sm">
               Duzenle
-            </button>
+            </NeonButton>
           )}
         </div>
 
         {editing ? (
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">Ad Soyad</label>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
-            </div>
+            <FloatingInput
+              label="Ad Soyad"
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+            <FloatingInput
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
             <div className="flex gap-3">
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-800 text-white rounded-lg transition-colors text-sm"
-              >
+              <NeonButton onClick={handleSave} disabled={saving} className="text-sm">
                 {saving ? 'Kaydediliyor...' : 'Kaydet'}
-              </button>
-              <button
-                onClick={handleCancel}
-                className="px-6 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors text-sm"
-              >
+              </NeonButton>
+              <NeonButton variant="ghost" onClick={handleCancel} className="text-sm">
                 Iptal
-              </button>
+              </NeonButton>
             </div>
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="flex justify-between py-2 border-b border-gray-800">
-              <span className="text-gray-400">Ad Soyad</span>
-              <span className="text-gray-100">{user?.full_name}</span>
+            <div className="flex justify-between border-b border-edge py-2">
+              <span className="text-silver">Ad Soyad</span>
+              <span className="text-cloud">{user?.full_name}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-gray-800">
-              <span className="text-gray-400">Email</span>
-              <span className="text-gray-100">{user?.email}</span>
+            <div className="flex justify-between border-b border-edge py-2">
+              <span className="text-silver">Email</span>
+              <span className="text-cloud">{user?.email}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-gray-800">
-              <span className="text-gray-400">Rol</span>
-              <span className="text-gray-100 capitalize">{user?.role}</span>
+            <div className="flex justify-between border-b border-edge py-2">
+              <span className="text-silver">Rol</span>
+              <span className="capitalize text-cloud">{user?.role}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-gray-800">
-              <span className="text-gray-400">Risk Seviyesi</span>
-              <span className="text-gray-100">{user?.risk_level}</span>
+            <div className="flex justify-between border-b border-edge py-2">
+              <span className="text-silver">Risk Seviyesi</span>
+              <span className="text-cloud">{user?.risk_level}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-gray-800">
-              <span className="text-gray-400">Sanal Bakiye</span>
-              <span className="text-emerald-400 font-mono">
+            <div className="flex justify-between border-b border-edge py-2">
+              <span className="text-silver">Sanal Bakiye</span>
+              <span className="font-mono text-neon">
                 {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(user?.virtual_balance || 0)}
               </span>
             </div>
             <div className="flex justify-between py-2">
-              <span className="text-gray-400">Kayit Tarihi</span>
-              <span className="text-gray-100">{formatDate(user?.CreatedAt)}</span>
+              <span className="text-silver">Kayit Tarihi</span>
+              <span className="text-cloud">{formatDate(user?.CreatedAt)}</span>
             </div>
           </div>
         )}
-      </div>
+      </GlassCard>
 
-      <div className="bg-gray-900 border border-red-900/50 rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-red-400 mb-2">Tehlikeli Bolge</h2>
-        <p className="text-gray-400 text-sm mb-4">
+      <GlassCard className="border-crimson/30 p-6">
+        <h2 className="mb-2 text-lg font-semibold text-crimson">Tehlikeli Bolge</h2>
+        <p className="mb-4 text-sm text-silver">
           Hesabinizi silmek geri alinamaz bir islemdir. Tum verileriniz kalici olarak silinecektir.
         </p>
-        <button
-          onClick={() => setShowDeleteModal(true)}
-          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm"
-        >
+        <NeonButton variant="danger" onClick={() => setShowDeleteModal(true)} className="text-sm">
           Hesabi Sil
-        </button>
-      </div>
+        </NeonButton>
+      </GlassCard>
 
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold text-red-400 mb-4">Hesabi Sil</h3>
-            <p className="text-gray-400 text-sm mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
+          <GlassCard className="w-full max-w-md p-6" glow>
+            <h3 className="mb-4 text-lg font-semibold text-crimson">Hesabi Sil</h3>
+            <p className="mb-4 text-sm text-silver">
               Bu islem geri alinamaz. Hesabiniz ve tum verileriniz kalici olarak silinecektir.
             </p>
-            <label className="flex items-center gap-2 mb-6 cursor-pointer">
+            <label className="mb-6 flex cursor-pointer items-center gap-2">
               <input
                 type="checkbox"
                 checked={deleteConfirm}
                 onChange={(e) => setDeleteConfirm(e.target.checked)}
-                className="rounded border-gray-600 bg-gray-800 text-red-500 focus:ring-red-500"
+                className="rounded border-edge bg-abyss text-crimson focus:ring-crimson"
               />
-              <span className="text-sm text-gray-300">Bu islemin geri alinamaz oldugunu anliyorum</span>
+              <span className="text-sm text-silver">Bu islemin geri alinamaz oldugunu anliyorum</span>
             </label>
             <div className="flex gap-3">
-              <button
+              <NeonButton
+                variant="danger"
                 onClick={handleDelete}
                 disabled={!deleteConfirm || deleting}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-900 disabled:cursor-not-allowed text-white rounded-lg transition-colors text-sm"
+                className="text-sm"
               >
                 {deleting ? 'Siliniyor...' : 'Evet, Hesabimi Sil'}
-              </button>
-              <button
+              </NeonButton>
+              <NeonButton
+                variant="ghost"
                 onClick={() => {
                   setShowDeleteModal(false)
                   setDeleteConfirm(false)
                 }}
-                className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                className="text-sm"
               >
                 Vazgec
-              </button>
+              </NeonButton>
             </div>
-          </div>
+          </GlassCard>
         </div>
       )}
     </div>

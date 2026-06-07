@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import api from '../api/axios'
 import { Plus, Star, List } from 'lucide-react'
+import GlassCard from '../ui/GlassCard'
+import FloatingInput from '../ui/FloatingInput'
+import NeonButton from '../ui/NeonButton'
 
 export default function Watchlist() {
   const [name, setName] = useState('')
@@ -43,77 +46,78 @@ export default function Watchlist() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-100">Watchlist</h1>
+    <div className="animate-fade-in space-y-6">
+      <h1 className="text-2xl font-bold text-cloud">Watchlist</h1>
 
-      {msg && <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-400 text-sm">{msg}</div>}
-      {error && <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">{error}</div>}
+      {msg && <div className="rounded-lg border border-neon/40 bg-neon/10 p-3 text-sm text-neon">{msg}</div>}
+      {error && <div className="rounded-lg border border-crimson/40 bg-crimson/10 p-3 text-sm text-crimson">{error}</div>}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Star size={20} className="text-yellow-400" />
-            <h2 className="text-lg font-semibold text-slate-100">Yeni Watchlist</h2>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <GlassCard className="p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <Star size={20} className="text-amber" />
+            <h2 className="text-lg font-semibold text-cloud">Yeni Watchlist</h2>
           </div>
           <form onSubmit={createWatchlist} className="space-y-4">
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Watchlist Adi</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} required
-                className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="Ornek: Kripto Favorilerim" />
-            </div>
-            <button type="submit" disabled={loading}
-              className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-800 text-white font-medium rounded-lg transition-colors inline-flex items-center justify-center gap-2">
+            <FloatingInput
+              label="Watchlist Adi"
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
+              placeholder="Ornek: Kripto Favorilerim"
+            />
+            <NeonButton type="submit" disabled={loading} className="w-full">
               <Plus size={16} /> {loading ? 'Olusturuluyor...' : 'Olustur'}
-            </button>
+            </NeonButton>
           </form>
-        </div>
+        </GlassCard>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <List size={20} className="text-emerald-400" />
-            <h2 className="text-lg font-semibold text-slate-100">Varlik Ekle</h2>
+        <GlassCard className="p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <List size={20} className="text-neon" />
+            <h2 className="text-lg font-semibold text-cloud">Varlik Ekle</h2>
           </div>
           <form onSubmit={addItem} className="space-y-4">
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Watchlist Sec</label>
-              <select value={selectedWl} onChange={e => setSelectedWl(e.target.value)}
-                className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <label className="block">
+              <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-silver">Watchlist Sec</span>
+              <select value={selectedWl} onChange={e => setSelectedWl(e.target.value)} className="input-base">
                 <option value="">Watchlist secin...</option>
                 {watchlists.map(wl => (
                   <option key={wl.id || wl.ID} value={wl.id || wl.ID}>{wl.name}</option>
                 ))}
               </select>
-            </div>
-            <div>
-              <label className="block text-sm text-slate-400 mb-1">Market Varlik ID</label>
-              <input type="number" value={itemId} onChange={e => setItemId(e.target.value)} required
-                className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="Varlik ID giriniz" />
-            </div>
-            <button type="submit" disabled={!selectedWl || !itemId}
-              className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-800 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors">
+            </label>
+            <FloatingInput
+              label="Market Varlik ID"
+              type="number"
+              value={itemId}
+              onChange={e => setItemId(e.target.value)}
+              required
+              placeholder="Varlik ID giriniz"
+            />
+            <NeonButton type="submit" disabled={!selectedWl || !itemId} className="w-full">
               Ekle
-            </button>
+            </NeonButton>
           </form>
-        </div>
+        </GlassCard>
       </div>
 
       {watchlists.length > 0 && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <h2 className="text-lg font-semibold text-slate-100 mb-4">Watchlistlerim</h2>
+        <GlassCard className="p-6">
+          <h2 className="mb-4 text-lg font-semibold text-cloud">Watchlistlerim</h2>
           <div className="space-y-3">
             {watchlists.map(wl => (
-              <div key={wl.id || wl.ID} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4">
+              <div key={wl.id || wl.ID} className="rounded-xl border border-edge bg-card/60 p-4">
                 <div className="flex items-center gap-2">
-                  <Star size={16} className="text-yellow-400" />
-                  <span className="font-semibold text-slate-100">{wl.name}</span>
-                  <span className="text-xs text-slate-500 ml-auto">ID: {wl.id || wl.ID}</span>
+                  <Star size={16} className="text-amber" />
+                  <span className="font-semibold text-cloud">{wl.name}</span>
+                  <span className="ml-auto font-mono text-xs text-silver">ID: {wl.id || wl.ID}</span>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </GlassCard>
       )}
     </div>
   )

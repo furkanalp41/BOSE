@@ -1,75 +1,115 @@
 import { useState } from 'react'
 import api from '../api/axios'
-import { Brain, Briefcase, Star, ArrowRightLeft, Loader2 } from 'lucide-react'
+import { Brain, Loader2, Search, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import GlassCard from '../ui/GlassCard'
+import NeonButton from '../ui/NeonButton'
+import StatTile from '../ui/StatTile'
+
+const QUICK_SYMBOLS = ['THYAO', 'GARAN', 'ASELS', 'AAPL', 'TSLA', 'BTC']
+
+const RECOMMENDATION_META = {
+  BUY: { label: 'AL', accent: 'text-bull', Icon: TrendingUp },
+  HOLD: { label: 'TUT', accent: 'text-amber', Icon: Minus },
+  SELL: { label: 'SAT', accent: 'text-bear', Icon: TrendingDown },
+}
 
 export default function AIReportGenerator() {
-  const [tab, setTab] = useState('portfolio')
-  const [result, setResult] = useState('')
+  const [symbol, setSymbol] = useState('')
+  const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const tabs = [
-    ['portfolio', 'Portfoy', Briefcase],
-    ['watchlist', 'Watchlist', Star],
-    ['transactions', 'Islemler', ArrowRightLeft],
-  ]
-
-  const runAnalysis = async (type) => {
+  const runAnalysis = async (raw) => {
+    const target = (raw ?? symbol).trim().toUpperCase()
+    if (!target) {
+      setError('Lutfen bir varlik sembolu girin.')
+      return
+    }
+    setSymbol(target)
     setLoading(true)
     setError('')
-    setResult('')
+    setReport(null)
     try {
-      let r
-      if (type === 'test') {
-        r = await api.get('/ai/reports/portfolio/test')
-      } else {
-        r = await api.post(`/ai/reports/${type}`, {})
-      }
-      setResult(r.data.report || r.data.data || JSON.stringify(r.data, null, 2))
+      const r = await api.get(`/ai/report/status/${encodeURIComponent(target)}`)
+      setReport(r.data)
     } catch (err) {
       setError(err.response?.data?.error || 'Analiz basarisiz oldu.')
     } finally { setLoading(false) }
   }
 
+  const meta = report ? (RECOMMENDATION_META[report.recommendation] || RECOMMENDATION_META.HOLD) : null
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Brain size={28} className="text-purple-400" />
-        <h1 className="text-2xl font-bold text-slate-100">AI Rapor Olusturucu</h1>
+        <Brain size={28} className="text-neon" />
+        <h1 className="text-2xl font-bold text-cloud">AI Durum Raporu</h1>
       </div>
 
-      <div className="flex gap-1 bg-slate-900 border border-slate-800 rounded-lg p-1">
-        {tabs.map(([k, l, Icon]) => (
-          <button key={k} onClick={() => { setTab(k); setResult(''); setError('') }}
-            className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors inline-flex items-center justify-center gap-1.5 ${tab === k ? 'bg-slate-800 text-purple-400' : 'text-slate-400 hover:text-slate-200'}`}>
-            <Icon size={14} /> {l}
-          </button>
-        ))}
-      </div>
+      {error && (
+        <div className="rounded-lg border border-crimson/40 bg-crimson/10 p-3 text-sm text-crimson">{error}</div>
+      )}
 
-      {error && <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">{error}</div>}
+      <GlassCard className="p-6 space-y-5">
+        <p className="text-sm text-silver">
+          Bir varlik sembolu girin ve simulasyon tabanli AL / TUT / SAT durum raporunu goruntuleyin.
+        </p>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-        <div className="flex gap-3">
-          <button onClick={() => runAnalysis(tab)} disabled={loading}
-            className="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2">
-            {loading ? <Loader2 size={16} className="animate-spin" /> : <Brain size={16} />}
-            {loading ? 'Analiz ediliyor...' : `${tabs.find(t => t[0] === tab)?.[1]} Analizi Baslat`}
-          </button>
-          {tab === 'portfolio' && (
-            <button onClick={() => runAnalysis('test')} disabled={loading}
-              className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg transition-colors border border-slate-700">
-              Test Analizi
-            </button>
-          )}
-        </div>
-        {result && (
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-purple-400 mb-3">Analiz Sonucu</h3>
-            <div className="text-slate-300 text-sm whitespace-pre-wrap leading-relaxed">{result}</div>
+        <form onSubmit={(e) => { e.preventDefault(); runAnalysis() }} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <div className="flex-1">
+            <span className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-silver">Varlik Sembolu</span>
+            <input
+              value={symbol}
+              onChange={(e) => setSymbol(e.target.value.toUpperCase())}
+              placeholder="orn. THYAO"
+              className="input-base font-mono uppercase"
+            />
           </div>
-        )}
-      </div>
+          <NeonButton type="submit" disabled={loading} className="sm:w-auto">
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
+            {loading ? 'Analiz ediliyor...' : 'Rapor Olustur'}
+          </NeonButton>
+        </form>
+
+        <div className="flex flex-wrap gap-2">
+          {QUICK_SYMBOLS.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => runAnalysis(s)}
+              disabled={loading}
+              className="rounded-full border border-edge px-3 py-1 font-mono text-xs text-silver transition-colors hover:border-neon hover:text-neon disabled:opacity-50"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </GlassCard>
+
+      {report && meta && (
+        <GlassCard className="p-6 space-y-5" glow>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-2xl font-black text-cloud">{report.symbol}</span>
+            </div>
+            <div className={`flex items-center gap-2 ${meta.accent}`}>
+              <meta.Icon size={22} />
+              <span className="font-mono text-xl font-bold">{report.recommendation}</span>
+              <span className="text-sm text-silver">({meta.label})</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 border-t border-edge pt-4">
+            <StatTile label="Tavsiye" value={report.recommendation} accent={meta.accent} />
+            <StatTile label="Duygu Skoru" value={`${report.sentimentScore} / 100`} accent="text-ice" />
+          </div>
+
+          <div className="rounded-xl border border-edge bg-white/5 p-5">
+            <h3 className="mb-3 text-sm font-semibold text-neon">Analiz Sonucu</h3>
+            <div className="text-sm leading-relaxed text-cloud whitespace-pre-wrap">{report.analysisText}</div>
+          </div>
+        </GlassCard>
+      )}
     </div>
   )
 }

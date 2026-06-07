@@ -1,30 +1,60 @@
-// This is a basic Flutter widget test.
+// Smoke tests for the BOSE design system (theme + reusable widget kit).
 //
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// The previous default counter-app boilerplate referenced a `MyApp` class
+// that does not exist in this project, which broke `flutter analyze`. These
+// tests build the real theme and widgets so the suite compiles and passes.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:bose_mobile/main.dart';
+import 'package:bose_mobile/core/theme.dart';
+import 'package:bose_mobile/widgets/widgets.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('boseTheme builds a dark Material 3 theme', (tester) async {
+    final theme = boseTheme();
+    expect(theme.useMaterial3, isTrue);
+    expect(theme.brightness, Brightness.dark);
+    expect(theme.colorScheme.primary, BoseColors.neon);
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  testWidgets('NeonButton renders its label and fires onPressed',
+      (tester) async {
+    var tapped = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: boseTheme(),
+        home: Scaffold(
+          body: NeonButton(
+            label: 'Giriş Yap',
+            onPressed: () => tapped = true,
+          ),
+        ),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(find.text('Giriş Yap'), findsOneWidget);
+    await tester.tap(find.byType(NeonButton));
+    expect(tapped, isTrue);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('StatTile shows its label and value', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: boseTheme(),
+        home: const Scaffold(
+          body: StatTile(label: 'Bakiye', value: '1.000'),
+        ),
+      ),
+    );
+
+    expect(find.text('Bakiye'), findsOneWidget);
+    expect(find.text('1.000'), findsOneWidget);
+  });
+
+  test('BoseColors.delta returns neon for gains and loss red for drops', () {
+    expect(BoseColors.delta(1), BoseColors.neon);
+    expect(BoseColors.delta(0), BoseColors.neon);
+    expect(BoseColors.delta(-1), BoseColors.loss);
   });
 }

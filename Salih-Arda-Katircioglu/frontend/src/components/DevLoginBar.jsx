@@ -56,35 +56,35 @@ export default function DevLoginBar() {
 
   if (token) {
     return (
-      <div className="bg-emerald-900/40 border-b border-emerald-700/50 text-emerald-100 text-xs px-4 py-1.5 flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-neon/30 bg-neon/10 px-4 py-1.5 text-xs text-neon">
         <span>Oturum: <strong>{user?.email ?? user?.full_name ?? 'aktif'}</strong></span>
-        <button onClick={onLogout} className="underline hover:text-emerald-300">çıkış</button>
+        <button onClick={onLogout} className="underline transition-colors hover:text-ice">çıkış</button>
       </div>
     )
   }
 
   return (
-    <div className="bg-amber-900/40 border-b border-amber-700/50 text-amber-100 text-xs px-4 py-1.5">
+    <div className="border-b border-amber/30 bg-amber/10 px-4 py-1.5 text-xs text-amber">
       <div className="flex items-center justify-between">
         <span>Giriş yapılmadı — istekler 401 dönecek.</span>
-        <button onClick={() => setOpen((v) => !v)} className="underline hover:text-amber-300">
+        <button onClick={() => setOpen((v) => !v)} className="underline transition-colors hover:text-cloud">
           {open ? 'kapat' : 'hızlı giriş'}
         </button>
       </div>
       {open && (
-        <form onSubmit={onSubmit} className="mt-2 flex flex-wrap gap-2 items-center">
+        <form onSubmit={onSubmit} className="mt-2 flex flex-wrap items-center gap-2">
           <input type="email" required placeholder="email" value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="px-2 py-1 bg-slate-800 border border-slate-700 rounded text-white text-xs" />
+            className="rounded border border-edge bg-white/5 px-2 py-1 text-xs text-cloud placeholder-silver/60 outline-none transition-colors focus:border-neon" />
           <input type="password" required placeholder="şifre" value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="px-2 py-1 bg-slate-800 border border-slate-700 rounded text-white text-xs" />
+            className="rounded border border-edge bg-white/5 px-2 py-1 text-xs text-cloud placeholder-silver/60 outline-none transition-colors focus:border-neon" />
           <button type="submit" disabled={busy}
-            className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-900 text-white text-xs rounded">
+            className="rounded bg-neon px-3 py-1 text-xs font-semibold text-void transition-shadow hover:shadow-neon-sm disabled:opacity-50">
             {busy ? '...' : 'Giriş Yap'}
           </button>
-          <span className="text-amber-300/80">hedef: {FURKAN_AUTH_BASE}/auth/login</span>
-          {error && <span className="text-red-300">{error}</span>}
+          <span className="text-silver">hedef: {FURKAN_AUTH_BASE}/auth/login</span>
+          {error && <span className="text-crimson">{error}</span>}
         </form>
       )}
     </div>

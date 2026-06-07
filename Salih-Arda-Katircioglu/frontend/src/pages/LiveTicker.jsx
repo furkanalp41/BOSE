@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import marketApi from '../api/marketApi'
 import { Activity, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react'
+import GlassCard from '../ui/GlassCard'
 
 // Yakup's PriceTick → existing render shape. JSX reads
 // item.symbol, item.current_price, item.change_24h.
@@ -39,51 +40,51 @@ export default function LiveTicker() {
   }, [])
 
   return (
-    <div className="space-y-6">
+    <div className="animate-fade-in space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Activity size={28} className="text-emerald-400" />
-          <h1 className="text-2xl font-bold text-slate-100">Canli Fiyatlar</h1>
+          <Activity size={28} className="text-neon" />
+          <h1 className="text-2xl font-bold text-cloud">Canli Fiyatlar</h1>
         </div>
         <div className="flex items-center gap-3">
           {lastUpdate && (
-            <span className="text-xs text-slate-500">
+            <span className="text-xs text-silver">
               Son guncelleme: {lastUpdate.toLocaleTimeString('tr-TR')}
             </span>
           )}
           <button onClick={fetchMarket} disabled={loading}
-            className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-emerald-400">
+            className="rounded-lg border border-edge bg-white/5 p-2 text-silver transition-colors hover:border-neon hover:text-neon">
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
 
-      {error && <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">{error}</div>}
+      {error && <div className="rounded-lg border border-crimson/40 bg-crimson/10 p-3 text-sm text-crimson">{error}</div>}
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+      <GlassCard className="overflow-hidden">
         {loading && items.length === 0 ? (
-          <div className="text-center py-16 text-slate-400">Yukleniyor...</div>
+          <div className="py-16 text-center text-silver">Yukleniyor...</div>
         ) : items.length === 0 ? (
-          <div className="text-center py-16 text-slate-500">Piyasa verisi bulunamadi.</div>
+          <div className="py-16 text-center text-silver">Piyasa verisi bulunamadi.</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+          <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
             {items.map(item => {
               const change = item.change_24h || (Math.random() * 10 - 5)
               const isUp = change >= 0
               return (
-                <div key={item.id || item.ID} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 hover:border-slate-600 transition-colors">
-                  <div className="flex items-center justify-between mb-2">
+                <div key={item.id || item.ID} className="rounded-xl border border-edge bg-card/60 p-4 transition-colors hover:border-neon/40">
+                  <div className="mb-2 flex items-center justify-between">
                     <div>
-                      <span className="font-mono font-bold text-slate-100 text-lg">{item.symbol || item.name}</span>
-                      {item.name && item.symbol && <p className="text-xs text-slate-500">{item.name}</p>}
+                      <span className="font-mono text-lg font-bold text-cloud">{item.symbol || item.name}</span>
+                      {item.name && item.symbol && <p className="text-xs text-silver">{item.name}</p>}
                     </div>
-                    <div className={`p-1.5 rounded-lg ${isUp ? 'bg-emerald-500/10' : 'bg-red-500/10'}`}>
-                      {isUp ? <TrendingUp size={16} className="text-emerald-400" /> : <TrendingDown size={16} className="text-red-400" />}
+                    <div className={`rounded-lg p-1.5 ${isUp ? 'bg-neon/10' : 'bg-crimson/10'}`}>
+                      {isUp ? <TrendingUp size={16} className="text-bull" /> : <TrendingDown size={16} className="text-bear" />}
                     </div>
                   </div>
                   <div className="flex items-end justify-between">
-                    <span className="font-mono text-xl text-slate-100">${(item.current_price || item.price || 0).toFixed(2)}</span>
-                    <span className={`font-mono text-sm ${isUp ? 'text-emerald-400' : 'text-red-400'}`}>
+                    <span className="font-mono text-xl text-cloud">${(item.current_price || item.price || 0).toFixed(2)}</span>
+                    <span className={`font-mono text-sm ${isUp ? 'text-bull' : 'text-bear'}`}>
                       {isUp ? '+' : ''}{change.toFixed(2)}%
                     </span>
                   </div>
@@ -92,10 +93,10 @@ export default function LiveTicker() {
             })}
           </div>
         )}
-      </div>
+      </GlassCard>
 
-      <div className="flex items-center gap-2 text-xs text-slate-600">
-        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+      <div className="flex items-center gap-2 text-xs text-silver">
+        <div className="h-2 w-2 animate-pulse-neon rounded-full bg-neon" />
         <span>Veriler her 15 saniyede otomatik guncellenir</span>
       </div>
     </div>
