@@ -68,6 +68,10 @@ jobs:
         run: go vet ./...
       - name: go test
         working-directory: ${{ matrix.service }}
+        # -race AND the sqlite test driver (gorm.io/driver/sqlite -> mattn/go-sqlite3)
+        # both require cgo; the job-level CGO_ENABLED=0 (kept for static builds) breaks them.
+        env:
+          CGO_ENABLED: "1"
         run: go test ./... -race -cover
       - name: go build
         working-directory: ${{ matrix.service }}
