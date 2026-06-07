@@ -66,6 +66,19 @@ if command -v docker >/dev/null 2>&1; then
   echo "Starting shared infra (Postgres + Redis + RabbitMQ)..."
   (cd "$ROOT_DIR" && docker compose up -d postgres redis rabbitmq) || \
     echo "  [WARN] docker compose failed — assuming infra is already running or env is using remote services."
+  # Wait for infra to be READY before launching backends. Otherwise the one-shot
+  # RabbitMQ publishers (Furkan user.registered, Cem order.filled) try to connect
+  # before RabbitMQ is accepting connections, fail, and silently no-op — so events
+  # are never published and the consumers (order_logs, Default watchlist) get nothing.
+  echo "  Waiting for RabbitMQ + Postgres to be ready..."
+  for _ in $(seq 1 40); do
+    docker exec bose-rabbitmq-1 rabbitmq-diagnostics -q ping >/dev/null 2>&1 && { echo "  RabbitMQ ready."; break; }
+    sleep 1
+  done
+  for _ in $(seq 1 40); do
+    docker exec bose-postgres-1 pg_isready -q -U bose >/dev/null 2>&1 && { echo "  Postgres ready."; break; }
+    sleep 1
+  done
   echo ""
 else
   echo "  [WARN] docker not found — relying on remote DB/Redis/RabbitMQ from .env."
