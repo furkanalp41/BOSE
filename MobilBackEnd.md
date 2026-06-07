@@ -18,7 +18,7 @@ Bu dokümanda, AI Destekli Borsa ve Kripto Simülasyonu mobil uygulamasının, G
 
 **1. HTTP Client ve WebSocket Yapılandırması**
 * **Base URL:** `https://api.simulasyon.com/v1`
-* **Gerçek Zamanlı Veri (WebSocket/SSE):** Borsa ve kripto anlık fiyat akışları için Kafka ve Redis destekli WebSocket bağlantılarının yönetimi.
+* **Gerçek Zamanlı Veri (WebSocket/SSE):** Borsa ve kripto anlık fiyat akışları için RabbitMQ ve Redis destekli WebSocket bağlantılarının yönetimi.
 * **Timeout:** Request timeout 30 saniye, connect timeout 10 saniye (Kritik alım-satım işlemleri için optimize edilmelidir).
 * **Headers:**
     * `Content-Type: application/json`

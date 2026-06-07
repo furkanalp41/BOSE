@@ -12,7 +12,7 @@ Açıklama: Sistemdeki bir varlığın açıklamasını, şirket/coin logosunu v
 
 Sistem Sağlık Durumu Görüntüleme
 API Metodu: GET /admin/health
-Açıklama: Sistemin arka planında çalışan Docker konteynerlarının, Kafka kuyruklarının ve Redis bağlantılarının durumunu teknik rapor olarak sunar. Altyapı takibi için sadece "Yönetici" yetkisine sahip kullanıcılar erişebilir.
+Açıklama: Sistemin arka planında çalışan Docker konteynerlarının, RabbitMQ kuyruklarının ve Redis bağlantılarının durumunu teknik rapor olarak sunar. Altyapı takibi için sadece "Yönetici" yetkisine sahip kullanıcılar erişebilir.
 
 Giriş Hareketlerini Listeleme
 API Metodu: GET /users/{userId}/logs

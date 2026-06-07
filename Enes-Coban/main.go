@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"bose-enes/config"
+	"bose-enes/messaging"
 	"bose-enes/routes"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,6 +18,8 @@ func main() {
 	_ = godotenv.Load()
 	config.ConnectDB()
 	config.ConnectRedis()
+
+	messaging.Start() // user.registered -> auto-create "Default" watchlist
 
 	app := fiber.New(fiber.Config{AppName: "BOSE Enes service"})
 	app.Use(logger.New())

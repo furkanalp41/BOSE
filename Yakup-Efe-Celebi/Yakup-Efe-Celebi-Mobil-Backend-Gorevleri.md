@@ -29,7 +29,7 @@
 * **API Endpoint:** `GET /admin/health`
 * **Görev:** Mobil uygulamanın gizli veya admin ekranında sistem durumunu gösterme.
 * **İşlevler:**
-  * Docker, Kafka ve Redis servislerinin "UP" veya "DOWN" durumlarını ekrana basma.
+  * Docker, RabbitMQ ve Redis servislerinin "UP" veya "DOWN" durumlarını ekrana basma.
 * **Teknik Detaylar:**
   * JSON'daki servis durumlarını okuyup yeşil/kırmızı ikonlarla eşleştirme.
 

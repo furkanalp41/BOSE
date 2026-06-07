@@ -29,10 +29,10 @@ func ConnectDB() {
 
 	fmt.Println("🚀 PostgreSQL bağlantısı kuruldu.")
 
-	if err := db.AutoMigrate(&models.User{}, &models.LoginLog{}); err != nil {
+	if err := db.AutoMigrate(&models.User{}, &models.LoginLog{}, &models.OrderLog{}); err != nil {
 		log.Fatal("AutoMigrate hatası: ", err)
 	}
-	fmt.Println("✅ users + login_logs tabloları migrate edildi.")
+	fmt.Println("✅ users + login_logs + order_logs tabloları migrate edildi.")
 
 	DB = db
 }

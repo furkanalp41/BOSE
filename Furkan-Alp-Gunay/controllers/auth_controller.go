@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"bose-furkan/config"
+	"bose-furkan/messaging"
 	"bose-furkan/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -82,6 +83,15 @@ func Register(c *fiber.Ctx) error {
 			"success": false, "error": "Kullanıcı oluşturulurken hata oluştu",
 		})
 	}
+
+	// Announce the new account so other services can react (e.g. Enes
+	// auto-creates a default watchlist). Fire-and-forget; non-fatal.
+	_ = messaging.Publish("user.registered", fiber.Map{
+		"userId":   user.ID,
+		"email":    user.Email,
+		"fullName": user.FullName,
+		"ts":       time.Now().Format(time.RFC3339),
+	})
 
 	token, err := generateToken(user)
 	if err != nil {

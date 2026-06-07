@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"bose-furkan/config"
+	"bose-furkan/messaging"
 	"bose-furkan/routes"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,6 +19,9 @@ func main() {
 
 	config.ConnectDB()
 	config.ConnectRedis()
+
+	messaging.Connect()            // user.registered publisher
+	messaging.StartOrderConsumer() // order.filled -> order_logs audit trail
 
 	app := fiber.New(fiber.Config{
 		AppName: "BOSE Furkan service",

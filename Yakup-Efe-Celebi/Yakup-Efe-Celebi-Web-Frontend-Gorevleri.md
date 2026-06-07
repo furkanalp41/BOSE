@@ -5,7 +5,7 @@ API Endpoint: GET /market/prices Görev: Uygulamanın ana ekranında (Piyasalar)
 Varlık Bilgilerini Güncelleme Paneli (Admin)
 API Endpoint: PUT /market/assets/{assetId} Görev: Hisselerin işlem (tahta) durumunu yönetici olarak değiştirme UI Bileşenleri: Admin varlık listesinde "Durumu Değiştir" Switch/Toggle butonu Kullanıcı Deneyimi: Tahta kapatıldığında varlığın satır renginin gri (disabled) hale gelmesi Teknik Detaylar: PUT isteği ile boolean (isActive) değerinin anlık güncellenmesi
 Sistem Sağlık Durumu Görüntüleme (Admin)
-API Endpoint: GET /admin/health Görev: Sunucu altyapısının web üzerinden takibi için Dashboard UI Bileşenleri: Docker, Kafka, Redis ve PostgreSQL için durum kartları (Status Cards) Aktif (Yeşil) ve Hatalı (Kırmızı) durum ikonları Kullanıcı Deneyimi: Sayfanın her 10 saniyede bir otomatik yenilenerek güncel durumu göstermesi Teknik Detaylar: Polling (setInterval) mekanizması ile API isteği atılması
+API Endpoint: GET /admin/health Görev: Sunucu altyapısının web üzerinden takibi için Dashboard UI Bileşenleri: Docker, RabbitMQ, Redis ve PostgreSQL için durum kartları (Status Cards) Aktif (Yeşil) ve Hatalı (Kırmızı) durum ikonları Kullanıcı Deneyimi: Sayfanın her 10 saniyede bir otomatik yenilenerek güncel durumu göstermesi Teknik Detaylar: Polling (setInterval) mekanizması ile API isteği atılması
 Giriş Hareketlerini Listeleme Sayfası
 API Endpoint: GET /users/{userId}/logs Görev: Kullanıcı profilindeki "Güvenlik Geçmişi" listesi UI Bileşenleri: Tarih, Saat, IP adresi ve Tarayıcı bilgisini içeren basit tablo Kullanıcı Deneyimi: Temiz ve okunabilir tipografi kullanımı Teknik Detaylar: Gelen tarih string'inin (ISO 8601) kullanıcı tarayıcısının yerel formatına dönüştürülmesi (Date.toLocaleString)
 AI Tahmin Geçmişini Temizleme Akışı

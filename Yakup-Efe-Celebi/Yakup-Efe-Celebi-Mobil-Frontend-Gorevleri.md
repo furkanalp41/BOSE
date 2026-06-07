@@ -19,8 +19,8 @@
 
 **4. Sistem Sağlık Durumu Görüntüleme (Admin)**
 * **API Endpoint:** `GET /admin/health`
-* **Görev:** Sunucu (Go/Kafka/Redis) altyapısının mobil cihazdan takibi.
-* **UI Bileşenleri:** Servis adları (Kafka, Database) ve yanlarında yanıp sönen durum ikonları (Yeşil nokta = Aktif, Kırmızı nokta = Hata). Dashboard görünümü.
+* **Görev:** Sunucu (Go/RabbitMQ/Redis) altyapısının mobil cihazdan takibi.
+* **UI Bileşenleri:** Servis adları (RabbitMQ, Database) ve yanlarında yanıp sönen durum ikonları (Yeşil nokta = Aktif, Kırmızı nokta = Hata). Dashboard görünümü.
 
 **5. Giriş Hareketlerini Listeleme Ekranı**
 * **API Endpoint:** `GET /users/{userId}/logs`

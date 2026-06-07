@@ -7,7 +7,7 @@
 ## Proje Hakkında
 
 **Proje Tanımı:**
-Yapay Zeka Destekli Borsa ve Kripto Simülasyonumuz, kullanıcılara risk almadan gerçekçi bir yatırım ve portföy yönetimi deneyimi sunmak için tasarlandı. Platformumuz, gerçek piyasa verilerini simüle ederek (Go, Kafka ve Redis altyapısıyla) saniyesi saniyesine fiyat akışları sağlar ve entegre yapay zeka karar mekanizmalarıyla kullanıcılara alım/satım sinyalleri sunar. Gelişmiş mikroservis mimarisi ve kullanıcı dostu arayüzü sayesinde yatırımcılar, hem manuel işlemler yapabilir hem de botların piyasa reflekslerini gözlemleyebilir. Amacımız, algoritmik ticaretin ve piyasa psikolojisinin karmaşık dinamiklerini herkes için erişilebilir ve test edilebilir bir laboratuvar ortamına dönüştürmektir.
+Yapay Zeka Destekli Borsa ve Kripto Simülasyonumuz, kullanıcılara risk almadan gerçekçi bir yatırım ve portföy yönetimi deneyimi sunmak için tasarlandı. Platformumuz, gerçek piyasa verilerini simüle ederek (Go, RabbitMQ ve Redis altyapısıyla) saniyesi saniyesine fiyat akışları sağlar ve entegre yapay zeka karar mekanizmalarıyla kullanıcılara alım/satım sinyalleri sunar. Gelişmiş mikroservis mimarisi ve kullanıcı dostu arayüzü sayesinde yatırımcılar, hem manuel işlemler yapabilir hem de botların piyasa reflekslerini gözlemleyebilir. Amacımız, algoritmik ticaretin ve piyasa psikolojisinin karmaşık dinamiklerini herkes için erişilebilir ve test edilebilir bir laboratuvar ortamına dönüştürmektir.
 
 **Proje Kategorisi:**
 Finans Teknolojileri (FinTech) / Simülasyon / Yapay Zeka

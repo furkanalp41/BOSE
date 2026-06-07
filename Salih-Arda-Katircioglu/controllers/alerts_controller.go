@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"bose-salih/config"
 	"bose-salih/middlewares"
@@ -10,6 +13,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 )
+
+const alertsTTL = 60 * time.Second
 
 type alertInput struct {
 	Symbol      string  `json:"symbol"`
@@ -56,6 +61,7 @@ func CreateAlert(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Alarm oluşturulamadı"})
 	}
 	invalidateAlertCache(body.Symbol)
+	invalidateUserAlerts(userID)
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"success": true, "alert": alert})
 }
 
@@ -100,6 +106,7 @@ func UpdateAlert(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Güncelleme başarısız"})
 	}
 	invalidateAlertCache(alert.Symbol)
+	invalidateUserAlerts(userID)
 	return c.JSON(fiber.Map{"success": true, "alert": alert})
 }
 
@@ -124,18 +131,45 @@ func DeleteAlert(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Silme başarısız"})
 	}
 	invalidateAlertCache(alert.Symbol)
+	invalidateUserAlerts(userID)
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
-// ListAlerts is not in the spec but useful for the alerts dashboard view.
+// ListAlerts returns the current user's alerts. Cache-aside: the per-user list
+// is served from Redis (key alerts:user:<id>, TTL alertsTTL) and recomputed from
+// Postgres on a miss; every mutation invalidates the key.
 func ListAlerts(c *fiber.Ctx) error {
 	userID, err := middlewares.CurrentUserID(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
 	}
+
+	if config.Redis != nil {
+		if raw, err := config.Redis.Get(config.RedisCtx, userAlertsKey(userID)).Result(); err == nil && raw != "" {
+			return c.Type("application/json").SendString(raw)
+		}
+	}
+
 	var alerts []models.PriceAlert
 	config.DB.Where("user_id = ?", userID).Order("created_at DESC").Find(&alerts)
-	return c.JSON(fiber.Map{"success": true, "data": alerts})
+
+	body := fiber.Map{"success": true, "data": alerts}
+	if config.Redis != nil {
+		if raw, err := json.Marshal(body); err == nil {
+			_ = config.Redis.Set(config.RedisCtx, userAlertsKey(userID), raw, alertsTTL).Err()
+		}
+	}
+	return c.JSON(body)
+}
+
+func userAlertsKey(userID uint) string { return fmt.Sprintf("alerts:user:%d", userID) }
+
+// invalidateUserAlerts drops a user's cached alert list after a mutation.
+func invalidateUserAlerts(userID uint) {
+	if config.Redis == nil {
+		return
+	}
+	_ = config.Redis.Del(config.RedisCtx, userAlertsKey(userID)).Err()
 }
 
 func invalidateAlertCache(symbol string) {

@@ -9,11 +9,11 @@
 **Konuşma İçeriği:**
 * Grup adının (UraniumZ) tanıtılması
 * Projenin genel tanıtımı (AI Destekli Borsa ve Kripto Simülasyonu)
-* Projenin amacı, kullanılan teknolojiler (Go, Kafka, Redis, Docker) ve kapsamı
+* Projenin amacı, kullanılan teknolojiler (Go, RabbitMQ, Redis, Docker) ve kapsamı
 * Sunumun yapısının kısaca açıklanması
 
 **Örnek Konuşma:**
-*"Merhaba, ben Furkan Alp Günay. UraniumZ ekibi olarak geliştirdiğimiz 'Yapay Zeka Destekli Borsa ve Kripto Simülasyonu' projemizin sunumuna hoş geldiniz. Bu projede, gerçek zamanlı piyasa verilerini Go, Kafka ve Redis altyapısıyla simüle ederek, kullanıcılara risk almadan yapay zeka destekli yatırım yapma ve algoritmik ticaret stratejilerini test etme imkanı sunuyoruz. Bugün sizlere mikroservis mimarisiyle geliştirdiğimiz bu güçlü altyapıyı ve arayüzü tanıtacağız. Şimdi sırasıyla her ekip arkadaşım kendini tanıtacak ve geliştirdiği modüllerin canlı demosunu yapacak."*
+*"Merhaba, ben Furkan Alp Günay. UraniumZ ekibi olarak geliştirdiğimiz 'Yapay Zeka Destekli Borsa ve Kripto Simülasyonu' projemizin sunumuna hoş geldiniz. Bu projede, gerçek zamanlı piyasa verilerini Go, RabbitMQ ve Redis altyapısıyla simüle ederek, kullanıcılara risk almadan yapay zeka destekli yatırım yapma ve algoritmik ticaret stratejilerini test etme imkanı sunuyoruz. Bugün sizlere mikroservis mimarisiyle geliştirdiğimiz bu güçlü altyapıyı ve arayüzü tanıtacağız. Şimdi sırasıyla her ekip arkadaşım kendini tanıtacak ve geliştirdiği modüllerin canlı demosunu yapacak."*
 
 ---
 
@@ -74,7 +74,7 @@ Her ekip üyesi sunumunu aşağıdaki formata göre (4-6 dakika) yapacaktır:
   1. **Yeni Market Varlığı Ekleme:** `POST /market/assets`
   2. **Piyasa Verilerini Listeleme:** `GET /market/prices` (Redis üzerinden anlık akış)
   3. **Varlık Bilgilerini Güncelleme:** `PUT /market/assets/{assetId}`
-  4. **Sistem Durumunu Kontrol Etme:** `GET /admin/health` (Kafka/Docker durumu)
+  4. **Sistem Durumunu Kontrol Etme:** `GET /admin/health` (RabbitMQ/Docker durumu)
   5. **AI Analiz Geçmişini Temizleme:** `DELETE /ai/history`
   6. **AI Piyasa Duyarlılığını Görüntüleme:** `GET /ai/market-sentiment`
 

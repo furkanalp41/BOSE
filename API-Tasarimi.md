@@ -688,7 +688,7 @@ paths:
       tags:
         - admin
       summary: Sistem durumunu kontrol et
-      description: Docker, Kafka ve Redis servis sağlık raporu.
+      description: Docker, RabbitMQ ve Redis servis sağlık raporu.
       operationId: getSystemHealth
       security:
         - bearerAuth: []
@@ -1125,7 +1125,7 @@ components:
             database:
               type: string
               example: "UP"
-            kafka:
+            rabbitmq:
               type: string
               example: "UP"
             redis:
