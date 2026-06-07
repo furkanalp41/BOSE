@@ -10,10 +10,16 @@ Aşağıdaki 3 video Furkan tarafından kaydedilir. Kullanılmayan teknoloji iç
 - **Demo komutu:** Terminal 1 — `redis-cli MONITOR`. Terminal 2 — `curl -H "Authorization: Bearer …" http://localhost:8080/api/v1/users/1` art arda çağrı.
 - **Video linki:** ____
 
-## Video 2 — RabbitMQ / Kafka
+## Video 2 — RabbitMQ (kullanıldı)
 
-- **Durum:** kullanmadım. (Furkan'ın domain'i mesaj kuyruğu gerektirmez.)
-- **Video linki:** —
+- **Kullanım yeri:**
+  - **Yayıncı:** `controllers/auth_controller.go` — yeni kayıtta `bose.events` topic exchange'ine `user.registered` routing key'iyle yayın yapar (Enes'in consumer'ı dinler).
+  - **Tüketici:** `messaging/consumer.go` — `order.filled` mesajlarını tüketip her dolan emri `order_logs` denetim tablosuna yazar (idempotent; `order_id` unique index).
+- **Demo akışı:**
+  1. RabbitMQ management UI (`http://localhost:15672`, guest/guest) → `bose.events` exchange + `bose.furkan.order-filled` kuyruğu görünür.
+  2. Cem'de bir piyasa emri verilir → `order.filled` tüketilir → denetim satırı düşer:
+     `docker exec bose-postgres-1 psql -U bose -d bose -c "select * from order_logs;"`
+- **Video linki:** ____
 
 ## Video 3 — Docker + CI/CD (kullanıldı)
 
